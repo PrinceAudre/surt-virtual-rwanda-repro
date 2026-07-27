@@ -1,0 +1,3 @@
+# Keep every file byte-identical across platforms so the SHA-256 checksums in
+# CHECKSUMS.sha256 hold on any clone (disable CRLF/LF conversion).
+* -text

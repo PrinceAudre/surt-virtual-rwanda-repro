@@ -1,0 +1,24 @@
+Environment record for the SuRT-Virtual Rwanda reproducibility artifact.
+
+These are the exact versions used to produce the released environmental layers
+(data/) and to run the value-class demonstration (R/demo_value_class.R).
+
+Operating system / platform: x86_64-w64-mingw32 (Windows, 64-bit)
+R: version 4.6.0 (2026-04-24 ucrt)
+
+R packages:
+  terra          1.9.27
+  sf             1.1.1
+  exactextractr  0.10.1
+  jsonlite       2.0.0
+
+Python fetchers (temperature and NDVI) additionally require Python 3 with:
+  cdsapi        (official Copernicus Climate Data Store client)
+  earthaccess   (official NASA Earthdata client)
+
+To approximate this R environment:
+  install.packages(c("terra", "sf", "exactextractr", "jsonlite"))
+
+Note: this is a version record, not a full dependency lockfile. A complete
+renv.lock and a continuous-integration run on a clean machine are planned but
+are not yet included; see the manuscript's reproducibility limitations.
