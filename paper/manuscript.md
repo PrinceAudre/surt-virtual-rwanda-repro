@@ -16,7 +16,7 @@ Article type: Software Tool Article
 
 **Methods:** We developed two open components and demonstrated them for Rwanda's 30 districts. An R pipeline prepares annual rainfall, mean temperature, mean Normalized Difference Vegetation Index, and a static low-lying terrain share from CHIRPS, ERA5-Land, MODIS, and Height Above Nearest Drainage products. Raster values are summarized with coverage-fraction-weighted zonal statistics. A provenance-labelling module accepts a register row as source-derived only when it declares a documented method on real or public data; otherwise it labels the output illustrative. An account-free synthetic-fixture pipeline exercises the released transformations without private files or data-provider credentials.
 
-**Results:** Each released environmental layer contains all 30 districts. The 2023 ranges are 917-1,489 mm annual rainfall, 15.7-21.9 degrees Celsius mean temperature, and 0.49-0.71 mean Normalized Difference Vegetation Index; the static share of district area with Height Above Nearest Drainage of 5 m or less is 8.6%-31.8%. The provenance demonstration passes nine assertions and the fixture pipeline passes eight. The release includes repository-relative builders, an R dependency lockfile, continuous-integration configuration, per-file provenance and licensing, and SHA-256 checksums.
+**Results:** Each released environmental layer contains all 30 districts. The 2023 ranges are 917-1,489 mm annual rainfall, 15.7-21.9 degrees Celsius mean temperature, and 0.49-0.71 mean Normalized Difference Vegetation Index; the static share of district area with Height Above Nearest Drainage of 5 m or less is 8.6%-31.8%. The provenance demonstration and fixture pipeline each pass nine assertions. The release includes repository-relative builders, an R dependency lockfile, continuous-integration configuration, per-file provenance and licensing, and SHA-256 checksums.
 
 **Conclusions:** The components provide a small, testable foundation for environmental-data preparation and provenance labelling. They do not compute disease relationships, forecasts, hazards, or operational recommendations. Independent numerical validation of the released district values remains future work.
 
@@ -80,7 +80,7 @@ The module validates declarations; it does not independently verify that a citat
 
 #### Reproducibility design
 
-The release uses repository-relative default paths. Real builders accept explicit output, district-geometry, and cache paths. `renv.lock` records the R dependency graph. The account-free command runs the nine-assertion provenance demonstration, an eight-assertion environmental fixture pipeline, and SHA-256 verification. The fixture creates synthetic rasters in memory and exercises the released rainfall, temperature, vegetation, and Height Above Nearest Drainage transformations over three synthetic polygons. It is a software test and does not regenerate or validate the released 2023 values.
+The release uses repository-relative default paths. Real builders accept explicit output, district-geometry, and cache paths. `renv.lock` records the R dependency graph. The account-free command runs the nine-assertion provenance demonstration, a nine-assertion environmental fixture pipeline, and SHA-256 verification. The fixture creates synthetic rasters in memory and exercises the released rainfall, temperature, vegetation, and Height Above Nearest Drainage transformations over three synthetic polygons. Its vegetation path uses two synthetic months and two same-month tiles in the MODIS sinusoidal coordinate system, then runs the released mosaic, annual-mean, scaling, reprojection, and district-extraction helper. It is a software test and does not regenerate or validate the released 2023 values.
 
 GitHub Actions is configured to restore the locked environment and run the same account-free command on a clean hosted runner. Rebuilding the real ERA5-Land and MODIS layers additionally requires free Copernicus Climate Data Store and NASA Earthdata accounts. Credentials are read from provider-standard local files and are not stored in the repository.
 
@@ -125,7 +125,7 @@ For a concrete output example, the released Nyarugenge records report annual rai
 
 The provenance demonstration passes nine assertions: the example register is well formed; a source-derived-plus-placeholder combination is rejected; the source-derived environmental entry is not illustrative; a synthetic entry and an unknown identifier are illustrative; explanatory-note behaviour is correct; and the palette and quantile helpers handle ordinary and degenerate inputs.
 
-The fixture pipeline passes eight assertions across the environmental transformations. It checks expected zonal means, broad directional gates, the Height Above Nearest Drainage threshold calculation, the MODIS scale transformation, and creation of an inspectable GeoJSON. Table 2 maps each principal engineering claim to its released evidence.
+The fixture pipeline passes nine assertions across the environmental transformations. It checks expected zonal means, broad directional gates, the Height Above Nearest Drainage threshold calculation, the complete MODIS multi-month/multi-tile transformation to EPSG:4326, and creation of an inspectable GeoJSON. Table 2 maps each principal engineering claim to its released evidence.
 
 ## Use case
 
@@ -149,7 +149,7 @@ No human participants, animals, patient records, personal data, confidential rec
 
 ## Data availability
 
-Underlying data and prepared outputs are archived with version 1.1.0 of the software [13]. The archive contains:
+Underlying data and prepared outputs are archived with version 1.1.1 of the software [13]. The archive contains:
 
 - `relief_districts.geojson`: World Bank district geometry, CC BY 4.0;
 - `relief_climate_rainfall.geojson`: CHIRPS version 2.0 annual precipitation, public domain/CC0;
@@ -167,7 +167,7 @@ Software available from: https://github.com/PrinceAudre/surt-virtual-rwanda-repr
 
 Source code available from: https://github.com/PrinceAudre/surt-virtual-rwanda-repro
 
-Archived source code at time of publication: Tuyishime AP. SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.0. Zenodo. 2026. https://doi.org/10.5281/zenodo.21674910 [Software] [13].
+Archived source code at time of publication: Tuyishime AP. SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.1. Zenodo. 2026. https://doi.org/10.5281/zenodo.21674910 [Software] [13].
 
 Licence: MIT for code. Data retain the per-file terms listed in the Data availability section and `NOTICE.md`.
 
@@ -201,7 +201,7 @@ OpenAI Codex (GPT-5, accessed July 2026) was used for coding assistance, reposit
 10. Munoz-Sabater J, Dutra E, Agusti-Panareda A, Albergel C, Arduini G, Balsamo G, et al. ERA5-Land: a state-of-the-art global reanalysis dataset for land applications. Earth System Science Data. 2021;13:4349-4383. doi:10.5194/essd-13-4349-2021.
 11. Didan K. MODIS/Terra Vegetation Indices Monthly L3 Global 1 km SIN Grid V061 [Dataset]. NASA EOSDIS Land Processes Distributed Active Archive Center; 2021. doi:10.5067/MODIS/MOD13A3.061.
 12. Nobre AD, Cuartas LA, Hodnett M, Renno CD, Rodrigues G, Silveira A, et al. Height Above the Nearest Drainage - a hydrologically relevant new terrain model. Journal of Hydrology. 2011;404:13-29. doi:10.1016/j.jhydrol.2011.03.051.
-13. Tuyishime AP. SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.0. Zenodo. 2026. doi:10.5281/zenodo.21674910 [Software].
+13. Tuyishime AP. SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.1. Zenodo. 2026. doi:10.5281/zenodo.21674910 [Software].
 
 ## Tables
 
@@ -219,7 +219,7 @@ OpenAI Codex (GPT-5, accessed July 2026) was used for coding assistance, reposit
 | Engineering claim | Released evidence | Test or inspection |
 |---|---|---|
 | Unknown or incomplete entries default to illustrative | `R/provenance_value_class.R` | Nine-assertion `R/demo_value_class.R` |
-| Product transforms and zonal summaries run without provider accounts | Transformation modules and synthetic in-memory rasters | Eight-assertion `R/test_fixture_pipeline.R` |
+| Product transforms and zonal summaries run without provider accounts | Transformation modules and synthetic in-memory rasters | Nine-assertion `R/test_fixture_pipeline.R` |
 | Every prepared environmental file covers 30 districts | Four environmental GeoJSON files | Feature-count and schema checks in the release QA |
 | Reported Nyarugenge values are present in the release | Four environmental GeoJSON files | Direct field lookup |
 | Release files have fixed integrity values | `CHECKSUMS.sha256` | `python/run_all_checks.py` |
