@@ -4,10 +4,10 @@
 #
 # These functions implement the value-class discipline described in the accompanying
 # paper: a methodology register in which every displayed output declares an
-# evidence_class (sound = a real, documented method on real/public data; illustrative =
+# evidence_class (source-derived = a documented method on real/public data; illustrative =
 # any output computed on synthetic or placeholder data) and a method_class (documented /
 # placeholder), validated for shape, with a FAIL-CLOSED rule that an output is treated as
-# illustrative unless the register explicitly declares it "sound".
+# illustrative unless the register explicitly declares it "source-derived".
 #
 # PROVENANCE: the function definitions below are reproduced from the SuRT-Virtual Rwanda
 # application source (05_dashboard/research_methods.R). The function logic is unchanged.
@@ -54,9 +54,10 @@ surt_quantile_breaks <- function(x, k = 5L) {
 }
 
 # Value-class vocabulary.
-#   evidence_class: "sound" (real method, real/public data) | "illustrative" (synthetic/placeholder)
+#   evidence_class: "source-derived" (documented method, real/public data) |
+#                   "illustrative" (synthetic/placeholder)
 #   method_class:   "documented" (a real, stated/cited method) | "placeholder" (hand-baked / ad-hoc)
-surt_evidence_classes <- c("sound", "illustrative")
+surt_evidence_classes <- c("source-derived", "illustrative")
 surt_method_classes   <- c("documented", "placeholder")
 
 # Fetch one register entry by id (NULL if absent).
@@ -67,7 +68,7 @@ surt_method_of <- function(id, register = example_register()) {
 
 # Validate the register shape: every entry has all fields, each a single non-empty string,
 # and a legal evidence_class / method_class. A placeholder (hand-baked) method can NEVER be
-# a "sound" output: that combination would make surt_output_is_illustrative() FALSE and hide
+# a source-derived output: that combination would make surt_output_is_illustrative() FALSE and hide
 # the honesty marker on a hand-baked score, so it is rejected (fail-closed).
 surt_method_register_ok <- function(register = example_register()) {
   if (!length(register)) return(FALSE)
@@ -78,20 +79,21 @@ surt_method_register_ok <- function(register = example_register()) {
       all(vapply(req, function(f) ok1(e[[f]]), logical(1))) &&
       e$evidence_class %in% surt_evidence_classes &&
       e$method_class %in% surt_method_classes &&
-      !(identical(e$evidence_class, "sound") && identical(e$method_class, "placeholder"))
+      !(identical(e$evidence_class, "source-derived") &&
+        identical(e$method_class, "placeholder"))
   }, logical(1)))
 }
 
-# Is a displayed output's method still illustrative (vs a real / "sound" method)?
-# FAIL CLOSED: illustrative unless the register explicitly declares evidence_class "sound"
+# Is a displayed output's method still illustrative (vs source-derived)?
+# FAIL CLOSED: illustrative unless the register explicitly declares evidence_class "source-derived"
 # for the id. Unknown / missing id -> illustrative. This ties the on-screen "illustrative"
 # marker to the METHOD's honesty (the register), not to whether the input data are real.
 surt_output_is_illustrative <- function(id, register = example_register()) {
   e <- surt_method_of(id, register)
-  is.null(e) || !identical(e$evidence_class, "sound")
+  is.null(e) || !identical(e$evidence_class, "source-derived")
 }
 
-# Short human-readable "illustrative" note; "" when the output is sound (auto-lifts when a
+# Short human-readable "illustrative" note; "" when the output is source-derived (auto-lifts when a
 # method is elevated). A placeholder output is never described as "a documented method".
 surt_illustrative_note <- function(id, short = FALSE, register = example_register()) {
   if (!surt_output_is_illustrative(id, register)) return("")

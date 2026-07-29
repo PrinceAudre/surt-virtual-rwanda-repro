@@ -23,16 +23,16 @@ ck <- function(name, cond) {
 reg <- example_register()
 
 ck("example register is well-formed (all fields, legal classes)", surt_method_register_ok(reg))
-ck("register_ok REJECTS a sound+placeholder entry (a hand-baked method may not be 'sound')",
+ck("register_ok REJECTS a source-derived+placeholder entry",
    isFALSE(surt_method_register_ok(list(list(id = "x", display = "x", method = "x", palette = "x",
-     evidence_class = "sound", method_class = "placeholder", citation = "x")))))
-ck("real climate layer is NOT illustrative (evidence_class sound)",
+     evidence_class = "source-derived", method_class = "placeholder", citation = "x")))))
+ck("real climate layer is NOT illustrative (evidence_class source-derived)",
    isFALSE(surt_output_is_illustrative("climate_temperature_layer", reg)))
 ck("synthetic signal IS illustrative",
    surt_output_is_illustrative("synthetic_disease_signal", reg))
 ck("fail-closed: an unknown id is treated as illustrative",
    surt_output_is_illustrative("no_such_id", reg))
-ck("illustrative note is empty for the sound output (auto-lifts)",
+ck("illustrative note is empty for the source-derived output (auto-lifts)",
    identical(surt_illustrative_note("climate_temperature_layer", register = reg), ""))
 ck("illustrative note is non-empty for the synthetic output",
    nzchar(surt_illustrative_note("synthetic_disease_signal", register = reg)))
