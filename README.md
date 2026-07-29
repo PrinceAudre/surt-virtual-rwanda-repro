@@ -1,5 +1,7 @@
 # SuRT-Virtual Rwanda: reproducibility artifact
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21671788.svg)](https://doi.org/10.5281/zenodo.21671788)
+
 Reproducibility artifact for the paper *A reproducible, provenance-transparent framework for descriptive climate-linked disease-risk evidence integration across a national district grid: design and proof-of-concept for Rwanda's 30 districts*.
 
 It contains the climate-integration pipeline and the provenance / value-class discipline described in that paper, together with the real, openly-licensed climate layers for Rwanda's 30 districts.
@@ -52,6 +54,6 @@ All files carry SHA-256 checksums in `CHECKSUMS.sha256` (verify with `sha256sum 
 
 ## How to cite
 
-Please cite the paper (Tuyishime Audre Prince, independent researcher; ORCID 0009-0002-0799-3140) and this archived artifact. Machine-readable software citation metadata are provided in `CITATION.cff`; the Zenodo DOI will be added after the metadata-complete release is archived.
+Please cite the paper (Tuyishime Audre Prince, independent researcher; ORCID 0009-0002-0799-3140) and the archived software release: [SuRT-Virtual Rwanda v1.0.1](https://doi.org/10.5281/zenodo.21671789). The concept DOI for all versions is [10.5281/zenodo.21671788](https://doi.org/10.5281/zenodo.21671788). Machine-readable software citation metadata are provided in `CITATION.cff`.
 
 See also: `NOTICE.md` (attributions and data licenses), `DATA_DICTIONARY.md` (data fields), and `SECURITY_REVIEW.md` (what was reviewed and what was deliberately excluded).
