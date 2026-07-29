@@ -1,8 +1,7 @@
 #!/usr/bin/env Rscript
-# build_relief_climate_ndvi_real.R - REAL per-district mean-NDVI choropleth from MODIS/Terra MOD13A3 v061 (NASA
-# LP DAAC), indicator #2b of the climate-health feature. REPLACES the illustrative fixture (build_relief_climate_
-# ndvi.R) through the SAME output geojson - the fixture's seam. Offline governed-prepare; NOT sourced by app.R.
-# DESCRIPTIVE vegetation greenness - not a forecast, not surveillance, not operational; operational_use_allowed = FALSE.
+# Build district mean NDVI from MODIS/Terra MOD13A3 v061 as an explicit
+# offline preparation step. This is a descriptive layer, not a forecast,
+# surveillance output, or operational output.
 #
 # DATA: MOD13A3 v061 "1 km monthly NDVI" (NASA LP DAAC). LICENSE: CC0 (NASA "CC0 unless the product carries a
 # use-restriction marker"; none observed - verified 2026-07-08, findings dossier B). Cite Didan (2021)
@@ -14,30 +13,32 @@
 # `python -c "import earthaccess; earthaccess.login(strategy='interactive', persist=True)"`. FAIL-CLOSED with these
 # instructions until that is in place - and it writes NOTHING, so the illustrative fixture layer stays intact.
 #
-# TRANSFORM: the mask/scale/mosaic/reproject/annual-mean pipeline + the two-part ground-truth gate live in the
+# TRANSFORM: the mask/scale/mosaic/reproject/annual-mean pipeline plus the two-part consistency gate live in the
 # HDF-FREE helper relief_ndvi_transform.R, which is EXECUTED + ASSERTED on a synthetic MODIS-sinusoidal fixture
 # in the hermetic tests (mask fill, scaled max <=1, western forest >= 0.05 greener than eastern savanna, negative
 # controls fail-closed). The ONE part that cannot be verified without a real granule - selecting the "1 km monthly
 # NDVI" HDF-EOS subdataset - is isolated below as read_mod13a3_ndvi_sds() and flagged FIRST-REAL-FETCH SEAM: on the
 # first real run, confirm it opens the NDVI SDS (the gate fail-closes VISIBLY on bad data - safe, not silent-wrong).
 #
-# GOVERNANCE: allow-list ONLY {district, mean_ndvi, provenance}. GEOMETRY: reuses relief_districts.geojson.
-# OUTPUT (git-ignored): www/relief_climate_ndvi.geojson
-# USAGE: Rscript tools/semantic_layers/experimental_maplibre_relief/build_relief_climate_ndvi_real.R [year] [out]
+# GOVERNANCE: allow-list ONLY {district, mean_ndvi, provenance}.
+# USAGE: Rscript R/build_relief_climate_ndvi_real.R [year] [out] [district_geojson] [cache_dir]
 suppressWarnings(suppressMessages({ library(terra); library(sf); library(exactextractr) }))
-HERE <- dirname(sub("^--file=", "", grep("^--file=", commandArgs(), value = TRUE)[1]))
-source(file.path(HERE, "relief_ndvi_transform.R"))   # ndvi_scale_mask_mod13a3 / ndvi_annual_mean_4326 / ndvi_assert_raster_scale / ndvi_ground_truth_gate
+HERE <- dirname(normalizePath(sub("^--file=", "", grep("^--file=", commandArgs(), value = TRUE)[1]),
+                             winslash = "/", mustWork = TRUE))
+ROOT <- normalizePath(file.path(HERE, ".."), winslash = "/", mustWork = TRUE)
+source(file.path(HERE, "relief_ndvi_transform.R"))
 args <- commandArgs(trailingOnly = TRUE)
 YEAR <- if (length(args) >= 1 && nzchar(args[1])) as.integer(args[1]) else 2023L
-GEOM <- file.path("05_dashboard", "www", "relief_districts.geojson")
-OUT  <- if (length(args) >= 2 && nzchar(args[2])) args[2] else file.path("05_dashboard", "www", "relief_climate_ndvi.geojson")
-PY   <- file.path(HERE, "fetch_modis_ndvi.py")
-CACHE <- file.path("02_data", "cache", "climate", "modis_ndvi", sprintf("mod13a3_%d", YEAR))
+OUT  <- if (length(args) >= 2 && nzchar(args[2])) args[2] else file.path(ROOT, "generated", "relief_climate_ndvi.geojson")
+GEOM <- if (length(args) >= 3 && nzchar(args[3])) args[3] else file.path(ROOT, "data", "relief_districts.geojson")
+PY   <- file.path(ROOT, "python", "fetch_modis_ndvi.py")
+CACHE_ROOT <- if (length(args) >= 4 && nzchar(args[4])) args[4] else file.path(ROOT, "cache", "modis_ndvi")
+CACHE <- file.path(CACHE_ROOT, sprintf("mod13a3_%d", YEAR))
 SETUP <- paste("create a free NASA Earthdata Login (https://urs.earthdata.nasa.gov), `pip3 install earthaccess`, then run once",
                "`python -c \"import earthaccess; earthaccess.login(strategy='interactive', persist=True)\"`.",
                "Credentials stay in the earthaccess-managed netrc - never in this repo.")
 
-if (!file.exists(GEOM)) stop(sprintf("FAIL-CLOSED: district geometry %s not found - build the population layer first.", GEOM))
+if (!file.exists(GEOM)) stop(sprintf("FAIL-CLOSED: district geometry not found: %s", GEOM))
 
 # --- Fetch ONCE into the git-ignored cache via the official earthaccess client (fail-closed with setup steps). ---
 hdfs <- list.files(CACHE, pattern = "\\.hdf$", full.names = TRUE, ignore.case = TRUE)
@@ -95,15 +96,16 @@ d$district <- as.character(d$district)
 d$mean_ndvi <- round(exactextractr::exact_extract(r4326, d, "mean", progress = FALSE), 2)
 if (any(is.na(d$mean_ndvi))) stop("FAIL-CLOSED: a district got no NDVI value (CRS / coverage / subdataset problem).")
 
-# --- GROUND-TRUTH GATE (two-part: band/scale tripwire + west-forest >= 0.05 greener than east-savanna). ---
-ndvi_ground_truth_gate(d$district, d$mean_ndvi)
+# --- Consistency gate: range tripwire plus west-forest/east-savanna direction. ---
+ndvi_consistency_gate(d$district, d$mean_ndvi)
 
 d$provenance <- sprintf("MODIS MOD13A3 v061 (NASA LP DAAC, CC0), annual-mean NDVI %d", YEAR)
 keep <- d[, c("district", "mean_ndvi", "provenance")]
 v <- terra::vect(keep)
+dir.create(dirname(OUT), recursive = TRUE, showWarnings = FALSE)
 if (file.exists(OUT)) file.remove(OUT)
 terra::writeVector(v, OUT, filetype = "GeoJSON")
 wf <- keep$mean_ndvi[keep$district %in% c("Nyamasheke", "Nyaruguru", "Rusizi")]
 es <- keep$mean_ndvi[keep$district %in% c("Nyagatare", "Kirehe")]
-cat(sprintf("REAL climate-NDVI choropleth: %d districts | %.2f-%.2f NDVI | W-forest mean %.2f >= E-savanna mean %.2f + 0.05 (ground-truth OK) | MOD13A3 %d -> %s\n",
+cat(sprintf("REAL climate-NDVI choropleth: %d districts | %.2f-%.2f NDVI | W-forest mean %.2f >= E-savanna mean %.2f + 0.05 (consistency gate OK) | MOD13A3 %d -> %s\n",
             nrow(keep), min(keep$mean_ndvi), max(keep$mean_ndvi), mean(wf), mean(es), YEAR, OUT))

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # fetch_era5land_temperature.py - download ERA5-Land monthly-mean 2m_temperature for Rwanda via the OFFICIAL
-# Copernicus CDS API (cdsapi), for the climate-health temperature layer (Phase 1c). The API key is read from
+# Copernicus CDS API (cdsapi) client for the district temperature layer. The API key is read from
 # %USERPROFILE%\.cdsapirc by cdsapi.Client() and is NEVER stored in this repo.
 #
 # OWNER ONE-TIME SETUP (Windows; see ECMWF "How to install and use CDS API on Windows"):
@@ -11,12 +11,13 @@
 # a missing client/key stops with instructions and writes nothing.
 #
 # USAGE: python fetch_era5land_temperature.py [year] [out.nc]
-import sys, os
+import sys
+from pathlib import Path
 
 YEAR = sys.argv[1] if len(sys.argv) > 1 else "2023"
-OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(
-    "02_data", "cache", "climate", "era5land", "era5land_t2m_%s.nc" % YEAR)
-os.makedirs(os.path.dirname(OUT), exist_ok=True)
+ROOT = Path(__file__).resolve().parents[1]
+OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / "cache" / "era5land" / ("era5land_t2m_%s.nc" % YEAR)
+OUT.parent.mkdir(parents=True, exist_ok=True)
 
 try:
     import cdsapi
@@ -31,7 +32,7 @@ except Exception as e:  # noqa: BLE001 - surface any key/config problem as a cle
              "your url+key from https://cds.climate.copernicus.eu/how-to-api ? Underlying error: %s" % e)
 
 # ERA5-Land monthly-averaged 2m air temperature over the Rwanda bounding box. NOTE: ERA5 2m_temperature is in
-# KELVIN - the R builder converts to degrees C, and its ground-truth gate (10-30 C + highlands cooler) will
+# KELVIN - the R builder converts to degrees C, and its consistency gate (10-30 C + highlands cooler) will
 # fail-closed if that conversion is ever wrong.
 client.retrieve(
     "reanalysis-era5-land-monthly-means",
@@ -45,7 +46,7 @@ client.retrieve(
         "data_format": "netcdf",
         "download_format": "unarchived",  # ask for a raw .nc; the modern CDS otherwise wraps the netCDF in a .zip
     },
-    OUT,
+    str(OUT),
 )
 
 # Defensive: the modern CDS can still deliver a ZIP (netCDF wrapped inside). terra cannot open that, so if OUT is
@@ -53,15 +54,15 @@ client.retrieve(
 # (the builder expects ONE 12-month netCDF; a multi-file split would need a merge step).
 import zipfile
 if zipfile.is_zipfile(OUT):
-    zpath = OUT + ".zip"
-    os.replace(OUT, zpath)
+    zpath = Path(str(OUT) + ".zip")
+    OUT.replace(zpath)
     with zipfile.ZipFile(zpath) as z:
         ncs = [n for n in z.namelist() if n.lower().endswith(".nc")]
         if not ncs:
             sys.exit("FAIL-CLOSED: the CDS download was a zip with no .nc inside: %s" % z.namelist())
         if len(ncs) > 1:
             sys.exit("FAIL-CLOSED: the CDS zip has %d .nc files %s - the builder expects a single 12-month netCDF; a merge step is needed." % (len(ncs), ncs))
-        with z.open(ncs[0]) as src, open(OUT, "wb") as dst:
+        with z.open(ncs[0]) as src, OUT.open("wb") as dst:
             dst.write(src.read())
-    os.remove(zpath)
+    zpath.unlink()
 print("wrote %s" % OUT)

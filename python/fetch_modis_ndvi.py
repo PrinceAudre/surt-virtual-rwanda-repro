@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # fetch_modis_ndvi.py - download MODIS/Terra MOD13A3 v061 monthly 1 km NDVI over Rwanda via the OFFICIAL NASA
-# earthaccess client, for the climate-health NDVI layer (indicator #2b). Earthdata credentials are read by
+# earthaccess client for the district NDVI layer. Earthdata credentials are read by
 # earthaccess from the netrc file it manages (machine urs.earthdata.nasa.gov) and are NEVER stored in this repo.
 #
 # OWNER ONE-TIME SETUP (Windows; the earthaccess analog of ERA5's cdsapi/.cdsapirc):
@@ -15,12 +15,13 @@
 # LICENSE: MOD13A3 is NASA CC0 (no product use-restriction marker) - redistributable. Cite Didan (2021),
 # DOI 10.5067/MODIS/MOD13A3.061.
 # USAGE: python fetch_modis_ndvi.py [year] [out_dir]
-import sys, os
+import sys
+from pathlib import Path
 
 YEAR = sys.argv[1] if len(sys.argv) > 1 else "2023"
-OUT_DIR = sys.argv[2] if len(sys.argv) > 2 else os.path.join(
-    "02_data", "cache", "climate", "modis_ndvi", "mod13a3_%s" % YEAR)
-os.makedirs(OUT_DIR, exist_ok=True)
+ROOT = Path(__file__).resolve().parents[1]
+OUT_DIR = Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / "cache" / "modis_ndvi" / ("mod13a3_%s" % YEAR)
+OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 try:
     import earthaccess
@@ -44,7 +45,7 @@ except Exception as e:  # noqa: BLE001 - surface any auth/config problem as a cl
 
 # MOD13A3 v061 monthly 1 km NDVI over the Rwanda bounding box for the whole year. Rwanda straddles 30 deg E, so a
 # bbox search returns the covering sinusoidal tiles (expect TWO: h20v09 west + h21v09 east) x 12 months. NDVI is
-# stored int16 (scale 0.0001, fill -3000); the R builder scales/masks, and its ground-truth gate fail-closes if
+# stored int16 (scale 0.0001, fill -3000); the R builder scales/masks, and its consistency gate fails closed if
 # that is ever wrong.
 results = earthaccess.search_data(
     short_name="MOD13A3",
@@ -55,5 +56,5 @@ results = earthaccess.search_data(
 if not results:
     sys.exit("FAIL-CLOSED: MOD13A3 v061 search returned 0 granules for %s over Rwanda - check the year/bbox/collection." % YEAR)
 
-files = earthaccess.download(results, OUT_DIR)
+files = earthaccess.download(results, str(OUT_DIR))
 print("downloaded %d MOD13A3 granule(s) for %s to %s" % (len(files), YEAR, OUT_DIR))

@@ -1,0 +1,9 @@
+/cache/
+/generated/
+/.Rprofile
+/.Rhistory
+/renv/library/
+/renv/staging/
+/renv/python/
+__pycache__/
+*.pyc

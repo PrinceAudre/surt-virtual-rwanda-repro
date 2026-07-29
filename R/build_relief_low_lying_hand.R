@@ -1,8 +1,9 @@
 #!/usr/bin/env Rscript
-# build_relief_climate_flood.R - REAL per-district FLOOD-SUSCEPTIBILITY choropleth from the CC0 global HAND product
-# (Height Above Nearest Drainage; ASF/HydroSAR from the Copernicus GLO-30 DEM). Indicator #5, Phase 2 of the
-# climate-health feature - the flood -> cholera/AWD terrain context. Offline governed-prepare; NOT sourced by app.R.
-# DESCRIPTIVE terrain susceptibility - not a forecast, not surveillance, not operational; operational_use_allowed = FALSE.
+# build_relief_low_lying_hand.R - per-district low-lying terrain share from the CC0 global HAND product
+# (Height Above Nearest Drainage; ASF/HydroSAR from the Copernicus GLO-30 DEM).
+# Static low-lying-terrain descriptor for research use; not observed flooding
+# or a validated hazard model.
+# Not a forecast, surveillance output, or operational output.
 #
 # DATA: Global 30 m HAND (CC0 1.0 PUBLIC DOMAIN; verified 2026-07-12 - registry.opendata.aws/glo-30-hand). Cloud-
 # Optimized GeoTIFF 1x1-deg tiles on the ANONYMOUS public S3 bucket (no AWS account) - fetched here over HTTPS.
@@ -10,27 +11,28 @@
 # accessed 2026 from https://registry.opendata.aws/glo-30-hand". No credentials, so - unlike ERA5-Land/MODIS - there
 # is NO owner key-setup step; it just needs one network run.
 #
-# METHOD: mosaic the tiles covering Rwanda -> clip -> per-district % of area with HAND <= threshold (default 5 m,
-# low-lying near-drainage = inundation-prone). GROUND-TRUTH GATE (fail-closed, in relief_flood_transform.R): every
-# fraction in [0,100]% AND eastern lowland/wetland districts more inundation-prone than the steep western highlands.
-# GOVERNANCE: aggregate per-district; allow-list ONLY {district, flood_prone_pct, provenance}. FAIL-CLOSED until the
+# METHOD: mosaic the tiles covering Rwanda -> clip -> per-district % of area with HAND <= threshold (default 5 m).
+# CONSISTENCY GATE (fail closed, in relief_low_lying_transform.R): every fraction is in [0,100]% and eastern
+# lowland/wetland districts have a greater low-lying share than the steep western highlands.
+# GOVERNANCE: aggregate per-district; allow-list ONLY {district, low_lying_share_pct, provenance}. FAIL-CLOSED until the
 # tiles are cached (writes NOTHING, so nothing renders a half-built layer).
-# GEOMETRY: reuses 05_dashboard/www/relief_districts.geojson. OUTPUT (git-ignored): www/relief_climate_flood.geojson
-# USAGE: Rscript tools/semantic_layers/experimental_maplibre_relief/build_relief_climate_flood.R [threshold_m] [out]
+# USAGE: Rscript R/build_relief_low_lying_hand.R [threshold_m] [out] [district_geojson] [cache_dir]
 suppressWarnings(suppressMessages({ library(terra); library(sf); library(exactextractr) }))
-HERE <- dirname(sub("^--file=", "", grep("^--file=", commandArgs(), value = TRUE)[1]))
-# Shared transform + ground-truth helpers (flood_prone_fraction / flood_district_lon / flood_ground_truth_gate) -
+HERE <- dirname(normalizePath(sub("^--file=", "", grep("^--file=", commandArgs(), value = TRUE)[1]),
+                             winslash = "/", mustWork = TRUE))
+ROOT <- normalizePath(file.path(HERE, ".."), winslash = "/", mustWork = TRUE)
+# Shared transform and consistency helpers -
 # sourced by BOTH this real builder AND the hermetic test, so the gate the real build runs is the exact gate CI
 # exercises on a synthetic HAND raster (no multi-tile download to cover it).
-source(file.path(HERE, "relief_flood_transform.R"))
+source(file.path(HERE, "relief_low_lying_transform.R"))
 args <- commandArgs(trailingOnly = TRUE)
 THRESH <- if (length(args) >= 1 && nzchar(args[1])) as.numeric(args[1]) else 5
-GEOM <- file.path("05_dashboard", "www", "relief_districts.geojson")
-OUT  <- if (length(args) >= 2 && nzchar(args[2])) args[2] else file.path("05_dashboard", "www", "relief_climate_flood.geojson")
-CACHE_DIR <- file.path("02_data", "cache", "climate", "hand")
+OUT  <- if (length(args) >= 2 && nzchar(args[2])) args[2] else file.path(ROOT, "generated", "relief_low_lying_hand.geojson")
+GEOM <- if (length(args) >= 3 && nzchar(args[3])) args[3] else file.path(ROOT, "data", "relief_districts.geojson")
+CACHE_DIR <- if (length(args) >= 4 && nzchar(args[4])) args[4] else file.path(ROOT, "cache", "hand")
 BASE_URL  <- "https://glo-30-hand.s3.amazonaws.com/v1/2021"
 
-if (!file.exists(GEOM)) stop(sprintf("FAIL-CLOSED: district geometry %s not found - build the population layer first.", GEOM))
+if (!file.exists(GEOM)) stop(sprintf("FAIL-CLOSED: district geometry not found: %s", GEOM))
 
 # --- SEAM (first-real-fetch verify): the exact HAND COG tile URL for a 1x1-deg tile whose SW corner is
 # (lat_deg N, lon_deg E). Copernicus GLO-30 convention: name is the SW-corner integer degree, hemisphere-lettered,
@@ -76,16 +78,19 @@ cat(sprintf("HAND tiles: all %d Rwanda-bbox tiles cached/fetched -> mosaic + cli
 r <- if (length(paths) == 1) terra::rast(paths) else terra::vrt(paths, filename = file.path(CACHE_DIR, "hand_rwanda.vrt"), overwrite = TRUE)
 r <- terra::crop(r, terra::ext(bb[["xmin"]], bb[["xmax"]], bb[["ymin"]], bb[["ymax"]]))
 
-# Per-district % of area with HAND <= threshold + the two-part SCALE [0,100]% + EAST>WEST (lowlands more
-# inundation-prone) ground-truth gate. Both live in relief_flood_transform.R (sourced above).
-d$flood_prone_pct <- flood_prone_fraction(r, d, THRESH)
-.gt <- flood_ground_truth_gate(d$district, d$flood_prone_pct, flood_district_lon(d))  # returns c(east, west) pole means
+# Per-district % of area with HAND <= threshold + the two-part SCALE [0,100]% + EAST>WEST gate.
+d$low_lying_share_pct <- low_lying_share(r, d, THRESH)
+.gt <- low_lying_consistency_gate(
+  d$district, d$low_lying_share_pct, low_lying_district_lon(d)
+)
 
 d$provenance <- sprintf("HAND (Height Above Nearest Drainage, CC0; ASF/HydroSAR from Copernicus GLO-30 DEM); %% of district area <= %g m above nearest drainage", THRESH)
-# Allow-list ONLY {district, flood_prone_pct, provenance}.
-keep <- d[, c("district", "flood_prone_pct", "provenance")]
+# Allow-list ONLY {district, low_lying_share_pct, provenance}.
+keep <- d[, c("district", "low_lying_share_pct", "provenance")]
 v <- terra::vect(keep)
+dir.create(dirname(OUT), recursive = TRUE, showWarnings = FALSE)
 if (file.exists(OUT)) file.remove(OUT)
 terra::writeVector(v, OUT, filetype = "GeoJSON")
-cat(sprintf("climate flood-susceptibility choropleth: %d districts | %.1f-%.1f %% area <= %g m HAND | east lowlands mean %.1f > west highlands mean %.1f (ground-truth OK) -> %s\n",
-            nrow(keep), min(keep$flood_prone_pct), max(keep$flood_prone_pct), THRESH, .gt[["east"]], .gt[["west"]], OUT))
+cat(sprintf("low-lying HAND share: %d districts | %.1f-%.1f %% area <= %g m HAND | east mean %.1f > west mean %.1f (consistency gate OK) -> %s\n",
+            nrow(keep), min(keep$low_lying_share_pct), max(keep$low_lying_share_pct),
+            THRESH, .gt[["east"]], .gt[["west"]], OUT))

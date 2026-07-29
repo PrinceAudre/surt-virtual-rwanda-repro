@@ -12,13 +12,13 @@ R packages:
   exactextractr  0.10.1
   jsonlite       2.0.0
 
-Python fetchers (temperature and NDVI) additionally require Python 3 with:
-  cdsapi        (official Copernicus Climate Data Store client)
-  earthaccess   (official NASA Earthdata client)
+Python fetchers (temperature and NDVI) additionally require Python 3 with the
+official `cdsapi` and `earthaccess` clients. These fetch-only dependencies are
+not required by the account-free verification command.
 
 To approximate this R environment:
   install.packages(c("terra", "sf", "exactextractr", "jsonlite"))
 
-Note: this is a version record, not a full dependency lockfile. A complete
-renv.lock and a continuous-integration run on a clean machine are planned but
-are not yet included; see the manuscript's reproducibility limitations.
+The full R dependency graph is recorded in `renv.lock`. Run
+`python python/run_all_checks.py` for the account-free labelling, fixture
+pipeline, and checksum checks. The same command is run in GitHub Actions.

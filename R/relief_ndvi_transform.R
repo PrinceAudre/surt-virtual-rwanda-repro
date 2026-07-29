@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
-# relief_ndvi_transform.R - PURE, HDF-FREE transform + ground-truth helpers for the REAL MODIS NDVI layer
-# (indicator #2b). Sourced by BOTH build_relief_climate_ndvi_real.R AND the synthetic-sinusoidal test in
-# tools/semantic_layers/tests/test_maplibre_relief.R.
+# relief_ndvi_transform.R - HDF-free transform and consistency helpers for the
+# MODIS NDVI layer. Sourced by the real builder and the account-free fixture test.
 #
 # WHY THIS FILE EXISTS: the real builder's core data path (mask fill -> scale -> mosaic the two sinusoidal tiles
 # -> reproject SIN->EPSG:4326 -> annual mean -> per-district) must be EXECUTED and asserted, not shipped blind -
@@ -64,7 +63,7 @@ ndvi_assert_complete_year <- function(month_keys, tile_keys, n_months = 12L) {
   invisible(TRUE)
 }
 
-# Two-part per-district GROUND-TRUTH gate (data correctness, not just structure):
+# Two-part per-district consistency gate (a bounded-value and broad-direction tripwire, not independent validation):
 #  (a) BAND: every district annual-mean NDVI in a plausible band; HARD FAIL outside [0.15, 0.95] (Rwanda is
 #      vegetated everywhere; eastern savanna annual mean ~0.4-0.6, western forest ~0.7-0.85).
 #  (b) DIRECTION: western montane-forest poles (Nyungwe: Nyamasheke/Nyaruguru/Rusizi) must be >= `margin` GREENER
@@ -74,10 +73,10 @@ ndvi_assert_complete_year <- function(month_keys, tile_keys, n_months = 12L) {
 #      real observed ~0.10 gradient (live 2023 MOD13A3: W-forest 0.69 vs E-savanna 0.59) - enough to catch an
 #      inversion / gross error (gap <= 0) with headroom for the known year-to-year eastern-greening narrowing,
 #      WITHOUT asserting this year's exact gradient magnitude (a threshold must sit below the signal, not on it).
-ndvi_ground_truth_gate <- function(district, mean_ndvi,
-                                   west_forest = c("Nyamasheke", "Nyaruguru", "Rusizi"),
-                                   east_savanna = c("Nyagatare", "Kirehe"),
-                                   margin = 0.05) {
+ndvi_consistency_gate <- function(district, mean_ndvi,
+                                  west_forest = c("Nyamasheke", "Nyaruguru", "Rusizi"),
+                                  east_savanna = c("Nyagatare", "Kirehe"),
+                                  margin = 0.05) {
   bad <- which(mean_ndvi <= 0.15 | mean_ndvi >= 0.95)
   if (length(bad))
     stop(sprintf("FAIL-CLOSED: NDVI outside the plausible [0.15, 0.95] band (scale/fill/aggregation bug): %s",
@@ -85,9 +84,9 @@ ndvi_ground_truth_gate <- function(district, mean_ndvi,
   wf <- mean_ndvi[district %in% west_forest]
   es <- mean_ndvi[district %in% east_savanna]
   if (!length(wf) || !length(es))
-    stop("FAIL-CLOSED: ground-truth pole districts (west forest / east savanna) not found in the data - cannot verify the gradient.")
+    stop("FAIL-CLOSED: consistency-gate pole districts (west forest / east savanna) not found in the data.")
   if (!(mean(wf) - mean(es) >= margin))
-    stop(sprintf("FAIL-CLOSED: ground-truth violated - western montane-forest districts (mean NDVI %.2f) are NOT >= %.2f greener than eastern savanna districts (mean NDVI %.2f). Likely a mosaic/reproject/units bug.",
+    stop(sprintf("FAIL-CLOSED: consistency check violated - western montane-forest districts (mean NDVI %.2f) are not >= %.2f greener than eastern savanna districts (mean NDVI %.2f). Likely a mosaic/reproject/units bug.",
                  mean(wf), margin, mean(es)))
   invisible(TRUE)
 }
