@@ -52,6 +52,6 @@ All files carry SHA-256 checksums in `CHECKSUMS.sha256` (verify with `sha256sum 
 
 ## How to cite
 
-Please cite the paper (Tuyishime Audre Prince, independent researcher; ORCID 0009-0002-0799-3140) and this archived artifact (DOI to be added on deposit).
+Please cite the paper (Tuyishime Audre Prince, independent researcher; ORCID 0009-0002-0799-3140) and this archived artifact. Machine-readable software citation metadata are provided in `CITATION.cff`; the Zenodo DOI will be added after the metadata-complete release is archived.
 
 See also: `NOTICE.md` (attributions and data licenses), `DATA_DICTIONARY.md` (data fields), and `SECURITY_REVIEW.md` (what was reviewed and what was deliberately excluded).

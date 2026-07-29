@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: >-
+  If you use this reproducibility artifact, please cite the archived software
+  release using the metadata below and cite the companion paper when available.
+title: >-
+  SuRT-Virtual Rwanda: reproducibility artifact for district-level
+  environmental-layer integration and provenance labelling
+type: software
+authors:
+  - family-names: Tuyishime
+    given-names: Audre Prince
+    affiliation: Independent researcher
+    orcid: "https://orcid.org/0009-0002-0799-3140"
+abstract: >-
+  Companion software and openly licensed district-level environmental layers
+  for a Rwanda proof of concept. The artifact provides R and Python pipelines
+  for rainfall, temperature, vegetation-greenness, and terrain
+  flood-susceptibility layers aggregated to Rwanda's 30 districts, together
+  with a fail-closed provenance and evidence-class labelling module. It is a
+  descriptive, non-operational research artifact and contains no patient,
+  surveillance, or other confidential operational data.
+version: 1.0.1
+date-released: 2026-07-29
+license: MIT
+repository-code: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro"
+url: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro"
+keywords:
+  - Rwanda
+  - reproducible research
+  - climate and health
+  - geospatial analysis
+  - provenance
+  - public health
+  - R
