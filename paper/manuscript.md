@@ -167,7 +167,7 @@ Software available from: https://github.com/PrinceAudre/surt-virtual-rwanda-repr
 
 Source code available from: https://github.com/PrinceAudre/surt-virtual-rwanda-repro
 
-Archived source code at time of publication: Tuyishime AP. SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.1. Zenodo. 2026. https://doi.org/10.5281/zenodo.21674910 [Software] [13].
+Archived source code at time of publication: Tuyishime AP. SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.1. Zenodo. 2026. https://doi.org/10.5281/zenodo.21677162 [Software] [13].
 
 Licence: MIT for code. Data retain the per-file terms listed in the Data availability section and `NOTICE.md`.
 
@@ -201,7 +201,7 @@ OpenAI Codex (GPT-5, accessed July 2026) was used for coding assistance, reposit
 10. Munoz-Sabater J, Dutra E, Agusti-Panareda A, Albergel C, Arduini G, Balsamo G, et al. ERA5-Land: a state-of-the-art global reanalysis dataset for land applications. Earth System Science Data. 2021;13:4349-4383. doi:10.5194/essd-13-4349-2021.
 11. Didan K. MODIS/Terra Vegetation Indices Monthly L3 Global 1 km SIN Grid V061 [Dataset]. NASA EOSDIS Land Processes Distributed Active Archive Center; 2021. doi:10.5067/MODIS/MOD13A3.061.
 12. Nobre AD, Cuartas LA, Hodnett M, Renno CD, Rodrigues G, Silveira A, et al. Height Above the Nearest Drainage - a hydrologically relevant new terrain model. Journal of Hydrology. 2011;404:13-29. doi:10.1016/j.jhydrol.2011.03.051.
-13. Tuyishime AP. SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.1. Zenodo. 2026. doi:10.5281/zenodo.21674910 [Software].
+13. Tuyishime AP. SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.1. Zenodo. 2026. doi:10.5281/zenodo.21677162 [Software].
 
 ## Tables
 

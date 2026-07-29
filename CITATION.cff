@@ -22,7 +22,7 @@ abstract: >-
   surveillance, or other confidential operational data.
 version: 1.1.1
 date-released: 2026-07-29
-doi: "10.5281/zenodo.21674910"
+doi: "10.5281/zenodo.21677162"
 license: MIT
 repository-code: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro"
 url: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro"
