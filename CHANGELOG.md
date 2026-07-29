@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.1 - 2026-07-29
+
+- Expanded the account-free NDVI fixture to exercise the complete
+  two-month/two-tile MODIS-sinusoidal mosaic, annual-mean, scale, reprojection,
+  and district-extraction path.
+- Corrected the manuscript and submission package to report the resulting nine
+  environmental-fixture assertions.
+
 ## 1.1.0 - 2026-07-29
 
 - Replaced the potentially evaluative evidence class `sound` with

@@ -55,6 +55,6 @@ All release files carry SHA-256 checksums in `CHECKSUMS.sha256`. The exact R and
 
 ## How to cite
 
-Please cite the paper (Tuyishime Audre Prince, Clinton Health Access Initiative; ORCID 0009-0002-0799-3140) and the archived software release. The concept DOI for all versions is [10.5281/zenodo.21671788](https://doi.org/10.5281/zenodo.21671788); the reserved v1.1.0 version DOI is [10.5281/zenodo.21674910](https://doi.org/10.5281/zenodo.21674910) and will resolve after publication.
+Please cite the paper (Tuyishime Audre Prince, Clinton Health Access Initiative; ORCID 0009-0002-0799-3140) and the archived software release. The concept DOI for all versions is [10.5281/zenodo.21671788](https://doi.org/10.5281/zenodo.21671788); the reserved v1.1.1 version DOI is [10.5281/zenodo.21674910](https://doi.org/10.5281/zenodo.21674910) and will resolve after publication.
 
 See also: `NOTICE.md` (attributions and data licenses), `DATA_DICTIONARY.md` (data fields), and `SECURITY_REVIEW.md` (what was reviewed and what was deliberately excluded).

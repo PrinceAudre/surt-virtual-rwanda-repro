@@ -12,10 +12,10 @@ if (-not $Source) {
     $Source = Join-Path $root "paper\manuscript.md"
 }
 if (-not $Output) {
-    $Output = Join-Path $root "paper\submission\F1000Research_Software_Tool_Article_v1.1.0.docx"
+    $Output = Join-Path $root "paper\submission\F1000Research_Software_Tool_Article_v1.1.1.docx"
 }
 if (-not $PreviewPdf) {
-    $PreviewPdf = Join-Path $root "generated\F1000Research_Software_Tool_Article_v1.1.0-preview.pdf"
+    $PreviewPdf = Join-Path $root "generated\F1000Research_Software_Tool_Article_v1.1.1-preview.pdf"
 }
 
 $Source = [System.IO.Path]::GetFullPath($Source)

@@ -1,7 +1,7 @@
 Package: surtvirtualrwandarepro
 Type: Project
 Title: SuRT-Virtual Rwanda Reproducibility Artifact
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: person("Audre Prince", "Tuyishime", role = c("aut", "cre"),
                   comment = c(ORCID = "0009-0002-0799-3140"))
 Description: Reproducible preparation and verification of district-level
