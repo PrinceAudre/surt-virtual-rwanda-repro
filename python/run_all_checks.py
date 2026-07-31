@@ -34,8 +34,8 @@ def run(label: str, command: list[str]) -> dict[str, Any]:
     }
 
 
-def verify_archived_checksums() -> dict[str, Any]:
-    """Verify the published v1.1.1 manifest without implying branch completeness."""
+def verify_listed_checksums() -> dict[str, Any]:
+    """Verify every file explicitly listed in CHECKSUMS.sha256."""
     started = time.perf_counter()
     manifest = ROOT / "CHECKSUMS.sha256"
     failures: list[str] = []
@@ -59,11 +59,11 @@ def verify_archived_checksums() -> dict[str, Any]:
             )
     elapsed = time.perf_counter() - started
     if failures:
-        raise SystemExit("Archived checksum verification failed:\n" + "\n".join(failures))
-    print(f"[PASS] {checked} archived v1.1.1 SHA-256 checksums verified")
-    print(f"[TIME] archived release integrity: {elapsed:.3f} seconds")
+        raise SystemExit("Listed-file checksum verification failed:\n" + "\n".join(failures))
+    print(f"[PASS] {checked} listed SHA-256 checksums verified")
+    print(f"[TIME] listed-file integrity: {elapsed:.3f} seconds")
     return {
-        "label": "archived v1.1.1 release integrity",
+        "label": "listed-file integrity",
         "checked_files": checked,
         "elapsed_seconds": round(elapsed, 6),
         "return_code": 0,
@@ -83,17 +83,22 @@ def write_summary(steps: list[dict[str, Any]], total_seconds: float) -> Path:
         "release_contract_corruptions_rejected": 5,
     }
     summary = {
-        "schema_version": "1.1",
+        "schema_version": "1.2",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "repository": "PrinceAudre/surt-virtual-rwanda-repro",
-        "archived_release": {
+        "published_base_archive": {
             "version": "1.1.1",
             "zenodo_doi": "10.5281/zenodo.21677162",
-            "checksum_scope": "files listed in CHECKSUMS.sha256",
         },
         "working_package": {
-            "status": "unreleased journal-refinement candidate",
+            "version": "1.2.0.9000",
+            "status": "unreleased Earth Science Informatics journal candidate",
             "version_doi": None,
+        },
+        "integrity": {
+            "scope": "interim stable files listed in CHECKSUMS.scope",
+            "manifest": "CHECKSUMS.sha256",
+            "final_release_requirement": "regenerate with --all-tracked",
         },
         "status": "passed",
         "assertions": {
@@ -137,12 +142,20 @@ def main() -> None:
             [rscript, str(ROOT / "R" / "test_failure_modes.R")],
         ),
         run(
-            "archived GeoJSON release contract",
+            "GeoJSON release contract and corruption rejection",
             [sys.executable, str(ROOT / "python" / "validate_release_contract.py")],
         ),
+        run(
+            "checksum scope and manifest consistency",
+            [
+                sys.executable,
+                str(ROOT / "python" / "build_checksum_manifest.py"),
+                "--check",
+            ],
+        ),
     ]
-    print("\n=== archived v1.1.1 release integrity ===")
-    steps.append(verify_archived_checksums())
+    print("\n=== listed-file integrity ===")
+    steps.append(verify_listed_checksums())
     total_seconds = time.perf_counter() - started
     write_summary(steps, total_seconds)
     print(f"\nAll account-free checks passed in {total_seconds:.3f} seconds.")
