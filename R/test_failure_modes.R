@@ -24,7 +24,7 @@ expect_error_contains <- function(label, expression, expected) {
   }, error = function(e) conditionMessage(e))
   if (is.na(message_text))
     stop(sprintf("[FAIL] %s: malformed input was accepted", label), call. = FALSE)
-  if (!grepl(expected, message_text, ignore.case = TRUE, fixed = TRUE))
+  if (!grepl(tolower(expected), tolower(message_text), fixed = TRUE))
     stop(sprintf("[FAIL] %s: wrong failure reason: %s", label, message_text), call. = FALSE)
   passed <<- passed + 1L
   cat(sprintf("[PASS] %s\n", label))
