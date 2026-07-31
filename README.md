@@ -2,28 +2,54 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21671788.svg)](https://doi.org/10.5281/zenodo.21671788)
 
-Reproducibility artifact for the paper *A reproducible R workflow for district-level environmental layers with fail-closed provenance labelling: a Rwanda implementation*.
+Companion reproducibility artifact for the working Software article *An auditable cross-provider workflow for district-scale Earth-data harmonization and provenance labelling: software design and a Rwanda implementation*.
 
-It contains the environmental-data preparation workflow and provenance / value-class contract described in the paper, together with source-derived environmental layers for Rwanda's 30 districts under the per-file terms documented in `NOTICE.md`.
+## Candidate status
 
-## What this is, and what it is not
+The current branch is an **unreleased journal candidate**. It extends the published version 1.1.1 base archive with additional validators, numerical-validation workflows, figures, evidence summaries, and submission records. It must receive a new immutable GitHub tag and Zenodo version DOI before journal submission.
 
-This is a **reduced, honestly scoped** artifact. It is **not** the whole SuRT-Virtual Rwanda application.
+- **Published base archive:** version 1.1.1, DOI `10.5281/zenodo.21677162`
+- **Concept DOI for all versions:** `10.5281/zenodo.21671788`
+- **Candidate metadata version:** `1.2.0.9000`
+- **Candidate branch:** `codex/earth-science-informatics-refinement-v1.3.0`
 
-- It **is**: the environmental workflow for rainfall, temperature, vegetation greenness, and low-lying terrain share; the generic provenance / value-class functions; and the resulting source-derived district layers.
-- It is **not**: the private interactive application, its full methodology register, or its operational-adjacent decision, forecast, supply, and workforce interfaces.
-- It contains **no disease data**. The value-class functions are demonstrated against a small, clearly labelled example register (`R/example_register.R`), not the private application's register.
+Do not cite the candidate branch as though it were contained in version 1.1.1.
 
-**Non-operational.** Nothing in this repository is validated or intended for clinical, operational, hazard, forecasting, or resource-allocation use (`operational_use_allowed = FALSE`). The environmental layers are supplied for descriptive research and reproducibility.
+## Scope
 
-## Contents
+This is a reduced, honestly scoped artifact. It is not the whole SuRT-Virtual Rwanda application.
 
-- `R/`: environmental builders and transformation functions, the provenance/value-class module, the example register, the nine-assertion provenance demonstration, and the nine-assertion environmental fixture.
-- `python/`: official-client fetchers for ERA5-Land and MODIS NDVI, plus the cross-platform verification runner.
-- `data/`: district GeoJSON layers for rainfall, temperature, NDVI, low-lying HAND share, and district geometry.
-- `paper/`: the manuscript source, editorial-readiness checklist, and referee suggestions. The prior v1.1.1 submission file is retained as an archive of the declined submission.
+It includes:
 
-## Account-free reproducibility check
+- provider-specific preparation of CHIRPS rainfall, ERA5-Land temperature, MODIS NDVI, and HAND terrain data;
+- district-level GeoJSON outputs for Rwanda's 30 districts;
+- a fail-closed provenance and evidence-class module;
+- positive transformation fixtures, projected non-Rwanda portability checks, and deliberate failure injection;
+- independent release-contract and corruption validation;
+- scoped public CHIRPS numerical reproduction and weighting sensitivity;
+- machine-readable verification summaries, figures, source terms, and integrity metadata.
+
+It excludes:
+
+- the private interactive application and its full methodology register;
+- disease, patient, surveillance, or confidential operational data;
+- decision, forecast, supply, workforce, clinical, or resource-allocation interfaces; and
+- any claim that the prepared layers are validated hazards, forecasts, epidemiological effects, or operational recommendations.
+
+`operational_use_allowed = FALSE`.
+
+## Repository map
+
+- `R/`: provider transformations and builders, provenance functions, positive fixtures, portability fixture, failure-injection tests, CHIRPS numerical validation, and manuscript-figure generation.
+- `python/`: provider fetch clients, the cross-platform verification runner, and the independent GeoJSON release-contract validator.
+- `data/`: district geometry and four environmental GeoJSON layers.
+- `.github/workflows/`: clean account-free verification and public CHIRPS validation.
+- `paper/`: manuscript, journal-targeting analysis, dual-agent review ledger, readiness record, reviewer dossier, figure accessibility record, and historical submission records under `paper/archive/`.
+- `NOTICE.md`, `DATA_DICTIONARY.md`, and `CHECKSUMS.sha256`: source terms, field definitions, and the current listed-file integrity scope.
+
+Historical F1000Research submission files were removed from the active candidate tree and remain available in Git history. See `paper/archive/F1000_ARTIFACT_INDEX.md`.
+
+## Account-free verification
 
 After restoring `renv.lock`, run:
 
@@ -31,31 +57,63 @@ After restoring `renv.lock`, run:
 python python/run_all_checks.py
 ```
 
-This runs **18 assertions** across provenance labelling and environmental transformations, writes an inspectable synthetic-fixture GeoJSON, and verifies every release checksum. It requires no private repository, network call, or data-provider account.
+The runner executes **41 explicit outcomes**:
 
-See `REPRODUCIBILITY.md` for real-data build commands and the boundary between software verification and rebuilding the source-derived 2023 layers.
+- 9 provenance assertions;
+- 9 controlled environmental-transformation assertions;
+- 6 geometry-agnostic portability assertions;
+- 7 transformation failure-injection assertions;
+- 5 valid release-layer contract checks; and
+- 5 deliberate release-corruption rejections.
 
-## Provenance / value-class contract
+It also writes machine-readable summaries, creates an inspectable fixture GeoJSON, and verifies every file currently listed in `CHECKSUMS.sha256`. No private repository, provider account, or network call is required for this command.
 
-`R/provenance_value_class.R` implements a fail-closed rule: a register row is accepted as `source-derived` only when it declares a documented method applied to real or public data. Unknown, incomplete, synthetic, and placeholder entries are treated as `illustrative`.
+## Public CHIRPS numerical validation
 
-Run the demonstration directly:
+Run:
 
 ```text
-Rscript R/demo_value_class.R
+Rscript R/validate_chirps_rainfall.R 2023
 ```
+
+The workflow independently downloads the public CHIRPS 2023 annual GeoTIFF, reproduces the 30 archived district values, cross-checks `exactextractr` against `terra`, and quantifies cell-area weighting sensitivity.
+
+Current clean-CI results:
+
+- 30/30 archived values reproduce exactly after rounding;
+- maximum cross-engine difference: 0.000136 mm;
+- maximum cell-area-weighting difference: 0.005127 mm.
+
+This validates computational reproduction of the CHIRPS layer only. It does not validate CHIRPS observational accuracy or the ERA5-Land, MODIS, and HAND layers.
+
+## Real-data builders
+
+```text
+Rscript R/build_relief_climate_rainfall.R 2023
+Rscript R/build_relief_climate_temperature.R 2023
+Rscript R/build_relief_climate_ndvi_real.R 2023
+Rscript R/build_relief_low_lying_hand.R 5
+```
+
+CHIRPS and HAND require network access. ERA5-Land and MODIS additionally require the user's own free Copernicus Climate Data Store and NASA Earthdata credentials. Credentials are read from provider-standard local files and are not stored in the repository.
+
+## Provenance contract
+
+`R/provenance_value_class.R` accepts `source-derived` status only when a register row declares a documented method applied to real or public data. Unknown, incomplete, synthetic, and placeholder entries default to `illustrative` and receive an explanatory note.
+
+The current candidate records lightweight human-readable provenance. It does not claim PROV-O, RO-Crate, or CWL conformance.
 
 ## Licences
 
 - **Code:** MIT, see `LICENSE`.
-- **Data:** per source. District boundaries are World Bank CC BY 4.0; CHIRPS is public domain / CC0; ERA5-Land uses the Copernicus Products licence; MODIS and HAND are CC0. Full attribution and terms are in `NOTICE.md`.
+- **Data:** source-specific. District boundaries are World Bank CC BY 4.0; CHIRPS is public domain/CC0; ERA5-Land uses the Copernicus Products licence; MODIS and HAND are CC0. See `NOTICE.md`.
 
-## Verification and environment
+## Citation
 
-Release files carry SHA-256 checksums in `CHECKSUMS.sha256`. R and package versions are recorded in `environment.txt` and `renv.lock`. GitHub Actions repeats the account-free checks on a clean runner.
+For the published base software, cite version 1.1.1:
 
-## How to cite
+> Tuyishime AP (2026). SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.1. Zenodo. https://doi.org/10.5281/zenodo.21677162
 
-Please cite the paper and the archived software release. The concept DOI for all versions is [10.5281/zenodo.21671788](https://doi.org/10.5281/zenodo.21671788); the published v1.1.1 version DOI is [10.5281/zenodo.21677162](https://doi.org/10.5281/zenodo.21677162).
+The final journal submission will cite a new candidate release DOI after the source tree, manuscript, figures, metadata, and checksums are frozen to one exact version.
 
-See also `NOTICE.md`, `DATA_DICTIONARY.md`, `REPRODUCIBILITY.md`, `SECURITY_REVIEW.md`, and `paper/EDITORIAL_READINESS.md`.
+See `REPRODUCIBILITY.md`, `SECURITY_REVIEW.md`, `paper/DUAL_AGENT_REVIEW.md`, and `paper/EDITORIAL_READINESS.md`.
