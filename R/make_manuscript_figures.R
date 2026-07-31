@@ -16,25 +16,29 @@ specs <- list(
     path = file.path(repo_root, "data", "relief_climate_rainfall.geojson"),
     field = "annual_rainfall_mm",
     label = "Annual rainfall (mm)",
-    panel = "a"
+    panel = "a",
+    digits = 0
   ),
   temperature = list(
     path = file.path(repo_root, "data", "relief_climate_temp.geojson"),
     field = "mean_temp_c",
     label = "Mean temperature (degrees C)",
-    panel = "b"
+    panel = "b",
+    digits = 1
   ),
   ndvi = list(
     path = file.path(repo_root, "data", "relief_climate_ndvi.geojson"),
     field = "mean_ndvi",
     label = "Mean NDVI",
-    panel = "c"
+    panel = "c",
+    digits = 2
   ),
   hand = list(
     path = file.path(repo_root, "data", "relief_low_lying_hand.geojson"),
     field = "low_lying_share_pct",
     label = "HAND <= 5 m share (%)",
-    panel = "d"
+    panel = "d",
+    digits = 1
   )
 )
 
@@ -49,10 +53,51 @@ read_checked_layer <- function(spec) {
   x
 }
 
-map_display <- function(x, spec) {
-  display <- x[spec$field]
-  names(display)[names(display) == spec$field] <- spec$label
-  display
+format_number <- function(x, digits) {
+  formatC(x, format = "f", digits = digits, big.mark = ",")
+}
+
+map_style <- function(values, spec, n_classes = 6L) {
+  breaks <- pretty(range(values, finite = TRUE), n = n_classes)
+  if (length(breaks) < 3L) {
+    breaks <- seq(min(values), max(values), length.out = n_classes + 1L)
+  }
+  breaks[1] <- min(breaks[1], min(values))
+  breaks[length(breaks)] <- max(breaks[length(breaks)], max(values))
+  breaks <- unique(breaks)
+  colours <- hcl.colors(length(breaks) - 1L, palette = "Viridis", rev = FALSE)
+  classes <- cut(values, breaks = breaks, include.lowest = TRUE, labels = FALSE)
+  labels <- paste0(
+    format_number(head(breaks, -1L), spec$digits),
+    "–",
+    format_number(tail(breaks, -1L), spec$digits)
+  )
+  list(breaks = breaks, colours = colours, classes = classes, labels = labels)
+}
+
+draw_map <- function(x, spec, title_prefix = TRUE, legend_cex = 0.62, border_lwd = 0.35) {
+  style <- map_style(x[[spec$field]], spec)
+  plot(
+    st_geometry(x),
+    col = style$colours[style$classes],
+    border = "grey30",
+    lwd = border_lwd,
+    axes = FALSE,
+    reset = FALSE
+  )
+  title_text <- if (title_prefix) paste0(spec$panel, ") ", spec$label) else spec$label
+  title(main = title_text, adj = 0, line = 0.25, cex.main = 0.88)
+  legend(
+    "bottomright",
+    legend = style$labels,
+    fill = style$colours,
+    border = NA,
+    bty = "n",
+    cex = legend_cex,
+    inset = 0.01,
+    x.intersp = 0.45,
+    y.intersp = 0.85
+  )
 }
 
 layers <- lapply(specs, read_checked_layer)
@@ -97,7 +142,8 @@ arrow(8.60, 3.30, 8.60, 2.70)
 text(5, 5.72, "Cross-provider Earth-data preparation and auditable release contract", cex = 1.05, font = 2)
 dev.off()
 
-# Figure 2: four-panel district maps. The HCL palette remains interpretable in greyscale.
+# Figure 2: deterministic four-panel district maps. Explicit geometry plotting is
+# used instead of sf's automatic key layout, which can override par(mfrow).
 tiff(
   filename = file.path(output_dir, "Fig2_environmental_layers.tiff"),
   width = 4200,
@@ -106,29 +152,15 @@ tiff(
   res = 600,
   compression = "lzw"
 )
-par(mfrow = c(2, 2), mar = c(0.2, 0.2, 1.2, 0.2), oma = c(0, 0, 0.2, 0))
+par(mfrow = c(2, 2), mar = c(0.25, 0.25, 1.55, 0.25), oma = c(0.15, 0.15, 0.15, 0.15))
 for (nm in names(specs)) {
-  spec <- specs[[nm]]
-  x <- layers[[nm]]
-  display <- map_display(x, spec)
-  plot(
-    display,
-    axes = FALSE,
-    border = "grey25",
-    lwd = 0.25,
-    pal = function(n) hcl.colors(n, palette = "Viridis", rev = FALSE),
-    key.pos = 4,
-    reset = FALSE
-  )
-  mtext(paste0(spec$panel, ") ", spec$label), side = 3, line = 0.15, adj = 0, cex = 0.72, font = 2)
+  draw_map(layers[[nm]], specs[[nm]], title_prefix = TRUE, legend_cex = 0.54, border_lwd = 0.24)
 }
 dev.off()
 
 # Individual vector maps are retained for editorial layout flexibility.
 for (nm in names(specs)) {
   spec <- specs[[nm]]
-  x <- layers[[nm]]
-  display <- map_display(x, spec)
   svg(
     filename = file.path(output_dir, paste0("Fig2", spec$panel, "_", nm, ".svg")),
     width = 6.4,
@@ -136,16 +168,8 @@ for (nm in names(specs)) {
     pointsize = 10,
     onefile = TRUE
   )
-  par(mar = c(0.2, 0.2, 0.4, 0.2))
-  plot(
-    display,
-    axes = FALSE,
-    border = "grey25",
-    lwd = 0.35,
-    pal = function(n) hcl.colors(n, palette = "Viridis", rev = FALSE),
-    key.pos = 4,
-    reset = FALSE
-  )
+  par(mar = c(0.3, 0.3, 1.05, 0.3))
+  draw_map(layers[[nm]], spec, title_prefix = FALSE, legend_cex = 0.75, border_lwd = 0.38)
   dev.off()
 }
 
@@ -182,16 +206,23 @@ matplot(
   values,
   type = "b",
   pch = c(16, 17, 15, 18),
-  lty = 1,
+  lty = c(1, 2, 3, 4),
   xaxt = "n",
   xlab = "District",
   ylab = "Standardized district value (z score)",
   cex = 0.55,
-  lwd = 0.8
+  lwd = 0.85
 )
 axis(1, at = seq_len(nrow(values)), labels = rownames(values), las = 2, cex.axis = 0.52)
 abline(h = 0, lty = 3)
-legend("topleft", legend = colnames(values), pch = c(16, 17, 15, 18), lty = 1, bty = "n", cex = 0.68)
+legend(
+  "topleft",
+  legend = colnames(values),
+  pch = c(16, 17, 15, 18),
+  lty = c(1, 2, 3, 4),
+  bty = "n",
+  cex = 0.68
+)
 dev.off()
 
 summary_rows <- lapply(names(specs), function(nm) {
