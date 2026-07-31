@@ -1,5 +1,6 @@
 /cache/
 /generated/
+/paper/figures/generated/
 /.Rprofile
 /.Rhistory
 /renv/library/
