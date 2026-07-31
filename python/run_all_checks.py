@@ -7,7 +7,6 @@ import hashlib
 from pathlib import Path
 import shutil
 import subprocess
-import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,7 +36,10 @@ def verify_checksums() -> None:
         actual = hashlib.sha256(path.read_bytes()).hexdigest()
         checked += 1
         if actual.lower() != digest.lower():
-            failures.append(f"checksum mismatch: {relative}")
+            failures.append(
+                f"checksum mismatch: {relative} "
+                f"(expected {digest.lower()}, actual {actual.lower()})"
+            )
     if failures:
         raise SystemExit("Checksum verification failed:\n" + "\n".join(failures))
     print(f"[PASS] {checked} SHA-256 checksums verified")
