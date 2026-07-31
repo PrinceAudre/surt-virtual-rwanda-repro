@@ -104,7 +104,7 @@ The runner executes 41 explicit outcomes in six groups:
 
 The environmental fixture creates synthetic rasters in memory and exercises rainfall, temperature, NDVI, HAND, reprojection, mosaicking, temporal aggregation, zonal extraction, and GeoJSON writing. Its NDVI path uses two synthetic months and two same-month tiles in the MODIS sinusoidal coordinate system. Failure injection tests absent raster coverage, unconverted kelvin values, an inverted rainfall gradient, unscaled MODIS digital numbers, an incomplete MODIS year, all-no-data HAND input, and impossible HAND percentages. The runner records step durations and execution-environment metadata in machine-readable JSON.
 
-A scoped integrity check verifies the 41 files listed in `CHECKSUMS.sha256`. The manifest is explicitly a listed-file contract; it is not presented as a complete manifest for the still-unreleased journal candidate. GitHub Actions restores the locked environment, repeats the account-free checks on a clean hosted runner, generates manuscript figures from the GeoJSON files, and retains the evidence bundle.
+A scoped integrity check verifies the 40 files listed in `CHECKSUMS.sha256`. The manifest is explicitly a listed-file contract; it is not presented as a complete manifest for the still-unreleased journal candidate. GitHub Actions restores the locked environment, repeats the account-free checks on a clean hosted runner, generates manuscript figures from the GeoJSON files, and retains the evidence bundle.
 
 ### Public-data numerical validation
 
@@ -145,7 +145,7 @@ Figure 3 standardizes values within each layer to compare district profiles desp
 
 ### Account-free verification and release-contract results
 
-All 41 explicit verification outcomes passed on the clean hosted runner. The positive fixtures established expected transformations on controlled inputs. The projected portability fixture completed with arbitrary administrative identifiers and non-Rwanda geometry. Each deliberately malformed transformation failed for the intended reason. The independent validator accepted all five archived GeoJSON files and rejected all five corrupted copies. The separate listed-file integrity check verified 41 SHA-256 digests.
+All 41 explicit verification outcomes passed on the clean hosted runner. The positive fixtures established expected transformations on controlled inputs. The projected portability fixture completed with arbitrary administrative identifiers and non-Rwanda geometry. Each deliberately malformed transformation failed for the intended reason. The independent validator accepted all five archived GeoJSON files and rejected all five corrupted copies. The separate listed-file integrity check verified 40 SHA-256 digests.
 
 These outcomes support claims about specified software behaviour, schema enforcement, and failure handling. They do not establish source-product accuracy, scientific validity of the HAND threshold, cross-country real-data portability, or suitability for a downstream model.
 
@@ -287,7 +287,7 @@ Zong L, Ngarukiyimana JP, Yang Y et al (2024) Malaria transmission risk is proje
 | Schema drift and corrupted release content are rejected | Five corrupted in-memory copies | Five rejection checks in `python/validate_release_contract.py` |
 | Archived CHIRPS district values are computationally reproducible | Public CHIRPS 2023 GeoTIFF and archived geometry | 30/30 rounded matches in `R/validate_chirps_rainfall.R` |
 | CHIRPS extraction is stable across engines and area weighting | `exactextractr`, `terra`, and cell-area weights | Maximum differences of 0.000136 mm and 0.005127 mm |
-| Listed release files have fixed integrity values | `CHECKSUMS.sha256` | 41 SHA-256 digests verified by `python/run_all_checks.py` |
+| Listed release files have fixed integrity values | `CHECKSUMS.sha256` | 40 SHA-256 digests verified by `python/run_all_checks.py` |
 | R dependencies are versioned | `renv.lock` and `environment.txt` | Clean-environment restore and continuous integration |
 
 ### Table 4 Principal limitations and interpretation
