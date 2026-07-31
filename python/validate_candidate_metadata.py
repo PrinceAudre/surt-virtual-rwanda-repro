@@ -44,7 +44,7 @@ def top_level_yaml_value(text: str, key: str) -> str | None:
     match = pattern.search(text)
     if not match:
         return None
-    return match.group(1).strip().strip('"\'')
+    return match.group(1).strip().strip("\"'")
 
 
 def description_value(text: str, key: str) -> str | None:
