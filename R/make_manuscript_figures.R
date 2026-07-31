@@ -1,7 +1,9 @@
 #!/usr/bin/env Rscript
 
 # Generate journal figures directly from the archived release data.
-# The script uses only base R and sf, both recorded in renv.lock.
+# Artwork contains no article title or full caption; captions remain in the
+# manuscript. Combination art is exported at 600 dpi, while line art and
+# individual maps are also exported as SVG and EPS for editorial flexibility.
 
 suppressPackageStartupMessages(library(sf))
 
@@ -65,7 +67,10 @@ map_style <- function(values, spec, n_classes = 6L) {
   breaks[1] <- min(breaks[1], min(values))
   breaks[length(breaks)] <- max(breaks[length(breaks)], max(values))
   breaks <- unique(breaks)
-  colours <- hcl.colors(length(breaks) - 1L, palette = "Viridis", rev = FALSE)
+
+  # Cividis has monotonic luminance and remains interpretable when printed in
+  # greyscale. Numeric interval labels provide redundant non-colour encoding.
+  colours <- hcl.colors(length(breaks) - 1L, palette = "Cividis", rev = FALSE)
   classes <- cut(values, breaks = breaks, include.lowest = TRUE, labels = FALSE)
   labels <- paste0(
     format_number(head(breaks, -1L), spec$digits),
@@ -75,71 +80,122 @@ map_style <- function(values, spec, n_classes = 6L) {
   list(breaks = breaks, colours = colours, classes = classes, labels = labels)
 }
 
-draw_map <- function(x, spec, title_prefix = TRUE, legend_cex = 0.62, border_lwd = 0.35) {
+draw_map <- function(x, spec, legend_cex = 0.62, border_lwd = 0.35, panel_label = TRUE) {
   style <- map_style(x[[spec$field]], spec)
   plot(
     st_geometry(x),
     col = style$colours[style$classes],
-    border = "grey30",
+    border = "grey25",
     lwd = border_lwd,
     axes = FALSE,
     reset = FALSE
   )
-  title_text <- if (title_prefix) paste0(spec$panel, ") ", spec$label) else spec$label
-  title(main = title_text, adj = 0, line = 0.25, cex.main = 0.88)
+  if (panel_label) {
+    mtext(paste0("(", spec$panel, ")"), side = 3, line = 0.15, adj = 0,
+          cex = 0.9, font = 2)
+  }
   legend(
     "bottomright",
     legend = style$labels,
+    title = spec$label,
     fill = style$colours,
-    border = NA,
+    border = "grey35",
     bty = "n",
     cex = legend_cex,
     inset = 0.01,
     x.intersp = 0.45,
-    y.intersp = 0.85
+    y.intersp = 0.82,
+    title.adj = 0
+  )
+}
+
+open_eps <- function(filename, width, height, pointsize = 10) {
+  postscript(
+    file = filename,
+    width = width,
+    height = height,
+    pointsize = pointsize,
+    onefile = FALSE,
+    horizontal = FALSE,
+    paper = "special",
+    family = "sans"
   )
 }
 
 layers <- lapply(specs, read_checked_layer)
 
-# Figure 1: data and verification architecture.
+# Figure 1: source-to-release architecture and independent evidence paths.
+draw_architecture <- function() {
+  par(mar = rep(0, 4))
+  plot.new()
+  plot.window(xlim = c(0, 11), ylim = c(0, 7.2))
+
+  box <- function(xleft, ybottom, xright, ytop, label, cex = 0.76, lwd = 1.15) {
+    rect(xleft, ybottom, xright, ytop, lwd = lwd)
+    text((xleft + xright) / 2, (ybottom + ytop) / 2, label, cex = cex)
+  }
+  arrow <- function(x0, y0, x1, y1, lty = 1) {
+    arrows(x0, y0, x1, y1, length = 0.07, lwd = 1.05, lty = lty)
+  }
+
+  # Source products.
+  box(0.15, 5.85, 1.75, 6.55, "CHIRPS\nrainfall")
+  box(0.15, 4.95, 1.75, 5.65, "ERA5-Land\ntemperature")
+  box(0.15, 4.05, 1.75, 4.75, "MODIS\nNDVI")
+  box(0.15, 3.15, 1.75, 3.85, "Global HAND\nterrain")
+
+  # Core production path.
+  box(2.20, 4.55, 4.05, 6.05,
+      "Provider-specific\nacquisition, masking,\nscaling, mosaicking and\ntemporal aggregation")
+  box(4.50, 4.55, 6.35, 6.05,
+      "Polygon extraction\nand coverage-fraction-\nweighted administrative\naggregation")
+  box(6.80, 4.55, 8.65, 6.05,
+      "Common GeoJSON\nschema, provenance\nstrings and per-file\nsource terms")
+  box(9.10, 4.55, 10.85, 6.05,
+      "Versioned release\nmetadata, integrity\nmanifest and archive")
+
+  for (y in c(6.20, 5.30, 4.40, 3.50)) arrow(1.75, y, 2.20, 5.30)
+  arrow(4.05, 5.30, 4.50, 5.30)
+  arrow(6.35, 5.30, 6.80, 5.30)
+  arrow(8.65, 5.30, 9.10, 5.30)
+
+  # Evidence paths, deliberately separated by claim type.
+  box(0.30, 1.55, 2.15, 2.65,
+      "Positive synthetic\ntransformation fixture\n(9 assertions)")
+  box(2.45, 1.55, 4.30, 2.65,
+      "Projected arbitrary-\nidentifier portability\nfixture (6 assertions)")
+  box(4.60, 1.55, 6.45, 2.65,
+      "Transformation\nfailure injection\n(7 assertions)")
+  box(6.75, 1.55, 8.60, 2.65,
+      "Independent release\ncontract and corruption\ntests (10 outcomes)")
+  box(8.90, 1.55, 10.75, 2.65,
+      "Public CHIRPS\nreproduction and\nweighting sensitivity")
+
+  # Dashed arrows distinguish validation/evidence from the production flow.
+  arrow(1.22, 2.65, 3.10, 4.55, lty = 2)
+  arrow(3.37, 2.65, 5.10, 4.55, lty = 2)
+  arrow(5.52, 2.65, 4.85, 4.55, lty = 2)
+  arrow(7.67, 2.65, 7.65, 4.55, lty = 2)
+  arrow(9.82, 2.65, 3.80, 4.55, lty = 2)
+
+  box(3.60, 0.30, 7.40, 1.05,
+      "Clean continuous integration records machine-readable outcomes;\nlisted-file SHA-256 checks establish integrity, not scientific validity",
+      cex = 0.72)
+  for (x in c(1.22, 3.37, 5.52, 7.67, 9.82)) arrow(x, 1.55, 5.50, 1.05, lty = 2)
+}
+
 svg(
   filename = file.path(output_dir, "Fig1_workflow_architecture.svg"),
-  width = 10,
-  height = 6,
+  width = 11,
+  height = 7.2,
   pointsize = 10,
   onefile = TRUE
 )
-par(mar = rep(0, 4))
-plot.new()
-plot.window(xlim = c(0, 10), ylim = c(0, 6))
+draw_architecture()
+dev.off()
 
-box <- function(xleft, ybottom, xright, ytop, label, cex = 0.82) {
-  rect(xleft, ybottom, xright, ytop, lwd = 1.2)
-  text((xleft + xright) / 2, (ybottom + ytop) / 2, label, cex = cex)
-}
-arrow <- function(x0, y0, x1, y1) arrows(x0, y0, x1, y1, length = 0.08, lwd = 1.1)
-
-box(0.25, 4.65, 2.05, 5.45, "CHIRPS\nrainfall")
-box(0.25, 3.55, 2.05, 4.35, "ERA5-Land\ntemperature")
-box(0.25, 2.45, 2.05, 3.25, "MODIS\nNDVI")
-box(0.25, 1.35, 2.05, 2.15, "Global HAND\nterrain")
-
-box(2.65, 3.85, 4.65, 5.10, "Provider-specific\nacquisition, masking,\nscaling and temporal\naggregation")
-box(2.65, 1.90, 4.65, 3.15, "Synthetic fixture\nexercises the same\ntransformation paths")
-box(5.15, 3.30, 7.10, 4.55, "Coverage-fraction-\nweighted district\naggregation\n(30 districts)")
-box(5.15, 1.45, 7.10, 2.70, "Fail-closed\nprovenance contract\nand licence metadata")
-box(7.60, 3.30, 9.60, 4.55, "Standardised\nGeoJSON layers")
-box(7.60, 1.45, 9.60, 2.70, "CI assertions,\nSHA-256 integrity and\nZenodo archive")
-
-for (y in c(5.05, 3.95, 2.85, 1.75)) arrow(2.05, y, 2.65, 4.45)
-arrow(4.65, 4.45, 5.15, 3.95)
-arrow(4.65, 2.52, 5.15, 2.08)
-arrow(7.10, 3.95, 7.60, 3.95)
-arrow(7.10, 2.08, 7.60, 2.08)
-arrow(6.13, 3.30, 6.13, 2.70)
-arrow(8.60, 3.30, 8.60, 2.70)
-text(5, 5.72, "Cross-provider Earth-data preparation and auditable release contract", cex = 1.05, font = 2)
+open_eps(file.path(output_dir, "Fig1_workflow_architecture.eps"), 11, 7.2, 10)
+draw_architecture()
 dev.off()
 
 # Figure 2: deterministic four-panel district maps. Explicit geometry plotting is
@@ -152,29 +208,33 @@ tiff(
   res = 600,
   compression = "lzw"
 )
-par(mfrow = c(2, 2), mar = c(0.25, 0.25, 1.55, 0.25), oma = c(0.15, 0.15, 0.15, 0.15))
+par(mfrow = c(2, 2), mar = c(0.25, 0.25, 1.15, 0.25), oma = c(0.15, 0.15, 0.15, 0.15))
 for (nm in names(specs)) {
-  draw_map(layers[[nm]], specs[[nm]], title_prefix = TRUE, legend_cex = 0.54, border_lwd = 0.24)
+  draw_map(layers[[nm]], specs[[nm]], legend_cex = 0.50, border_lwd = 0.24)
 }
 dev.off()
 
-# Individual vector maps are retained for editorial layout flexibility.
+# Individual vector maps retain panel labels and numeric interval legends, but
+# no figure title or caption.
 for (nm in names(specs)) {
   spec <- specs[[nm]]
-  svg(
-    filename = file.path(output_dir, paste0("Fig2", spec$panel, "_", nm, ".svg")),
-    width = 6.4,
-    height = 6.4,
-    pointsize = 10,
-    onefile = TRUE
-  )
-  par(mar = c(0.3, 0.3, 1.05, 0.3))
-  draw_map(layers[[nm]], spec, title_prefix = FALSE, legend_cex = 0.75, border_lwd = 0.38)
+  svg_path <- file.path(output_dir, paste0("Fig2", spec$panel, "_", nm, ".svg"))
+  eps_path <- file.path(output_dir, paste0("Fig2", spec$panel, "_", nm, ".eps"))
+
+  svg(filename = svg_path, width = 6.4, height = 6.4, pointsize = 10, onefile = TRUE)
+  par(mar = c(0.3, 0.3, 0.85, 0.3))
+  draw_map(layers[[nm]], spec, legend_cex = 0.72, border_lwd = 0.38)
+  dev.off()
+
+  open_eps(eps_path, 6.4, 6.4, 10)
+  par(mar = c(0.3, 0.3, 0.85, 0.3))
+  draw_map(layers[[nm]], spec, legend_cex = 0.72, border_lwd = 0.38)
   dev.off()
 }
 
 # Figure 3: standardized district distributions permit cross-layer comparison
-# without implying that the four variables share physical units.
+# without implying that the four variables share physical units. Distinct line
+# types and symbols ensure that interpretation does not depend on colour.
 values <- do.call(
   cbind,
   lapply(names(specs), function(nm) {
@@ -187,10 +247,37 @@ values <- do.call(
 )
 colnames(values) <- c("Rainfall", "Temperature", "NDVI", "HAND share")
 
-# Sort districts by the first principal component of the standardized matrix.
 pc <- prcomp(values, center = FALSE, scale. = FALSE)
 ord <- order(pc$x[, 1])
 values <- values[ord, , drop = FALSE]
+
+draw_profiles <- function() {
+  par(mar = c(7.8, 4.2, 0.7, 0.5))
+  matplot(
+    seq_len(nrow(values)),
+    values,
+    type = "b",
+    pch = c(16, 17, 15, 18),
+    lty = c(1, 2, 3, 4),
+    xaxt = "n",
+    xlab = "District",
+    ylab = "Standardized district value (z score)",
+    cex = 0.55,
+    lwd = 0.85,
+    col = rep("black", 4)
+  )
+  axis(1, at = seq_len(nrow(values)), labels = rownames(values), las = 2, cex.axis = 0.52)
+  abline(h = 0, lty = 3)
+  legend(
+    "topleft",
+    legend = colnames(values),
+    pch = c(16, 17, 15, 18),
+    lty = c(1, 2, 3, 4),
+    bty = "n",
+    cex = 0.68,
+    col = rep("black", 4)
+  )
+}
 
 tiff(
   filename = file.path(output_dir, "Fig3_standardized_district_profiles.tiff"),
@@ -200,29 +287,11 @@ tiff(
   res = 600,
   compression = "lzw"
 )
-par(mar = c(7.8, 4.2, 0.7, 0.5))
-matplot(
-  seq_len(nrow(values)),
-  values,
-  type = "b",
-  pch = c(16, 17, 15, 18),
-  lty = c(1, 2, 3, 4),
-  xaxt = "n",
-  xlab = "District",
-  ylab = "Standardized district value (z score)",
-  cex = 0.55,
-  lwd = 0.85
-)
-axis(1, at = seq_len(nrow(values)), labels = rownames(values), las = 2, cex.axis = 0.52)
-abline(h = 0, lty = 3)
-legend(
-  "topleft",
-  legend = colnames(values),
-  pch = c(16, 17, 15, 18),
-  lty = c(1, 2, 3, 4),
-  bty = "n",
-  cex = 0.68
-)
+draw_profiles()
+dev.off()
+
+open_eps(file.path(output_dir, "Fig3_standardized_district_profiles.eps"), 8, 5.5, 10)
+draw_profiles()
 dev.off()
 
 summary_rows <- lapply(names(specs), function(nm) {
