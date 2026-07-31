@@ -2,25 +2,26 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21671788.svg)](https://doi.org/10.5281/zenodo.21671788)
 
-Reproducibility artifact for the paper *An R pipeline for district-level environmental layers and provenance labelling: a Rwanda proof of concept*.
+Reproducibility artifact for the paper *A reproducible R workflow for district-level environmental layers with fail-closed provenance labelling: a Rwanda implementation*.
 
-It contains the environmental-data preparation pipeline and the provenance / value-class discipline described in that paper, together with source-derived environmental layers for Rwanda's 30 districts under the per-file terms documented in `NOTICE.md`.
+It contains the environmental-data preparation workflow and provenance / value-class contract described in the paper, together with source-derived environmental layers for Rwanda's 30 districts under the per-file terms documented in `NOTICE.md`.
 
 ## What this is, and what it is not
 
-This is a **reduced, honestly-scoped** artifact. It is **not** the whole SuRT-Virtual Rwanda application.
+This is a **reduced, honestly scoped** artifact. It is **not** the whole SuRT-Virtual Rwanda application.
 
-- It **is**: the real environmental data pipeline (rainfall, temperature, vegetation greenness, and low-lying terrain share, aggregated to Rwanda's 30 districts); the generic provenance / value-class functions that enforce the labelling discipline; and the resulting source-derived environmental layers as data.
-- It is **not**: the full application. The application's real methodology register, its interactive dashboard, and its operational-adjacent layer (for example decision-support queues, forecast and supply / workforce views) are deliberately **not included**. They remain a private, non-operational research prototype.
-- The disease-side signals in the application are **synthetic and illustrative**, so this artifact ships **no disease data at all**. It ships only the source-derived environmental layers and code. The value-class functions are demonstrated against a small, clearly labelled illustrative example register (`R/example_register.R`), which is **not** the application's register.
+- It **is**: the environmental workflow for rainfall, temperature, vegetation greenness, and low-lying terrain share; the generic provenance / value-class functions; and the resulting source-derived district layers.
+- It is **not**: the private interactive application, its full methodology register, or its operational-adjacent decision, forecast, supply, and workforce interfaces.
+- It contains **no disease data**. The value-class functions are demonstrated against a small, clearly labelled example register (`R/example_register.R`), not the private application's register.
 
-**Non-operational.** Nothing here is validated for, or intended for, clinical, operational, or resource-allocation use (`operational_use_allowed = FALSE`). The environmental values are source-derived and retain the per-file terms documented in `NOTICE.md`; they are provided for descriptive research and reproducibility only.
+**Non-operational.** Nothing in this repository is validated or intended for clinical, operational, hazard, forecasting, or resource-allocation use (`operational_use_allowed = FALSE`). The environmental layers are supplied for descriptive research and reproducibility.
 
 ## Contents
 
-- `R/` environmental pipeline, the provenance/value-class module (`provenance_value_class.R`), an illustrative example register (`example_register.R`), the nine-assertion demonstration (`demo_value_class.R`), and an account-free fixture pipeline (`test_fixture_pipeline.R`).
-- `python/` the two official-client fetchers for ERA5-Land (Copernicus CDS) and MODIS NDVI (NASA Earthdata). No credentials are stored here; each reads the user's own account credentials from the standard local files.
-- `data/` the source-derived environmental layers for Rwanda's 30 districts as GeoJSON (rainfall, temperature, NDVI, and low-lying HAND share), plus district boundary geometry. See `DATA_DICTIONARY.md` and `NOTICE.md`.
+- `R/`: environmental builders and transformation functions, the provenance/value-class module, the example register, the nine-assertion provenance demonstration, and the nine-assertion environmental fixture.
+- `python/`: official-client fetchers for ERA5-Land and MODIS NDVI, plus the cross-platform verification runner.
+- `data/`: district GeoJSON layers for rainfall, temperature, NDVI, low-lying HAND share, and district geometry.
+- `paper/`: the manuscript source, editorial-readiness checklist, referee suggestions, and submission document.
 
 ## Account-free reproducibility check
 
@@ -30,31 +31,31 @@ After restoring `renv.lock`, run:
 python python/run_all_checks.py
 ```
 
-This runs 17 assertions across the labelling and environmental transformations,
-writes an inspectable synthetic-fixture GeoJSON, and verifies the release
-checksums. It requires no network access, private repository, or data-provider
-account. See `REPRODUCIBILITY.md` for real-data build commands and the precise
-boundary between fixture verification and rebuilding the released 2023 layers.
+This runs **18 assertions** across provenance labelling and environmental transformations, writes an inspectable synthetic-fixture GeoJSON, and verifies every release checksum. It requires no private repository, network call, or data-provider account.
 
-## The provenance / value-class discipline
+See `REPRODUCIBILITY.md` for real-data build commands and the boundary between software verification and rebuilding the source-derived 2023 layers.
 
-`R/provenance_value_class.R` implements the contract described in the paper: a register row is accepted as `source-derived` only when it declares a documented method on real/public data; unknown, incomplete, synthetic, or placeholder entries are treated as `illustrative` by default.
+## Provenance / value-class contract
 
-Run the demo and checks:
+`R/provenance_value_class.R` implements a fail-closed rule: a register row is accepted as `source-derived` only when it declares a documented method applied to real or public data. Unknown, incomplete, synthetic, and placeholder entries are treated as `illustrative`.
 
-    Rscript R/demo_value_class.R
+Run the demonstration directly:
 
-## Licenses
+```text
+Rscript R/demo_value_class.R
+```
 
-- **Code**: MIT (see `LICENSE`).
-- **Data**: per-source, in `data/`. District boundaries are World Bank CC BY 4.0; CHIRPS is public domain / CC0; ERA5-Land is under the Copernicus Products licence; MODIS and HAND are CC0. Full per-file attributions and required citations are in **`NOTICE.md`**. No single software licence is asserted over the data.
+## Licences
+
+- **Code:** MIT, see `LICENSE`.
+- **Data:** per source. District boundaries are World Bank CC BY 4.0; CHIRPS is public domain / CC0; ERA5-Land uses the Copernicus Products licence; MODIS and HAND are CC0. Full attribution and terms are in `NOTICE.md`.
 
 ## Verification and environment
 
-All release files carry SHA-256 checksums in `CHECKSUMS.sha256`. The exact R and package versions are recorded in `environment.txt` and `renv.lock`. GitHub Actions repeats the account-free checks on a clean runner.
+Release files carry SHA-256 checksums in `CHECKSUMS.sha256`. R and package versions are recorded in `environment.txt` and `renv.lock`. GitHub Actions repeats the account-free checks on a clean runner.
 
 ## How to cite
 
-Please cite the paper (Tuyishime Audre Prince, Clinton Health Access Initiative; ORCID 0009-0002-0799-3140) and the archived software release. The concept DOI for all versions is [10.5281/zenodo.21671788](https://doi.org/10.5281/zenodo.21671788); the published v1.1.1 version DOI is [10.5281/zenodo.21677162](https://doi.org/10.5281/zenodo.21677162).
+Please cite the paper and the archived software release. The concept DOI for all versions is [10.5281/zenodo.21671788](https://doi.org/10.5281/zenodo.21671788); the published v1.1.1 version DOI is [10.5281/zenodo.21677162](https://doi.org/10.5281/zenodo.21677162).
 
-See also: `NOTICE.md` (attributions and data licenses), `DATA_DICTIONARY.md` (data fields), and `SECURITY_REVIEW.md` (what was reviewed and what was deliberately excluded).
+See also `NOTICE.md`, `DATA_DICTIONARY.md`, `REPRODUCIBILITY.md`, `SECURITY_REVIEW.md`, and `paper/EDITORIAL_READINESS.md`.
