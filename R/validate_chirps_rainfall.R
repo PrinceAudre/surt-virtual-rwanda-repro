@@ -157,9 +157,24 @@ if (max_cross_implementation_difference > 2.0) {
   ), call. = FALSE)
 }
 
+cat(sprintf(
+  paste0(
+    "[PASS] CHIRPS %d archive reproduction: 30/30 rounded district values identical\n",
+    "[PASS] cross-implementation comparison: max |terra - exactextractr| = %.6f mm; RMSE = %.6f mm\n",
+    "[PASS] cell-area sensitivity: max |area-weighted - coverage mean| = %.6f mm; RMSE = %.6f mm\n"
+  ),
+  year,
+  max_cross_implementation_difference,
+  rmse_cross_implementation,
+  max_area_weighting_difference,
+  rmse_area_weighting
+))
+
 csv_path <- file.path(output_dir, sprintf("chirps_%d_district_validation.csv", year))
 json_path <- file.path(output_dir, sprintf("chirps_%d_validation_summary.json", year))
-utils::write.csv(results, csv_path, row.names = FALSE, digits = 12)
+# write.csv does not accept a digits argument. R retains full practical double
+# precision in its default numeric serialization; JSON precision is set below.
+utils::write.csv(results, csv_path, row.names = FALSE, na = "")
 
 summary <- list(
   schema_version = "1.0",
@@ -196,17 +211,7 @@ summary <- list(
 jsonlite::write_json(summary, json_path, pretty = TRUE, auto_unbox = TRUE, digits = 12)
 
 cat(sprintf(
-  paste0(
-    "[PASS] CHIRPS %d archive reproduction: 30/30 rounded district values identical\n",
-    "[PASS] cross-implementation comparison: max |terra - exactextractr| = %.6f mm; RMSE = %.6f mm\n",
-    "[PASS] cell-area sensitivity: max |area-weighted - coverage mean| = %.6f mm; RMSE = %.6f mm\n",
-    "[WRITE] %s\n[WRITE] %s\n"
-  ),
-  year,
-  max_cross_implementation_difference,
-  rmse_cross_implementation,
-  max_area_weighting_difference,
-  rmse_area_weighting,
+  "[WRITE] %s\n[WRITE] %s\n",
   normalizePath(csv_path, winslash = "/", mustWork = TRUE),
   normalizePath(json_path, winslash = "/", mustWork = TRUE)
 ))
