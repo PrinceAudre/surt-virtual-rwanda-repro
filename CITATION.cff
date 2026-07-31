@@ -1,34 +1,35 @@
 cff-version: 1.2.0
 message: >-
-  If you use this reproducibility artifact, please cite the archived software
-  release using the metadata below and cite the companion paper when available.
+  This branch is an unreleased journal candidate. Cite the published version
+  1.1.1 base archive for current reuse and replace this development metadata
+  with the final immutable release DOI before citing the candidate additions.
 title: >-
-  SuRT-Virtual Rwanda: reproducibility artifact for district-level
-  environmental-layer preparation and provenance labelling
+  SuRT-Virtual Rwanda: auditable district-scale Earth-data harmonization and
+  provenance-labelling reproducibility artifact
 type: software
 authors:
   - family-names: Tuyishime
     given-names: Audre Prince
     orcid: "https://orcid.org/0009-0002-0799-3140"
 abstract: >-
-  Companion software and district-level environmental layers with explicit
-  per-file source and licence metadata for a Rwanda implementation. The
-  artifact provides R and Python workflows for rainfall, temperature,
-  vegetation greenness, and low-lying terrain share aggregated to Rwanda's
-  30 districts, together with a fail-closed provenance and evidence-class
-  labelling module. It is descriptive and non-operational and contains no
-  patient, surveillance, or confidential operational data.
-version: 1.1.1
-date-released: 2026-07-29
-doi: "10.5281/zenodo.21677162"
+  Unreleased companion software candidate for an Earth Science Informatics
+  Software article. It prepares CHIRPS rainfall, ERA5-Land temperature, MODIS
+  vegetation greenness, and HAND terrain descriptors for Rwanda's 30 districts;
+  applies a fail-closed provenance and evidence-class contract; and includes
+  positive, negative, portability, release-contract, integrity, and scoped
+  public-data numerical validation. The candidate extends the published
+  version 1.1.1 base archive, DOI 10.5281/zenodo.21677162. It is descriptive,
+  non-operational, and contains no patient, surveillance, or confidential
+  operational data.
+version: 1.2.0-dev
 license: MIT
 repository-code: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro"
-url: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro"
+url: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro/tree/codex/earth-science-informatics-refinement-v1.3.0"
 keywords:
-  - Rwanda
+  - Earth science informatics
   - reproducible research
   - environmental data
-  - geospatial analysis
-  - provenance
-  - public health
+  - geospatial workflow
+  - data provenance
+  - zonal statistics
   - R
