@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased - F1000Research resubmission hardening
+
+- Reframed the manuscript as one integrated, auditable Software Tool workflow.
+- Added explicit comparison with Google Earth Engine, MODIStsp, and `exactextractr`.
+- Added input/output contracts, suitable use cases, and a clearer boundary between software verification and scientific validation.
+- Corrected the README assertion total from 17 to 18.
+- Removed an unverified institutional affiliation from `CITATION.cff`.
+- Added an editorial-readiness checklist and synchronized the revised manuscript title.
+
 ## 1.1.1 - 2026-07-29
 
 - Expanded the account-free NDVI fixture to exercise the complete
