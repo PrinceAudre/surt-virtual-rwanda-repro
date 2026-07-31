@@ -1,12 +1,16 @@
 Package: surtvirtualrwandarepro
 Type: Project
-Title: SuRT-Virtual Rwanda Reproducibility Artifact
-Version: 1.1.1
+Title: Auditable District-Scale Earth-Data Harmonization and Provenance Labelling
+Version: 1.2.0.9000
 Authors@R: person("Audre Prince", "Tuyishime", role = c("aut", "cre"),
                   comment = c(ORCID = "0009-0002-0799-3140"))
-Description: Reproducible preparation and verification of district-level
-    environmental layers for Rwanda, together with a fail-closed provenance
-    labelling demonstration.
+Description: Reproducible preparation of district-level rainfall, temperature,
+    vegetation-greenness, and terrain layers for Rwanda, together with a
+    fail-closed provenance-labelling contract, controlled transformation
+    fixtures, failure-injection tests, geometry-agnostic portability checks,
+    independent GeoJSON release-contract validation, and scoped public CHIRPS
+    numerical reproduction. This is an unreleased development candidate based
+    on the published version 1.1.1 archive.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Imports:
