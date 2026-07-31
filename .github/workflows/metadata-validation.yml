@@ -1,4 +1,4 @@
-name: Candidate metadata validation
+name: Candidate metadata and manuscript validation
 
 on:
   push:
@@ -8,9 +8,11 @@ on:
       - "README.md"
       - "CHANGELOG.md"
       - "paper/manuscript.md"
+      - "paper/REFERENCE_AUDIT.md"
       - "paper/submission/**"
       - "paper/archive/**"
       - "python/validate_candidate_metadata.py"
+      - "python/audit_manuscript.py"
       - ".github/workflows/metadata-validation.yml"
   pull_request:
     paths:
@@ -19,9 +21,11 @@ on:
       - "README.md"
       - "CHANGELOG.md"
       - "paper/manuscript.md"
+      - "paper/REFERENCE_AUDIT.md"
       - "paper/submission/**"
       - "paper/archive/**"
       - "python/validate_candidate_metadata.py"
+      - "python/audit_manuscript.py"
       - ".github/workflows/metadata-validation.yml"
   workflow_dispatch:
 
@@ -42,3 +46,5 @@ jobs:
         run: cffconvert --validate
       - name: Validate candidate consistency and journal limits
         run: python python/validate_candidate_metadata.py
+      - name: Audit manuscript structure and references
+        run: python python/audit_manuscript.py
