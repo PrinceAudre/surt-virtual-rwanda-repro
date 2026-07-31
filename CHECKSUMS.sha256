@@ -2,7 +2,7 @@
 # Verify on Linux/macOS:  sha256sum -c CHECKSUMS.sha256
 # Verify in PowerShell:   Get-FileHash <file> -Algorithm SHA256
 fbf815468cd887b5898ba8b2fc367f78f5ea8f30f83ec75dac923b12479e7a7d  .gitattributes
-fc73f0a893405355f131ebee7740c04b04c577de28bba698033c424d4a9808f5  .github/workflows/reproducibility.yml
+e9f9817c27687b4031aee807e44842cd0b2e726966cf4b6545f0e41f851b7082  .github/workflows/reproducibility.yml
 7513ec72991866916f623429a4a5ef9ed42fef0984f35590c287cee5cde040ba  .gitignore
 73d7ee87ba20661612b2fed6d02c45129cebaabe317e1ed1e02baec4abbce008  CHANGELOG.md
 40943a1ebeae802dfdea7b8c65c4fc3d9662947d8ed0b5b16d92fffcac168469  CITATION.cff
