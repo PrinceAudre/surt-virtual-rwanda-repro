@@ -171,8 +171,10 @@ def main() -> None:
         len(refs) == len(EXPECTED_REFERENCE_STARTS),
         f"reference list contains the expected {len(EXPECTED_REFERENCE_STARTS)} entries",
     )
+    # The length check above makes plain zip() equivalent to strict zip while
+    # retaining compatibility with the Python 3.9 runtime used by CI.
     actual_starts = []
-    for expected, paragraph in zip(EXPECTED_REFERENCE_STARTS, refs, strict=True):
+    for expected, paragraph in zip(EXPECTED_REFERENCE_STARTS, refs):
         require(
             paragraph.startswith(expected),
             f"reference begins with verified author-year metadata: {expected}",
