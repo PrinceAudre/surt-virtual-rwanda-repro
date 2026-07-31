@@ -80,7 +80,7 @@ map_style <- function(values, spec, n_classes = 6L) {
   list(breaks = breaks, colours = colours, classes = classes, labels = labels)
 }
 
-draw_map <- function(x, spec, legend_cex = 0.62, border_lwd = 0.35, panel_label = TRUE) {
+draw_map <- function(x, spec, legend_cex = 0.66, border_lwd = 0.35, panel_label = TRUE) {
   style <- map_style(x[[spec$field]], spec)
   plot(
     st_geometry(x),
@@ -103,8 +103,8 @@ draw_map <- function(x, spec, legend_cex = 0.62, border_lwd = 0.35, panel_label 
     bty = "n",
     cex = legend_cex,
     inset = 0.01,
-    x.intersp = 0.45,
-    y.intersp = 0.82,
+    x.intersp = 0.50,
+    y.intersp = 0.88,
     title.adj = 0
   )
 }
@@ -124,7 +124,9 @@ open_eps <- function(filename, width, height, pointsize = 10) {
 
 layers <- lapply(specs, read_checked_layer)
 
-# Figure 1: source-to-release architecture and independent evidence paths.
+# Figure 1: a clean production path plus independent evidence band. Evidence
+# boxes are not connected back into individual production nodes because each
+# gate addresses a different claim class and crossing arrows reduce readability.
 draw_architecture <- function() {
   par(mar = rep(0, 4))
   plot.new()
@@ -159,7 +161,9 @@ draw_architecture <- function() {
   arrow(6.35, 5.30, 6.80, 5.30)
   arrow(8.65, 5.30, 9.10, 5.30)
 
-  # Evidence paths, deliberately separated by claim type.
+  text(5.50, 3.03, "Independent executable evidence and validation", cex = 0.82, font = 2)
+
+  evidence_centres <- c(1.22, 3.37, 5.52, 7.67, 9.82)
   box(0.30, 1.55, 2.15, 2.65,
       "Positive synthetic\ntransformation fixture\n(9 assertions)")
   box(2.45, 1.55, 4.30, 2.65,
@@ -171,17 +175,10 @@ draw_architecture <- function() {
   box(8.90, 1.55, 10.75, 2.65,
       "Public CHIRPS\nreproduction and\nweighting sensitivity")
 
-  # Dashed arrows distinguish validation/evidence from the production flow.
-  arrow(1.22, 2.65, 3.10, 4.55, lty = 2)
-  arrow(3.37, 2.65, 5.10, 4.55, lty = 2)
-  arrow(5.52, 2.65, 4.85, 4.55, lty = 2)
-  arrow(7.67, 2.65, 7.65, 4.55, lty = 2)
-  arrow(9.82, 2.65, 3.80, 4.55, lty = 2)
-
-  box(3.60, 0.30, 7.40, 1.05,
-      "Clean continuous integration records machine-readable outcomes;\nlisted-file SHA-256 checks establish integrity, not scientific validity",
+  box(0.30, 0.30, 10.75, 1.05,
+      "Clean continuous integration records machine-readable outcomes; listed-file SHA-256 checks establish integrity, not scientific validity",
       cex = 0.72)
-  for (x in c(1.22, 3.37, 5.52, 7.67, 9.82)) arrow(x, 1.55, 5.50, 1.05, lty = 2)
+  for (x in evidence_centres) arrow(x, 1.55, x, 1.05, lty = 2)
 }
 
 svg(
@@ -210,7 +207,7 @@ tiff(
 )
 par(mfrow = c(2, 2), mar = c(0.25, 0.25, 1.15, 0.25), oma = c(0.15, 0.15, 0.15, 0.15))
 for (nm in names(specs)) {
-  draw_map(layers[[nm]], specs[[nm]], legend_cex = 0.50, border_lwd = 0.24)
+  draw_map(layers[[nm]], specs[[nm]], legend_cex = 0.66, border_lwd = 0.24)
 }
 dev.off()
 
@@ -223,12 +220,12 @@ for (nm in names(specs)) {
 
   svg(filename = svg_path, width = 6.4, height = 6.4, pointsize = 10, onefile = TRUE)
   par(mar = c(0.3, 0.3, 0.85, 0.3))
-  draw_map(layers[[nm]], spec, legend_cex = 0.72, border_lwd = 0.38)
+  draw_map(layers[[nm]], spec, legend_cex = 0.76, border_lwd = 0.38)
   dev.off()
 
   open_eps(eps_path, 6.4, 6.4, 10)
   par(mar = c(0.3, 0.3, 0.85, 0.3))
-  draw_map(layers[[nm]], spec, legend_cex = 0.72, border_lwd = 0.38)
+  draw_map(layers[[nm]], spec, legend_cex = 0.76, border_lwd = 0.38)
   dev.off()
 }
 
@@ -252,7 +249,7 @@ ord <- order(pc$x[, 1])
 values <- values[ord, , drop = FALSE]
 
 draw_profiles <- function() {
-  par(mar = c(7.8, 4.2, 0.7, 0.5))
+  par(mar = c(8.4, 4.2, 2.2, 0.5), xpd = NA)
   matplot(
     seq_len(nrow(values)),
     values,
@@ -262,19 +259,24 @@ draw_profiles <- function() {
     xaxt = "n",
     xlab = "District",
     ylab = "Standardized district value (z score)",
-    cex = 0.55,
-    lwd = 0.85,
+    cex = 0.60,
+    lwd = 0.90,
     col = rep("black", 4)
   )
-  axis(1, at = seq_len(nrow(values)), labels = rownames(values), las = 2, cex.axis = 0.52)
+  axis(1, at = seq_len(nrow(values)), labels = rownames(values), las = 2, cex.axis = 0.58)
   abline(h = 0, lty = 3)
   legend(
-    "topleft",
+    "top",
+    inset = c(0, -0.12),
     legend = colnames(values),
     pch = c(16, 17, 15, 18),
     lty = c(1, 2, 3, 4),
+    ncol = 4,
+    horiz = TRUE,
     bty = "n",
-    cex = 0.68,
+    cex = 0.72,
+    seg.len = 1.5,
+    x.intersp = 0.55,
     col = rep("black", 4)
   )
 }
