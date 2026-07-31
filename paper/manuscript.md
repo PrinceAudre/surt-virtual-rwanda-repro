@@ -85,7 +85,7 @@ An independent Python validator uses only the standard library and therefore doe
 
 ### Verification design
 
-`renv.lock` records the R dependency graph. The published base release was prepared with R 4.6.0, `terra` 1.9.27, `sf` 1.1.1, `exactextractr` 0.10.1, and `jsonlite` 2.0.0. Python 3 is used by provider fetchers, the cross-platform verification runner, and the independent release-contract validator.
+`renv.lock` records the R dependency graph. The published base release was prepared with R 4.6.0, `terra` 1.9.27, `sf` 1.1.1, `exactextractr` 0.10.1, and `jsonlite` 2.0.0. Python 3 is used by provider fetchers, the cross-platform verification runner, the independent release-contract validator, and the checksum-manifest builder.
 
 The account-free verification command is:
 
@@ -104,7 +104,9 @@ The runner executes 41 explicit outcomes in six groups:
 
 The environmental fixture creates synthetic rasters in memory and exercises rainfall, temperature, NDVI, HAND, reprojection, mosaicking, temporal aggregation, zonal extraction, and GeoJSON writing. Its NDVI path uses two synthetic months and two same-month tiles in the MODIS sinusoidal coordinate system. Failure injection tests absent raster coverage, unconverted kelvin values, an inverted rainfall gradient, unscaled MODIS digital numbers, an incomplete MODIS year, all-no-data HAND input, and impossible HAND percentages. The runner records step durations and execution-environment metadata in machine-readable JSON.
 
-A scoped integrity check verifies the 40 files listed in `CHECKSUMS.sha256`. The manifest is explicitly a listed-file contract; it is not presented as a complete manifest for the still-unreleased journal candidate. GitHub Actions restores the locked environment, repeats the account-free checks on a clean hosted runner, generates manuscript figures from the GeoJSON files, and retains the evidence bundle.
+The interim integrity manifest is generated from the stable-file list in `CHECKSUMS.scope`. `python/build_checksum_manifest.py --check` requires the manifest to match that scope exactly, after which the runner verifies every listed digest. The evolving journal documents and development-only validators are intentionally outside the interim scope. At candidate freeze, `python/build_checksum_manifest.py --all-tracked --write` must replace it with a complete tracked-file manifest for the exact release commit. A checksum establishes byte integrity, not scientific validity.
+
+GitHub Actions restores the locked environment, repeats the account-free checks on a clean hosted runner, generates manuscript figures from the GeoJSON files, and retains the evidence bundle.
 
 ### Public-data numerical validation
 
@@ -145,9 +147,9 @@ Figure 3 standardizes values within each layer to compare district profiles desp
 
 ### Account-free verification and release-contract results
 
-All 41 explicit verification outcomes passed on the clean hosted runner. The positive fixtures established expected transformations on controlled inputs. The projected portability fixture completed with arbitrary administrative identifiers and non-Rwanda geometry. Each deliberately malformed transformation failed for the intended reason. The independent validator accepted all five archived GeoJSON files and rejected all five corrupted copies. The separate listed-file integrity check verified 40 SHA-256 digests.
+All 41 explicit verification outcomes passed on the clean hosted runner. The positive fixtures established expected transformations on controlled inputs. The projected portability fixture completed with arbitrary administrative identifiers and non-Rwanda geometry. Each deliberately malformed transformation failed for the intended reason. The independent validator accepted all five archived GeoJSON files and rejected all five corrupted copies. The checksum builder confirmed that the interim manifest matched its declared stable-file scope, and every listed digest was verified.
 
-These outcomes support claims about specified software behaviour, schema enforcement, and failure handling. They do not establish source-product accuracy, scientific validity of the HAND threshold, cross-country real-data portability, or suitability for a downstream model.
+These outcomes support claims about specified software behaviour, schema enforcement, failure handling, and listed-file integrity. They do not establish source-product accuracy, scientific validity of the HAND threshold, cross-country real-data portability, or suitability for a downstream model.
 
 ### CHIRPS numerical validation
 
@@ -186,7 +188,7 @@ The workflow converts four heterogeneous Earth-data products into standardized, 
 - **Project name:** SuRT-Virtual Rwanda reproducibility artifact
 - **Project home page:** https://github.com/PrinceAudre/surt-virtual-rwanda-repro
 - **Published base archive:** version 1.1.1, https://doi.org/10.5281/zenodo.21677162
-- **Journal candidate:** `codex/earth-science-informatics-refinement-v1.3.0`; this branch contains validation and submission-package additions not present in version 1.1.1 and must receive a new immutable version archive before submission
+- **Journal candidate:** development version 1.2.0.9000 on `codex/earth-science-informatics-refinement-v1.3.0`; this branch contains validation and submission-package additions not present in version 1.1.1 and must receive a new immutable version archive before submission
 - **Operating systems:** Linux, Windows, or macOS for the account-free workflow; real-data provider clients are subject to their own platform requirements
 - **Programming languages:** R 4.6.0 and Python 3
 - **Core dependencies:** `terra`, `sf`, `exactextractr`, and `jsonlite`, with versions recorded in `renv.lock`
@@ -195,7 +197,7 @@ The workflow converts four heterogeneous Earth-data products into standardized, 
 - **Licence:** MIT for code; data retain the per-file terms documented in `NOTICE.md`
 - **Restrictions on non-academic use:** none for the MIT-licensed code; users must comply with source-data terms
 
-Before submission, the candidate branch, manuscript, metadata, figures, checksums, release tag, and Zenodo version DOI will be frozen to one exact version. The final submitted manuscript will replace the branch reference above with that immutable version DOI.
+Before submission, the candidate branch, manuscript, metadata, figures, complete tracked-file checksum manifest, release tag, and Zenodo version DOI will be frozen to one exact version. The final submitted manuscript will replace the branch reference above with that immutable version DOI.
 
 ## Statements and Declarations
 
@@ -219,7 +221,7 @@ Tuyishime Audre Prince: Conceptualization, Data Curation, Methodology, Software,
 
 The published base outputs and software are archived in Zenodo version 1.1.1 (Tuyishime 2026). The additional verification, numerical-validation, and journal-packaging files described in this working manuscript are in the named candidate branch and will be included in a new immutable archive before submission. The final manuscript will cite that exact archive.
 
-The repository contains district geometry and four environmental GeoJSON layers. `NOTICE.md` supplies per-file attribution and licence information, `DATA_DICTIONARY.md` defines fields, and `CHECKSUMS.sha256` supplies a scoped listed-file integrity contract. No disease data are associated with the article.
+The repository contains district geometry and four environmental GeoJSON layers. `NOTICE.md` supplies per-file attribution and licence information, `DATA_DICTIONARY.md` defines fields, `CHECKSUMS.scope` defines the interim stable-file scope, and `CHECKSUMS.sha256` supplies the corresponding listed-file integrity contract. No disease data are associated with the article.
 
 ERA5-Land is third-party data under the Copernicus Products licence. A reader can obtain it through the same route as the author by creating a free Climate Data Store account, accepting the product terms, configuring the official `cdsapi` client, and running `python/fetch_era5land_temperature.py`. The corresponding transformation is implemented in `R/build_relief_climate_temperature.R`.
 
@@ -287,7 +289,8 @@ Zong L, Ngarukiyimana JP, Yang Y et al (2024) Malaria transmission risk is proje
 | Schema drift and corrupted release content are rejected | Five corrupted in-memory copies | Five rejection checks in `python/validate_release_contract.py` |
 | Archived CHIRPS district values are computationally reproducible | Public CHIRPS 2023 GeoTIFF and archived geometry | 30/30 rounded matches in `R/validate_chirps_rainfall.R` |
 | CHIRPS extraction is stable across engines and area weighting | `exactextractr`, `terra`, and cell-area weights | Maximum differences of 0.000136 mm and 0.005127 mm |
-| Listed release files have fixed integrity values | `CHECKSUMS.sha256` | 40 SHA-256 digests verified by `python/run_all_checks.py` |
+| Interim integrity manifest matches its declared scope | `CHECKSUMS.scope`, `CHECKSUMS.sha256`, and manifest builder | `python/build_checksum_manifest.py --check` |
+| Every interim listed file has its recorded digest | `CHECKSUMS.sha256` | SHA-256 verification in `python/run_all_checks.py` |
 | R dependencies are versioned | `renv.lock` and `environment.txt` | Clean-environment restore and continuous integration |
 
 ### Table 4 Principal limitations and interpretation
@@ -303,7 +306,7 @@ Zong L, Ngarukiyimana JP, Yang Y et al (2024) Malaria transmission risk is proje
 | Independent public-data validation covers CHIRPS only | ERA5-Land, MODIS, and HAND require equivalent checks before stronger numerical claims |
 | Provider-dependent rebuilds require accounts and network access | Only the fixtures, contract checks, and CHIRPS validation are fully account-free |
 | Lightweight provenance is not PROV-O or RO-Crate conformant | Machine-actionable interoperability remains limited |
-| Journal candidate extends the published v1.1.1 base | A new exact release and version DOI are required before submission |
+| Journal candidate extends the published v1.1.1 base | A new exact release, complete tracked-file manifest, and version DOI are required before submission |
 
 ## Figure captions
 
@@ -315,16 +318,16 @@ Zong L, Ngarukiyimana JP, Yang Y et al (2024) Malaria transmission risk is proje
 
 ## Software Files
 
-The published v1.1.1 archive contains the base software and district outputs. The current journal candidate adds the validators, numerical-validation workflow, figure pipeline, machine-readable evidence summaries, and submission records described in this manuscript. A new immutable release containing the complete candidate package is required before submission.
+The published v1.1.1 archive contains the base software and district outputs. The current journal candidate adds the validators, numerical-validation workflow, figure pipeline, machine-readable evidence summaries, manifest builder, and submission records described in this manuscript. A new immutable release containing the complete candidate package is required before submission.
 
 Principal directories and files are:
 
-- `R/`: provider transformation functions, real-data builders, provenance classification, positive fixtures, portability fixture, failure-injection tests, and CHIRPS numerical validation;
-- `python/`: provider fetch clients, cross-platform verification runner, and independent GeoJSON release-contract validator;
+- `R/`: provider transformation functions, real-data builders, provenance classification, positive fixtures, portability fixture, failure-injection tests, CHIRPS numerical validation, and manuscript-figure generation;
+- `python/`: provider fetch clients, cross-platform verification runner, independent GeoJSON release-contract validator, and checksum-manifest builder;
 - `data/`: district geometry and four environmental GeoJSON layers;
 - `renv.lock` and `environment.txt`: dependency and execution-environment records;
 - `NOTICE.md` and `DATA_DICTIONARY.md`: source terms, attribution, and field definitions;
-- `CHECKSUMS.sha256`: scoped listed-file integrity manifest;
+- `CHECKSUMS.scope` and `CHECKSUMS.sha256`: interim stable-file scope and corresponding integrity manifest;
 - `.github/workflows/reproducibility.yml`: clean account-free verification and figure-generation workflow;
 - `.github/workflows/public-data-validation.yml`: public CHIRPS reproduction and sensitivity workflow; and
-- `paper/`: manuscript, journal-targeting record, dual-agent review ledger, editorial-readiness record, and generated-figure instructions.
+- `paper/`: manuscript, journal-targeting record, dual-agent review ledger, editorial-readiness record, reviewer dossier, historical records, and figure-accessibility instructions.
