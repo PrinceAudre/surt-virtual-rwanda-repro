@@ -6,6 +6,10 @@
 
 A clarification request has been prepared in Gmail. Resubmission should occur only after the editorial office identifies the unmet criterion or confirms that a substantially revised submission may be treated as new.
 
+A review of the current F1000Research eligibility policy identifies author affiliation as the leading unresolved risk. For original research outputs, at least one key author must be formally affiliated with an accredited institution or recognised organisation, and the affiliation may be verified. The manuscript's current `Independent researcher, Kigali, Rwanda` line should therefore be treated as provisional rather than submission-ready.
+
+Any replacement affiliation must be truthful, current, verifiable, and appropriate to the circumstances in which the work was conducted. A clinical employer, contractual research organisation, private company, university, or other organisation must not be listed merely to clear an eligibility check, and an affiliation must not imply sponsorship or endorsement that did not occur.
+
 ## Changes completed in this hardening branch
 
 - Repositioned the article from a generic "proof of concept" to a specific Software Tool Article.
@@ -30,18 +34,18 @@ A clarification request has been prepared in Gmail. Resubmission should occur on
 | Clear claims and limitations | Claim-to-evidence table, verification/validation boundary | Addressed |
 | Ethics and consent | Dedicated statement | Addressed |
 | Competing interests | Dedicated statement | Addressed, author verification required |
-| Affiliation | Independent-researcher wording in manuscript; no affiliation in CFF | Author verification required |
+| Author eligibility and affiliation | Current independent-researcher wording appears insufficient under the published policy | Unresolved, editorial confirmation required |
 | Referee eligibility and conflicts | Five-candidate file | Personal conflict check required |
 | Editorial reason for rejection | Clarification draft to editorial office | Awaiting response |
 
 ## Required author sign-offs before resubmission
 
-1. Confirm that **Independent researcher, Kigali, Rwanda** is the correct article affiliation.
-2. Confirm the competing-interest statement about contractual CHAI research coordination.
-3. Confirm that CHAI did not sponsor or endorse this software article.
-4. Recheck all five suggested referees for personal or professional conflicts.
-5. Review the final DOCX and approve the exact title, author name, ORCID, and corresponding email.
-6. Obtain a specific response from F1000Research about the failed requirement.
+1. Obtain F1000Research's confirmation of the failed criterion and its acceptable affiliation treatment.
+2. Identify a truthful, current, and verifiable formal affiliation only where it accurately represents the circumstances of the work.
+3. Confirm the competing-interest statement about contractual CHAI research coordination.
+4. Confirm that no listed organisation sponsored or endorsed the software article unless that is documented.
+5. Recheck all five suggested referees for personal or professional conflicts.
+6. Review the final DOCX and approve the exact title, author name, affiliation, ORCID, and corresponding email.
 
 ## Release discipline
 
