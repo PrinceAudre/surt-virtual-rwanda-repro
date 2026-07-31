@@ -153,6 +153,10 @@ def main() -> None:
                 "--check",
             ],
         ),
+        run(
+            "candidate metadata and submission-package consistency",
+            [sys.executable, str(ROOT / "python" / "validate_candidate_metadata.py")],
+        ),
     ]
     print("\n=== listed-file integrity ===")
     steps.append(verify_listed_checksums())
