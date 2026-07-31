@@ -21,7 +21,7 @@ This is a **reduced, honestly scoped** artifact. It is **not** the whole SuRT-Vi
 - `R/`: environmental builders and transformation functions, the provenance/value-class module, the example register, the nine-assertion provenance demonstration, and the nine-assertion environmental fixture.
 - `python/`: official-client fetchers for ERA5-Land and MODIS NDVI, plus the cross-platform verification runner.
 - `data/`: district GeoJSON layers for rainfall, temperature, NDVI, low-lying HAND share, and district geometry.
-- `paper/`: the manuscript source, editorial-readiness checklist, referee suggestions, and submission document.
+- `paper/`: the manuscript source, editorial-readiness checklist, and referee suggestions. The prior v1.1.1 submission file is retained as an archive of the declined submission.
 
 ## Account-free reproducibility check
 
