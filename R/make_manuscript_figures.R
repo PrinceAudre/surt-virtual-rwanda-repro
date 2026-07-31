@@ -49,6 +49,12 @@ read_checked_layer <- function(spec) {
   x
 }
 
+map_display <- function(x, spec) {
+  display <- x[spec$field]
+  names(display)[names(display) == spec$field] <- spec$label
+  display
+}
+
 layers <- lapply(specs, read_checked_layer)
 
 # Figure 1: data and verification architecture.
@@ -104,8 +110,7 @@ par(mfrow = c(2, 2), mar = c(0.2, 0.2, 1.2, 0.2), oma = c(0, 0, 0.2, 0))
 for (nm in names(specs)) {
   spec <- specs[[nm]]
   x <- layers[[nm]]
-  display <- x[spec$field]
-  names(display) <- spec$label
+  display <- map_display(x, spec)
   plot(
     display,
     axes = FALSE,
@@ -123,8 +128,7 @@ dev.off()
 for (nm in names(specs)) {
   spec <- specs[[nm]]
   x <- layers[[nm]]
-  display <- x[spec$field]
-  names(display) <- spec$label
+  display <- map_display(x, spec)
   svg(
     filename = file.path(output_dir, paste0("Fig2", spec$panel, "_", nm, ".svg")),
     width = 6.4,
