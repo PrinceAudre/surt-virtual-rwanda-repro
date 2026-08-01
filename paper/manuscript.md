@@ -18,7 +18,7 @@ Earth-observation workflows frequently combine products that differ in access me
 
 ## Introduction
 
-Earth-system analysis increasingly depends on computational chains that combine distributed observation, reanalysis, and terrain products. Even a small administrative-unit dataset may require provider-specific acquisition, masking, scaling, temporal aggregation, mosaicking, coordinate transformation, polygon extraction, metadata recording, licence attribution, verification, and archival packaging. CHIRPS precipitation, ERA5-Land reanalysis, MODIS vegetation indices, and Height Above Nearest Drainage (HAND) terrain data illustrate this heterogeneity (Didan 2021; Funk et al. 2015; Munoz-Sabater et al. 2021; Nobre et al. 2011). The informatics problem is not limited to obtaining files. It is preserving a reviewable chain from source product to interpretable, citable, and reusable output.
+Earth-system analysis increasingly depends on computational chains that combine distributed observation, reanalysis, and terrain products. Even a small administrative-unit dataset may require provider-specific acquisition, masking, scaling, temporal aggregation, mosaicking, coordinate transformation, polygon extraction, metadata recording, licence attribution, verification, and archival packaging. CHIRPS precipitation, ERA5-Land reanalysis, MODIS vegetation indices, and Height Above Nearest Drainage (HAND) terrain data illustrate this heterogeneity (Didan 2021; Funk et al. 2015; Muñoz-Sabater et al. 2021; Nobre et al. 2011). The informatics problem is not limited to obtaining files. It is preserving a reviewable chain from source product to interpretable, citable, and reusable output.
 
 Computational workflows can improve traceability and reuse, but portability and reproducibility depend on explicit interfaces, execution evidence, and preserved provenance rather than workflow automation alone (Kale et al. 2023). FAIR principles similarly emphasize metadata, provenance, and reuse (Wilkinson et al. 2016), while provenance-driven data-management systems and research-object packaging show how software, data, methods, identifiers, and relationships can be preserved as an assessable artifact (Mitchell et al. 2022; Soiland-Reyes et al. 2022). W3C PROV provides a formal model for interoperable provenance representation, although the present release does not claim PROV-O conformance (Lebo et al. 2013).
 
@@ -26,7 +26,7 @@ Mature geospatial tools solve important parts of the processing problem. Google 
 
 District environmental summaries may later be used in climate-sensitive health research, surveillance, or early-warning analyses, including Rwanda-specific work on malaria and climate (Zong et al. 2024). Such downstream uses make interpretation boundaries consequential. A prepared environmental covariate is not a forecast, hazard probability, causal effect, exposure estimate, or operational recommendation.
 
-The research question addressed here is whether a small open workflow can harmonize heterogeneous Earth-data products into a consistent district schema while making transformation behaviour, evidence status, numerical reproducibility, and release integrity inspectable independently of a larger application. The contribution is an Earth science informatics design and reference implementation, not a new raster-processing algorithm. The public artifact integrates provider-specific transformation, administrative aggregation, fail-closed provenance labelling, explicit data terms, positive and negative tests, a geometry-agnostic portability fixture, public-data numerical validation, continuous integration, and versioned archival practice. Rwanda is the real-data reference implementation. The artifact excludes the private parent dashboard, disease-side signals, patient or surveillance data, decision rules, and operational interfaces.
+The research question addressed here is whether a small open workflow can harmonize heterogeneous Earth-data products into a consistent district schema while making transformation behaviour, evidence status, numerical reproducibility, and release integrity inspectable independently of a larger application. The contribution is an Earth science informatics design and reference implementation, not a new raster-processing algorithm. The public artifact integrates provider-specific transformation, administrative aggregation, fail-closed provenance labelling, explicit data terms, positive and negative tests, a geometry-agnostic portability fixture, public-data numerical validation, continuous integration, and versioned archival practice. Rwanda is the real-data reference implementation. Portability is claimed only at the function-interface level demonstrated with arbitrary identifiers and projected synthetic geometry; end-to-end deployment in a second country has not been evaluated. The artifact excludes the private parent dashboard, disease-side signals, patient or surveillance data, decision rules, and operational interfaces.
 
 ## Design and Implementation
 
@@ -43,7 +43,7 @@ The repository integrates six functions that are commonly separated across scrip
 
 Figure 1 shows the architecture. Source-specific modules isolate access, masking, scaling, mosaicking, reprojection, and temporal aggregation from the common polygon-extraction and output contract. Synthetic fixtures exercise transformation paths without provider credentials. Separate failure-injection and release-contract validators test whether malformed inputs or outputs are rejected rather than silently accepted. A public-data validation path independently reacquires CHIRPS and compares the archived values with two extraction implementations and an area-weighting sensitivity calculation.
 
-The workflow does not replace Google Earth Engine, MODIStsp, `exactextractr`, Common Workflow Language tooling, or research-object standards. Its contribution is the release-level integration around these capabilities: multiple providers, a common district schema, an explicit evidence-status contract, account-free executable evidence, per-file terms, fixed integrity values, and an archived version.
+The workflow does not replace Google Earth Engine, MODIStsp, `exactextractr`, Common Workflow Language tooling, or research-object standards. Its contribution is the release-level integration around these capabilities: multiple providers, a common district schema, an explicit evidence-status contract, account-free executable evidence, per-file terms, fixed integrity values, and an archived version. Table 2 summarizes the relationship between these adjacent tools or standards and the present workflow.
 
 ### Geographic reference implementation and portability boundary
 
@@ -56,7 +56,7 @@ The generic transformation functions do not require Rwanda district names. A sep
 Three layers describe calendar year 2023 and one represents static terrain:
 
 - **Rainfall:** CHIRPS version 2.0 annual precipitation (Funk et al. 2015). Negative no-data values are masked, coverage-fraction-weighted district means are calculated, and released values are rounded to whole millimetres.
-- **Temperature:** ERA5-Land 2 m air temperature (Munoz-Sabater et al. 2021). Twelve monthly-mean layers for 2023 are checked for completeness, averaged, converted from kelvin to degrees Celsius, and summarized by district.
+- **Temperature:** ERA5-Land 2 m air temperature (Muñoz-Sabater et al. 2021). Twelve monthly-mean layers for 2023 are checked for completeness, averaged, converted from kelvin to degrees Celsius, and summarized by district.
 - **Vegetation greenness:** MODIS/Terra MOD13A3 version 061 monthly 1 km NDVI (Didan 2021). Fill and out-of-range values are masked, the 0.0001 scale factor is applied, same-month tiles are mosaicked, and the 12 monthly products are averaged before district extraction. Product quality and reliability flags are not applied in this release.
 - **Low-lying terrain share:** Global 30 m HAND, derived from Copernicus GLO-30, is thresholded at 5 m. The output is the percentage of district area represented by HAND values at or below the threshold. It is not observed flooding or a validated flood-hazard probability. The terrain concept follows Nobre et al. (2011).
 
@@ -73,7 +73,7 @@ The provenance module consumes a register row containing an identifier, display 
 - unknown, incomplete, synthetic, and placeholder entries default to `illustrative`; and
 - illustrative outputs receive an explanatory note.
 
-The rule is fail closed: incomplete declarations are not promoted to source-derived status. The module validates declarations and presentation behaviour. It does not independently establish that a citation is correct, that every external application routes values through the module, or that a declared method was implemented faithfully outside the released repository. Provenance is recorded as human-readable file and feature metadata; the current candidate does not claim PROV-O or RO-Crate conformance.
+Figure 3 separates the implementation into three independent controls. First, `surt_method_register_ok()` validates the required register structure, legal vocabularies, and the prohibition on combining `source-derived` evidence with a `placeholder` method. Second, `surt_output_is_illustrative()` applies the fail-closed display rule independently: an output remains illustrative unless its identifier is present and its `evidence_class` is exactly `source-derived`; this function does not inspect `method_class` or independently verify that real or public data were used. Third, `surt_illustrative_note()` selects one wording for a documented method on synthetic data and another for synthetic, placeholder, unknown, or incomplete material. The module validates declarations and presentation behaviour. It does not independently establish that a citation is correct, that every external application routes values through the module, or that a declared method was implemented faithfully outside the released repository. Provenance is recorded as human-readable file and feature metadata; the current candidate does not claim PROV-O or RO-Crate conformance.
 
 ### Input and output contract
 
@@ -101,6 +101,8 @@ The runner executes 41 explicit outcomes in six groups:
 - seven transformation failure-injection assertions;
 - five valid release-layer contract checks; and
 - five deliberate release-corruption rejections.
+
+Table 3 maps the principal software claims to the corresponding candidate evidence and verification mechanism.
 
 The environmental fixture creates synthetic rasters in memory and exercises rainfall, temperature, NDVI, HAND, reprojection, mosaicking, temporal aggregation, zonal extraction, and GeoJSON writing. Its NDVI path uses two synthetic months and two same-month tiles in the MODIS sinusoidal coordinate system. Failure injection tests absent raster coverage, unconverted kelvin values, an inverted rainfall gradient, unscaled MODIS digital numbers, an incomplete MODIS year, all-no-data HAND input, and impossible HAND percentages. The runner records step durations and execution-environment metadata in machine-readable JSON.
 
@@ -143,7 +145,7 @@ Every environmental output contains one feature for each of Rwanda's 30 district
 
 For a record-level example, the Nyarugenge features contain annual rainfall of 955 mm, mean temperature of 20.6 degrees Celsius, mean NDVI of 0.55, and a low-lying terrain share of 22.1%. The last value means that 22.1% of the district polygon is represented by HAND values of 5 m or less. It must not be interpreted as observed flood extent, flood probability, population exposure, or risk.
 
-Figure 3 standardizes values within each layer to compare district profiles despite different units. The profile is descriptive and is not a composite environmental, hazard, or health-risk index.
+Supplementary Figure S1 standardizes values within each layer to compare district profiles despite different units. The profile is descriptive and is not a composite environmental, hazard, or health-risk index.
 
 ### Account-free verification and release-contract results
 
@@ -175,7 +177,7 @@ The portability fixture narrows another claim. It demonstrates that the core fun
 
 The design is related to broader provenance and research-object approaches but remains intentionally lightweight. Human-readable provenance strings, file-level documentation, checksums, machine-readable test summaries, and a versioned archive improve inspectability. They do not constitute a formal provenance graph or a standards-conformant research object. Future packaging could adopt PROV-O, RO-Crate, or Workflow Run RO-Crate where the additional semantic and interoperability benefits justify the maintenance burden (Lebo et al. 2013; Soiland-Reyes et al. 2022).
 
-The release has further limitations. Annual district summaries suppress seasonality, extremes, and within-district heterogeneity. MODIS quality flags are not applied. Environmental values are point estimates without uncertainty or quality fields. Provider-dependent rebuilds require accounts and network access. The real-data implementation covers one country and one reference year. Only the CHIRPS layer currently has independent public-data computational validation. The candidate branch also extends the published v1.1.1 base archive; therefore a new immutable release and version DOI are required before journal submission.
+The release has further limitations. Annual district summaries suppress seasonality, extremes, and within-district heterogeneity. MODIS quality flags are not applied. Environmental values are point estimates without uncertainty or quality fields. Provider-dependent rebuilds require accounts and network access. The real-data implementation covers one country and one reference year. Only the CHIRPS layer currently has independent public-data computational validation. The candidate branch also extends the published v1.1.1 base archive; therefore a new immutable release and version DOI are required before journal submission. Table 4 consolidates these limitations and their interpretation consequences.
 
 Future work should add MODIS quality filtering, monthly and seasonal summaries, uncertainty and data-quality fields, independent ERA5-Land, MODIS, and HAND comparisons, cross-platform real-data rebuilds, a second-country portability study, and standards-based research-object metadata. These additions would strengthen scientific validation and machine-actionable reuse without changing the core release contract.
 
@@ -239,15 +241,15 @@ Gorelick N, Hancher M, Dixon M et al (2017) Google Earth Engine: planetary-scale
 
 Kale A, Sun Z, Ma X (2023) Utility of the Python package Geoweaver_cwl for improving workflow reusability: an illustration with multidisciplinary use cases. Earth Sci Inform 16:2955–2961. https://doi.org/10.1007/s12145-023-01045-0
 
-Lebo T, Sahoo S, McGuinness D et al (2013) PROV-O: The PROV Ontology. W3C Recommendation, 30 April 2013. https://www.w3.org/TR/prov-o/
+Lebo T, Sahoo S, McGuinness D (eds) (2013) PROV-O: The PROV Ontology. W3C Recommendation, 30 April 2013. https://www.w3.org/TR/prov-o/
 
-Mitchell SN et al (2022) FAIR data pipeline: provenance-driven data management for traceable scientific workflows. Philos Trans R Soc A 380:20210300. https://doi.org/10.1098/rsta.2021.0300
+Mitchell SN, Lahiff A, Cummings N et al (2022) FAIR data pipeline: provenance-driven data management for traceable scientific workflows. Philos Trans R Soc A 380(2233):20210300. https://doi.org/10.1098/rsta.2021.0300
 
-Munoz-Sabater J, Dutra E, Agusti-Panareda A et al (2021) ERA5-Land: a state-of-the-art global reanalysis dataset for land applications. Earth Syst Sci Data 13:4349–4383. https://doi.org/10.5194/essd-13-4349-2021
+Muñoz-Sabater J, Dutra E, Agustí-Panareda A et al (2021) ERA5-Land: a state-of-the-art global reanalysis dataset for land applications. Earth Syst Sci Data 13:4349–4383. https://doi.org/10.5194/essd-13-4349-2021
 
 Nobre AD, Cuartas LA, Hodnett M et al (2011) Height Above the Nearest Drainage – a hydrologically relevant new terrain model. J Hydrol 404:13–29. https://doi.org/10.1016/j.jhydrol.2011.03.051
 
-Soiland-Reyes S, Sefton P, Crosas M et al (2022) Packaging research artefacts with RO-Crate. Data Sci 5:97–138. https://doi.org/10.3233/DS-210053
+Soiland-Reyes S, Sefton P, Crosas M et al (2022) Packaging research artefacts with RO-Crate. Data Sci 5(2):97–138. https://doi.org/10.3233/DS-210053
 
 Tuyishime AP (2026) SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.1. Zenodo [Software]. https://doi.org/10.5281/zenodo.21677162
 
@@ -314,7 +316,9 @@ Zong L, Ngarukiyimana JP, Yang Y et al (2024) Malaria transmission risk is proje
 
 **Fig. 2** Spatial distribution of four district-level environmental layers for Rwanda. (a) CHIRPS annual rainfall for 2023, in millimetres; (b) ERA5-Land mean 2 m air temperature for 2023, in degrees Celsius; (c) MODIS MOD13A3 mean NDVI for 2023; and (d) percentage of district area represented by HAND values of 5 m or less. The HAND layer is a static relative-elevation descriptor and must not be interpreted as observed flooding or flood probability
 
-**Fig. 3** Standardized district profiles across the four environmental layers. Values are expressed as within-layer z scores to permit comparison despite different physical units. District ordering is based on the first principal component of the four standardized layers. The plot is descriptive and does not represent an epidemiological risk score, hazard index, or causal model
+**Fig. 3** Three independent provenance controls implemented in `R/provenance_value_class.R`. Register validation checks required fields and legal vocabularies and rejects `source-derived` combined with `placeholder`. Display classification is fail closed: an output is illustrative unless its identifier is present and its `evidence_class` is exactly `source-derived`; this step does not inspect `method_class` or independently verify real-data use. Illustrative-note selection uses one wording for a documented method on synthetic data and another for synthetic, placeholder, unknown, or incomplete material. Register validity is not shown as a prerequisite for the display or note functions because the functions can be called independently.
+
+**Supplementary Fig. S1** Standardized district profiles across the four environmental layers. Values are expressed as within-layer z scores to permit comparison despite different physical units. District ordering is based on the first principal component of the four standardized layers. The plot is descriptive and does not represent an epidemiological risk score, hazard index, or causal model
 
 ## Software Files
 
