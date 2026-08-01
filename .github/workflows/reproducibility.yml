@@ -57,7 +57,7 @@ jobs:
       - name: Verify exact helper parent
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "1d5d31d6c053aa5eccc5c3e8d60e642fe6bf7d8b"
+          test "$(git rev-parse HEAD^)" = "99b7b1c33088d5a583ecf042168eee437e12ecc5"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/reproducibility.yml"
       - name: Apply reviewed v1.2.0 transformation
         shell: python
@@ -99,38 +99,22 @@ jobs:
           if count != 1:
               raise SystemExit(f'Expected one manuscript-audit dependency block; found {count}')
           path.write_text(text, encoding='utf-8', newline='\n')
-      - name: Remove temporary helpers and restore workflow
-        shell: python
-        run: |
-          from pathlib import Path
-          for name in (
-              '.github/workflows/apply-v1.2.0-freeze.yml',
-              '.github/workflows/execute-v1.2.0-freeze.yml',
-              '.github/workflows/execute-v1.2.0-freeze-final.yml',
-          ):
-              path = Path(name)
-              if path.exists():
-                  path.unlink()
-          path = Path('.github/workflows/reproducibility.yml')
-          text = path.read_text(encoding='utf-8')
-          marker = '\n  # BEGIN TEMPORARY V1.2.0 FREEZE JOB\n'
-          if text.count(marker) != 1:
-              raise SystemExit('Temporary workflow marker not found exactly once')
-          restored = text.split(marker, 1)[0].replace('permissions:\n  contents: write', 'permissions:\n  contents: read') + '\n'
-          path.write_text(restored, encoding='utf-8', newline='\n')
-      - name: Reject development tokens and generate complete manifest
+      - name: Validate transformed release state
         run: |
           set -euo pipefail
-          if git grep -nE '1\.2\.0\.9000|1\.2\.0-dev' -- ':!paper/archive/**'; then
+          if git grep -nE '1\.2\.0\.9000|1\.2\.0-dev' -- ':!paper/archive/**' ':!.github/workflows/**'; then
             exit 1
           fi
+          python python/validate_candidate_metadata.py
+          python python/audit_manuscript.py
+      - name: Restore workflow files and generate manifest
+        run: |
+          set -euo pipefail
+          git restore --source=HEAD --staged --worktree .github/workflows
           git add -A
           python python/build_checksum_manifest.py --all-tracked --write
           python python/build_checksum_manifest.py --all-tracked --check
-      - name: Run release preflights
-        run: |
-          python python/validate_candidate_metadata.py
-          python python/audit_manuscript.py
+          test -z "$(git diff --name-only HEAD -- .github/workflows)"
       - name: Commit and push pre-DOI freeze
         run: |
           set -euo pipefail
