@@ -4,16 +4,17 @@
 
 Companion reproducibility artifact for the working Software article *An auditable cross-provider workflow for district-scale Earth-data harmonization and provenance labelling: software design and a Rwanda implementation*.
 
-## Candidate status
+## Version 1.2.0 release freeze
 
-The current branch is an **unreleased journal candidate**. It extends the published version 1.1.1 base archive with additional validators, numerical-validation workflows, figures, evidence summaries, and submission records. It must receive a new immutable GitHub tag and Zenodo version DOI before journal submission.
+The current branch is the **version 1.2.0 pre-DOI release freeze**. It extends the published version 1.1.1 base archive with additional validators, numerical-validation workflows, figures, evidence summaries, and submission records. Scientific and figure review are closed. The immutable Zenodo version DOI must still be reserved and inserted before the exact Git tag, archival publication, citation, or journal submission.
 
+- **Release-freeze version:** `1.2.0`
 - **Published base archive:** version 1.1.1, DOI `10.5281/zenodo.21677162`
 - **Concept DOI for all versions:** `10.5281/zenodo.21671788`
-- **Candidate metadata version:** `1.2.0.9000`
-- **Candidate branch:** `codex/earth-science-informatics-refinement-v1.3.0`
+- **Version DOI:** not yet reserved; no placeholder DOI is asserted
+- **Freeze branch:** `codex/earth-science-informatics-refinement-v1.3.0`
 
-Do not cite the candidate branch as though it were contained in version 1.1.1.
+Until the version DOI is published, cite version 1.1.1 only for the historical base archive and do not represent it as containing the version 1.2.0 additions.
 
 ## Scope
 
@@ -114,6 +115,6 @@ For the published base software, cite version 1.1.1:
 
 > Tuyishime AP (2026). SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.1. Zenodo. https://doi.org/10.5281/zenodo.21677162
 
-The final journal submission will cite a new candidate release DOI after the source tree, manuscript, figures, metadata, and checksums are frozen to one exact version.
+Version 1.2.0 is frozen pending DOI reservation. After the reserved version DOI is inserted, the complete manifest will be regenerated and the exact commit will be tagged and archived before journal submission.
 
 See `REPRODUCIBILITY.md`, `SECURITY_REVIEW.md`, `paper/DUAL_AGENT_REVIEW.md`, and `paper/EDITORIAL_READINESS.md`.

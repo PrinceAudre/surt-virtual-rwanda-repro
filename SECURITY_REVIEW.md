@@ -2,9 +2,9 @@
 
 This record documents the security, privacy, credential, and publication-scope review for the Earth Science Informatics journal candidate. It supplements automated checks and does not replace the author's final pre-release inspection.
 
-## Candidate status
+## Version 1.2.0 freeze status
 
-The current branch is an unreleased candidate based on published version 1.1.1. Historical F1000Research submission artifacts were removed from the active candidate tree without rewriting Git history. No new release or DOI is claimed by this branch.
+The current branch is the version 1.2.0 pre-DOI release freeze based on published version 1.1.1. Historical F1000Research submission artifacts were removed from the active tree without rewriting Git history. No version DOI, Git tag, GitHub release, Zenodo publication, or journal submission is claimed yet.
 
 ## Reviewed and cleared
 
@@ -70,7 +70,7 @@ The historical files removed from the active tree are indexed in `paper/archive/
 | External download URLs or terms may change | Release documentation records source and terms; provider-dependent builds fail visibly rather than embedding fallback data |
 | Generated outputs may contain local absolute paths | Generated evidence is inspected before archival; scripts write repository-relative metadata where possible |
 | Reviewer contact information may become outdated | Verify each address against an official institutional source immediately before submission |
-| Branch metadata may be mistaken for a published release | `CITATION.cff`, `DESCRIPTION`, README, manuscript, and readiness records identify the package as unreleased |
+| The pre-DOI freeze may be mistaken for a published release | `CITATION.cff`, `DESCRIPTION`, README, manuscript, and readiness records state that DOI reservation, exact tagging, and archival publication remain pending |
 | Historical submission files may be mistaken for active materials | Removed from the candidate tree and indexed under `paper/archive/` |
 | Public environmental layers may be overinterpreted operationally | README, manuscript, data dictionary, notices, and provenance labels state the descriptive and non-operational boundary |
 | A listed-file checksum may be mistaken for full scientific validation | Documentation separates byte integrity, software verification, numerical reproduction, and scientific interpretation |

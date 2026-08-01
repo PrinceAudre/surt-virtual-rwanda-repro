@@ -91,14 +91,14 @@ def write_summary(steps: list[dict[str, Any]], total_seconds: float) -> Path:
             "zenodo_doi": "10.5281/zenodo.21677162",
         },
         "working_package": {
-            "version": "1.2.0.9000",
-            "status": "unreleased Earth Science Informatics journal candidate",
+            "version": "1.2.0",
+            "status": "pre-DOI release freeze",
             "version_doi": None,
         },
         "integrity": {
-            "scope": "interim stable files listed in CHECKSUMS.scope",
+            "scope": "complete tracked-file release scope",
             "manifest": "CHECKSUMS.sha256",
-            "final_release_requirement": "regenerate with --all-tracked",
+            "final_release_requirement": "insert reserved DOI, regenerate manifest, and rerun on exact tag",
         },
         "status": "passed",
         "assertions": {
@@ -146,15 +146,16 @@ def main() -> None:
             [sys.executable, str(ROOT / "python" / "validate_release_contract.py")],
         ),
         run(
-            "checksum scope and manifest consistency",
+            "complete tracked-file manifest consistency",
             [
                 sys.executable,
                 str(ROOT / "python" / "build_checksum_manifest.py"),
+                "--all-tracked",
                 "--check",
             ],
         ),
         run(
-            "candidate metadata and submission-package consistency",
+            "v1.2.0 freeze metadata and submission-package consistency",
             [sys.executable, str(ROOT / "python" / "validate_candidate_metadata.py")],
         ),
     ]

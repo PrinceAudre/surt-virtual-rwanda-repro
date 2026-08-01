@@ -106,7 +106,7 @@ Table 3 maps the principal software claims to the corresponding candidate eviden
 
 The environmental fixture creates synthetic rasters in memory and exercises rainfall, temperature, NDVI, HAND, reprojection, mosaicking, temporal aggregation, zonal extraction, and GeoJSON writing. Its NDVI path uses two synthetic months and two same-month tiles in the MODIS sinusoidal coordinate system. Failure injection tests absent raster coverage, unconverted kelvin values, an inverted rainfall gradient, unscaled MODIS digital numbers, an incomplete MODIS year, all-no-data HAND input, and impossible HAND percentages. The runner records step durations and execution-environment metadata in machine-readable JSON.
 
-The interim integrity manifest is generated from the stable-file list in `CHECKSUMS.scope`. `python/build_checksum_manifest.py --check` requires the manifest to match that scope exactly, after which the runner verifies every listed digest. The evolving journal documents and development-only validators are intentionally outside the interim scope. At candidate freeze, `python/build_checksum_manifest.py --all-tracked --write` must replace it with a complete tracked-file manifest for the exact release commit. A checksum establishes byte integrity, not scientific validity.
+For the version 1.2.0 freeze, `CHECKSUMS.sha256` is generated with `python/build_checksum_manifest.py --all-tracked --write` and covers every tracked file except the manifest itself. The runner requires `--all-tracked --check` to reproduce that exact scope and then verifies every listed digest. `CHECKSUMS.scope` is retained as a historical development-scope record. The manifest must be regenerated after the reserved DOI is inserted. A checksum establishes byte integrity, not scientific validity.
 
 GitHub Actions restores the locked environment, repeats the account-free checks on a clean hosted runner, generates manuscript figures from the GeoJSON files, and retains the evidence bundle.
 
@@ -149,7 +149,7 @@ Supplementary Figure S1 standardizes values within each layer to compare distric
 
 ### Account-free verification and release-contract results
 
-All 41 explicit verification outcomes passed on the clean hosted runner. The positive fixtures established expected transformations on controlled inputs. The projected portability fixture completed with arbitrary administrative identifiers and non-Rwanda geometry. Each deliberately malformed transformation failed for the intended reason. The independent validator accepted all five archived GeoJSON files and rejected all five corrupted copies. The checksum builder confirmed that the interim manifest matched its declared stable-file scope, and every listed digest was verified.
+All 41 explicit verification outcomes passed on the clean hosted runner. The positive fixtures established expected transformations on controlled inputs. The projected portability fixture completed with arbitrary administrative identifiers and non-Rwanda geometry. Each deliberately malformed transformation failed for the intended reason. The independent validator accepted all five archived GeoJSON files and rejected all five corrupted copies. The checksum builder confirmed that the complete all-tracked manifest matched the frozen repository scope, and every listed digest was verified.
 
 These outcomes support claims about specified software behaviour, schema enforcement, failure handling, and listed-file integrity. They do not establish source-product accuracy, scientific validity of the HAND threshold, cross-country real-data portability, or suitability for a downstream model.
 
@@ -177,7 +177,7 @@ The portability fixture narrows another claim. It demonstrates that the core fun
 
 The design is related to broader provenance and research-object approaches but remains intentionally lightweight. Human-readable provenance strings, file-level documentation, checksums, machine-readable test summaries, and a versioned archive improve inspectability. They do not constitute a formal provenance graph or a standards-conformant research object. Future packaging could adopt PROV-O, RO-Crate, or Workflow Run RO-Crate where the additional semantic and interoperability benefits justify the maintenance burden (Lebo et al. 2013; Soiland-Reyes et al. 2022).
 
-The release has further limitations. Annual district summaries suppress seasonality, extremes, and within-district heterogeneity. MODIS quality flags are not applied. Environmental values are point estimates without uncertainty or quality fields. Provider-dependent rebuilds require accounts and network access. The real-data implementation covers one country and one reference year. Only the CHIRPS layer currently has independent public-data computational validation. The candidate branch also extends the published v1.1.1 base archive; therefore a new immutable release and version DOI are required before journal submission. Table 4 consolidates these limitations and their interpretation consequences.
+The release has further limitations. Annual district summaries suppress seasonality, extremes, and within-district heterogeneity. MODIS quality flags are not applied. Environmental values are point estimates without uncertainty or quality fields. Provider-dependent rebuilds require accounts and network access. The real-data implementation covers one country and one reference year. Only the CHIRPS layer currently has independent public-data computational validation. Version 1.2.0 extends the published v1.1.1 base archive; its immutable version DOI must be reserved, inserted, and archived on the exact tagged commit before journal submission. Table 4 consolidates these limitations and their interpretation consequences.
 
 Future work should add MODIS quality filtering, monthly and seasonal summaries, uncertainty and data-quality fields, independent ERA5-Land, MODIS, and HAND comparisons, cross-platform real-data rebuilds, a second-country portability study, and standards-based research-object metadata. These additions would strengthen scientific validation and machine-actionable reuse without changing the core release contract.
 
@@ -190,7 +190,7 @@ The workflow converts four heterogeneous Earth-data products into standardized, 
 - **Project name:** SuRT-Virtual Rwanda reproducibility artifact
 - **Project home page:** https://github.com/PrinceAudre/surt-virtual-rwanda-repro
 - **Published base archive:** version 1.1.1, https://doi.org/10.5281/zenodo.21677162
-- **Journal candidate:** development version 1.2.0.9000 on `codex/earth-science-informatics-refinement-v1.3.0`; this branch contains validation and submission-package additions not present in version 1.1.1 and must receive a new immutable version archive before submission
+- **Release freeze:** version 1.2.0 on `codex/earth-science-informatics-refinement-v1.3.0`; the immutable Zenodo version DOI will be inserted after reservation and before exact tagging, archival publication, citation, or submission
 - **Operating systems:** Linux, Windows, or macOS for the account-free workflow; real-data provider clients are subject to their own platform requirements
 - **Programming languages:** R 4.6.0 and Python 3
 - **Core dependencies:** `terra`, `sf`, `exactextractr`, and `jsonlite`, with versions recorded in `renv.lock`
@@ -199,7 +199,7 @@ The workflow converts four heterogeneous Earth-data products into standardized, 
 - **Licence:** MIT for code; data retain the per-file terms documented in `NOTICE.md`
 - **Restrictions on non-academic use:** none for the MIT-licensed code; users must comply with source-data terms
 
-Before submission, the candidate branch, manuscript, metadata, figures, complete tracked-file checksum manifest, release tag, and Zenodo version DOI will be frozen to one exact version. The final submitted manuscript will replace the branch reference above with that immutable version DOI.
+The version 1.2.0 source tree, manuscript, metadata, and figures are frozen in a pre-DOI state, and the complete tracked-file checksum manifest is generated. Before submission, the reserved version DOI will be inserted, the manifest regenerated, and the exact commit tagged and archived. The final submitted manuscript will replace the branch reference above with that immutable version DOI.
 
 ## Statements and Declarations
 
@@ -221,9 +221,9 @@ Tuyishime Audre Prince: Conceptualization, Data Curation, Methodology, Software,
 
 ### Data and software availability
 
-The published base outputs and software are archived in Zenodo version 1.1.1 (Tuyishime 2026). The additional verification, numerical-validation, and journal-packaging files described in this working manuscript are in the named candidate branch and will be included in a new immutable archive before submission. The final manuscript will cite that exact archive.
+The published base outputs and software remain archived in Zenodo version 1.1.1 (Tuyishime 2026). Version 1.2.0 includes the additional verification, numerical-validation, figure, integrity, and journal-packaging files described here. Its immutable Zenodo version DOI is pending reservation and will be inserted before the exact commit is tagged, archived, cited, or submitted.
 
-The repository contains district geometry and four environmental GeoJSON layers. `NOTICE.md` supplies per-file attribution and licence information, `DATA_DICTIONARY.md` defines fields, `CHECKSUMS.scope` defines the interim stable-file scope, and `CHECKSUMS.sha256` supplies the corresponding listed-file integrity contract. No disease data are associated with the article.
+The repository contains district geometry and four environmental GeoJSON layers. `NOTICE.md` supplies per-file attribution and licence information, `DATA_DICTIONARY.md` defines fields, and `CHECKSUMS.sha256` supplies the complete all-tracked integrity contract; `CHECKSUMS.scope` is retained only as a historical development-scope record. No disease data are associated with the article.
 
 ERA5-Land is third-party data under the Copernicus Products licence. A reader can obtain it through the same route as the author by creating a free Climate Data Store account, accepting the product terms, configuring the official `cdsapi` client, and running `python/fetch_era5land_temperature.py`. The corresponding transformation is implemented in `R/build_relief_climate_temperature.R`.
 
@@ -308,7 +308,7 @@ Zong L, Ngarukiyimana JP, Yang Y et al (2024) Malaria transmission risk is proje
 | Independent public-data validation covers CHIRPS only | ERA5-Land, MODIS, and HAND require equivalent checks before stronger numerical claims |
 | Provider-dependent rebuilds require accounts and network access | Only the fixtures, contract checks, and CHIRPS validation are fully account-free |
 | Lightweight provenance is not PROV-O or RO-Crate conformant | Machine-actionable interoperability remains limited |
-| Journal candidate extends the published v1.1.1 base | A new exact release, complete tracked-file manifest, and version DOI are required before submission |
+| Version 1.2.0 extends the published v1.1.1 base | The reserved version DOI, regenerated complete manifest, exact tag, and immutable archive are required before submission |
 
 ## Figure captions
 
@@ -322,7 +322,7 @@ Zong L, Ngarukiyimana JP, Yang Y et al (2024) Malaria transmission risk is proje
 
 ## Software Files
 
-The published v1.1.1 archive contains the base software and district outputs. The current journal candidate adds the validators, numerical-validation workflow, figure pipeline, machine-readable evidence summaries, manifest builder, and submission records described in this manuscript. A new immutable release containing the complete candidate package is required before submission.
+Version 1.2.0 contains the base software and district outputs together with the validators, numerical-validation workflow, figure pipeline, machine-readable evidence summaries, manifest builder, and submission records described in this manuscript. Its immutable version DOI must be inserted and the exact commit tagged and archived before submission.
 
 Principal directories and files are:
 

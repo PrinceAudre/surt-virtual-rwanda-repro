@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate candidate metadata and active submission-package consistency."""
+"""Validate the version 1.2.0 pre-DOI release freeze and package consistency."""
 
 from __future__ import annotations
 
@@ -14,8 +14,8 @@ EXPECTED_TITLE = (
     "harmonization and provenance labelling: software design and a Rwanda "
     "implementation"
 )
-EXPECTED_DESCRIPTION_VERSION = "1.2.0.9000"
-EXPECTED_CFF_VERSION = "1.2.0-dev"
+EXPECTED_DESCRIPTION_VERSION = "1.2.0"
+EXPECTED_CFF_VERSION = "1.2.0"
 BASE_VERSION = "1.1.1"
 BASE_DOI = "10.5281/zenodo.21677162"
 BRANCH = "codex/earth-science-informatics-refinement-v1.3.0"
@@ -119,7 +119,7 @@ def main() -> None:
     cff_version = top_level_yaml_value(citation, "version")
     require(
         cff_version == EXPECTED_CFF_VERSION,
-        f"CITATION.cff development version is {EXPECTED_CFF_VERSION}",
+        f"CITATION.cff freeze version is {EXPECTED_CFF_VERSION}",
     )
     require(
         top_level_yaml_value(citation, "cff-version") == "1.2.0",
@@ -127,11 +127,11 @@ def main() -> None:
     )
     require(
         top_level_yaml_value(citation, "doi") is None,
-        "unreleased CITATION.cff has no top-level DOI",
+        "pre-DOI freeze has no invented top-level DOI",
     )
     require(
         top_level_yaml_value(citation, "date-released") is None,
-        "unreleased CITATION.cff has no release date",
+        "pre-DOI freeze has no premature release date",
     )
 
     for label, text in {
@@ -187,15 +187,15 @@ def main() -> None:
     )
 
     require(
-        "unreleased" in citation.casefold(),
-        "CITATION.cff explicitly labels the package as unreleased",
+        "release freeze" in citation.casefold() and "doi" in citation.casefold(),
+        "CITATION.cff explicitly labels the pre-DOI release freeze",
     )
     require(
-        "new immutable" in manuscript.casefold(),
-        "manuscript requires a new immutable archive before submission",
+        "reserved version doi" in manuscript.casefold() and "before submission" in manuscript.casefold(),
+        "manuscript requires DOI insertion and immutable archival before submission",
     )
 
-    print("\nCandidate metadata validation passed.")
+    print("\nVersion 1.2.0 pre-DOI release-freeze metadata validation passed.")
 
 
 if __name__ == "__main__":

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Build or verify the repository SHA-256 manifest.
 
-The default mode reads CHECKSUMS.scope, which defines the interim stable-file
-contract used while the journal candidate is evolving. Release preparation must
-use --all-tracked so that every tracked file, except the manifest itself, is
-included in the frozen candidate archive.
+The default mode reads CHECKSUMS.scope, retained as a historical development
+scope. Versioned release verification uses --all-tracked so that every tracked
+file, except the manifest itself, is included in the frozen release archive.
 """
 
 from __future__ import annotations
@@ -86,7 +85,7 @@ def digest_file(relative: str) -> str:
 def render(entries: list[str], mode: str) -> str:
     if mode == "all-tracked":
         scope_text = (
-            "complete tracked-file candidate scope generated with "
+            "complete tracked-file release scope generated with "
             "--all-tracked"
         )
     else:
@@ -94,8 +93,8 @@ def render(entries: list[str], mode: str) -> str:
     header = [
         "# SHA-256 checksums for the SuRT-Virtual Rwanda reproducibility artifact.",
         f"# Scope: {scope_text}.",
-        "# Verify or rebuild: python python/build_checksum_manifest.py --check",
-        "# Final release: python python/build_checksum_manifest.py --all-tracked --write",
+        "# Verify release: python python/build_checksum_manifest.py --all-tracked --check",
+        "# Rebuild release: python python/build_checksum_manifest.py --all-tracked --write",
     ]
     rows = [f"{digest_file(relative)}  {relative}" for relative in entries]
     return "\n".join(header + rows) + "\n"

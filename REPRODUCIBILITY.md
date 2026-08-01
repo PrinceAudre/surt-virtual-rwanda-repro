@@ -1,10 +1,10 @@
 # Reproducibility
 
-## Candidate and archive boundary
+## Version 1.2.0 freeze and archive boundary
 
-The current branch is an unreleased Earth Science Informatics journal candidate. It extends the published version 1.1.1 base archive, DOI `10.5281/zenodo.21677162`, with additional validators, figures, evidence summaries, and submission records. A new immutable GitHub tag and Zenodo version DOI are required before submission.
+The current branch is the version 1.2.0 pre-DOI release freeze. It extends the published version 1.1.1 base archive, DOI `10.5281/zenodo.21677162`, with additional validators, figures, evidence summaries, and submission records. The immutable Zenodo version DOI must be reserved and inserted before the exact Git tag and archival publication.
 
-The commands below describe the candidate branch. They must not be attributed to version 1.1.1 unless the cited file is present in that archive.
+The commands below describe version 1.2.0. They must not be attributed to version 1.1.1 unless the cited file is present in that historical archive.
 
 ## Environment restoration
 
@@ -33,7 +33,7 @@ The command executes 41 explicit outcomes in six groups:
 5. five valid GeoJSON release-layer contract checks in `python/validate_release_contract.py`; and
 6. five deliberate release-corruption rejections in the same Python validator.
 
-The runner also verifies every file currently listed in `CHECKSUMS.sha256` and writes:
+The runner also verifies the complete all-tracked release manifest in `CHECKSUMS.sha256` and writes:
 
 - `generated/fixture_pipeline_output.geojson`;
 - `generated/release_contract_summary.json`; and
@@ -130,9 +130,9 @@ The generated directory is excluded from version control. GitHub Actions retains
 
 ## Integrity scope
 
-`CHECKSUMS.sha256` is currently an explicit listed-file contract. It is not a complete manifest for every file in the evolving candidate branch. The final candidate release must regenerate a complete frozen manifest after all source, manuscript, figure, metadata, and submission files are finalized and before the Git tag and Zenodo deposit are created.
+For the version 1.2.0 freeze, `CHECKSUMS.sha256` is generated with `python python/build_checksum_manifest.py --all-tracked --write` and covers every tracked file except the manifest itself. Verify it with `python python/build_checksum_manifest.py --all-tracked --check`. `CHECKSUMS.scope` is retained as a historical development-scope record and is not the release verification scope.
 
-A successful checksum verification establishes byte-level integrity of listed files. It does not establish scientific validity.
+A successful checksum verification establishes byte-level integrity of tracked files. It does not establish scientific validity. The manifest must be regenerated after the reserved DOI is inserted.
 
 ## Reproducibility limits
 

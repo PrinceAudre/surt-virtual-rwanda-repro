@@ -238,11 +238,12 @@ def main() -> None:
         "manuscript contains no unresolved editorial placeholder",
     )
     require(
-        "new immutable" in text.casefold()
-        and "version doi" in text.casefold()
-        and "before submission" in text.casefold(),
-        "candidate release and DOI dependency is explicit",
-    )
+    "version 1.2.0" in text.casefold()
+    and "reserved version doi" in text.casefold()
+    and "before submission" in text.casefold()
+    and "tagged and archived" in text.casefold(),
+    "v1.2.0 DOI, tag, and archive dependency is explicit",
+)
 
     print("\nManuscript structure and citation audit passed.")
 
