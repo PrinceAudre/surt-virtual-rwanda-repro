@@ -57,7 +57,7 @@ jobs:
       - name: Verify exact helper parent
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "1628d4ad5c3e659147511afff9f23d0724241dc1"
+          test "$(git rev-parse HEAD^)" = "1d5d31d6c053aa5eccc5c3e8d60e642fe6bf7d8b"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/reproducibility.yml"
       - name: Apply reviewed v1.2.0 transformation
         shell: python
@@ -124,6 +124,7 @@ jobs:
           if git grep -nE '1\.2\.0\.9000|1\.2\.0-dev' -- ':!paper/archive/**'; then
             exit 1
           fi
+          git add -A
           python python/build_checksum_manifest.py --all-tracked --write
           python python/build_checksum_manifest.py --all-tracked --check
       - name: Run release preflights
