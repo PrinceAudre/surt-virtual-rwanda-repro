@@ -46,7 +46,7 @@ jobs:
 
   # BEGIN TEMPORARY V1.2.0 FREEZE JOB
   freeze-v1-2-0:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/codex/earth-science-informatics-refinement-v1.3.0'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
       - name: Verify exact helper parent
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "d5a60a041914e3bf1902600b6954dd5e991c4a8e"
+          test "$(git rev-parse HEAD^)" = "1a0ae1ee104a9a271d3fdcda2dbe5b49e49407c0"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/reproducibility.yml"
       - name: Apply reviewed v1.2.0 transformation
         shell: python
