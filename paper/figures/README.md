@@ -23,6 +23,6 @@ Generated files are written to `paper/figures/generated/` and uploaded by GitHub
 - Figure values are read from the archived GeoJSON files, not copied manually.
 - The script fails if a layer does not contain exactly 30 districts, a required field is absent, or a value is non-finite.
 - The map palette is perceptually ordered and designed to remain interpretable when converted to greyscale.
-- Supplementary Figure S1 uses a colour-blind-friendly four-series palette with redundant point symbols and line types, so interpretation does not depend on colour alone.
+- Supplementary Figure S1 uses the colour-blind-friendly blue, orange, green, and reddish-purple palette encoded in `R/make_manuscript_figures.R`, together with redundant point symbols and line types, so interpretation does not depend on colour alone.
 - Vector SVG versions of the four maps are retained for layout flexibility; Figure 3 is generated as SVG and EPS line art, and the combined map plus Supplementary Figure S1 are produced as 600 dpi TIFF files.
 - Captions, source attribution, and interpretive limitations remain in the manuscript rather than being embedded in the graphics.
