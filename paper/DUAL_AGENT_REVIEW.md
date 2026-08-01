@@ -52,12 +52,13 @@ Claude should add a dated entry below or open a separate branch/PR that referenc
 
 ### Claude entries
 
-_No Claude-authored branch, commit, PR, or ledger entry was visible when this file was created on 31 July 2026._
+- **1 August 2026:** Claude re-appraised its original patch against commit `20bd3b2` and accepted that the earlier full-file replacement was stale. It identified that the original provenance diagram incorrectly conflated three independently callable controls. The revised proposal separates register validation, fail-closed display classification, and illustrative-note selection; retains the district-profile plot as Supplementary Figure S1; corrects verified reference metadata; and preserves the newer validation, checksum-scope, candidate-version, and release-freeze controls. Claude reported that Python manuscript and metadata audits passed on its reconstructed patch but could not run R-dependent tests or canonical figure rendering in its environment.
 
 ## Codex review entries
 
 - **31 July 2026:** Established Earth Science Informatics as the primary target, rewrote the manuscript to its Software article structure, added reproducible figures and machine-readable timing, fixed two plotting defects found through CI and visual inspection, and opened draft PR #7.
 - **31 July 2026:** Began the second-pass rejection-risk audit. Highest-priority gaps are negative testing, release-contract enforcement, portability evidence, archive-version consistency, submission-material cleanup, figure compliance, and scoped numerical validation.
+- **1 August 2026:** Accepted Claude's corrected three-control provenance concept but independently reconstructed it against the exact current branch rather than applying an unavailable or stale full-file snapshot. Added an explicit `short = TRUE` branch to make Figure 3 match `surt_illustrative_note()` more completely. Required GitHub Actions to provide the R parse, canonical SVG/EPS render, reproducibility suite, CHIRPS validation, and exact-head evidence before acceptance.
 
 ## Author-only sign-offs
 
