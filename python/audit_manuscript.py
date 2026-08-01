@@ -84,7 +84,7 @@ EXPECTED_DOIS = {
     "10.5194/essd-13-4349-2021",
     "10.1016/j.jhydrol.2011.03.051",
     "10.3233/DS-210053",
-    "10.5281/zenodo.21677162",
+    "10.5281/zenodo.21744708",
     "10.1038/sdata.2016.18",
     "10.1038/s43247-024-01717-9",
 }
@@ -96,6 +96,9 @@ FORBIDDEN_ACTIVE_TERMS = [
     "operational decision support",
     "validated flood hazard",
     "validated flood susceptibility",
+    "pre-DOI",
+    "pending reservation",
+    "reserved version DOI",
 ]
 
 
@@ -238,12 +241,12 @@ def main() -> None:
         "manuscript contains no unresolved editorial placeholder",
     )
     require(
-    "version 1.2.0" in text.casefold()
-    and "reserved version doi" in text.casefold()
-    and "before submission" in text.casefold()
-    and "tagged and archived" in text.casefold(),
-    "v1.2.0 DOI, tag, and archive dependency is explicit",
-)
+        "version 1.2.0" in text.casefold()
+        and "10.5281/zenodo.21744708" in text
+        and "v1.2.0" in text
+        and "archived" in text.casefold(),
+        "v1.2.0 DOI, tag, and immutable archive identity is explicit",
+    )
 
     print("\nManuscript structure and citation audit passed.")
 

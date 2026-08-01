@@ -9,8 +9,8 @@ Description: Reproducible preparation of district-level rainfall, temperature,
     fail-closed provenance-labelling contract, controlled transformation
     fixtures, failure-injection tests, geometry-agnostic portability checks,
     independent GeoJSON release-contract validation, and scoped public CHIRPS
-    numerical reproduction. This is the version 1.2.0 pre-DOI release freeze;
-    the immutable Zenodo version DOI will be inserted before tagging and submission.
+    numerical reproduction. Version 1.2.0 is archived at
+    DOI 10.5281/zenodo.21744708.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Imports:

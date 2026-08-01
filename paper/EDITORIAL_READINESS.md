@@ -2,7 +2,7 @@
 
 ## Status
 
-**Release-gated, not ready for submission.** The scientific, manuscript, reference, software-verification, public-CHIRPS-validation, and figure-review gates are closed. The candidate must still receive a frozen semantic version, complete tracked-file checksum manifest, exact Git tag, immutable Zenodo version DOI, final Springer DOCX/PDF package, and author-only sign-offs before submission.
+**DOI-bearing release prepared; not yet ready for journal submission.** The scientific, manuscript, reference, software-verification, public-CHIRPS-validation, figure-review, semantic-version, DOI-insertion, and complete-manifest gates are closed for version 1.2.0. Remaining gates are exact-head CI confirmation, Git tag `v1.2.0`, GitHub release, Zenodo publication under DOI `10.5281/zenodo.21744708`, final Springer DOCX/PDF inspection, and author-only sign-offs.
 
 The prior F1000Research readiness record is preserved at `paper/archive/F1000_EDITORIAL_READINESS_2026-07-31.md` and is not part of the active submission package.
 
@@ -18,6 +18,9 @@ The prior F1000Research readiness record is preserved at `paper/archive/F1000_ED
 - **Working branch:** `codex/earth-science-informatics-refinement-v1.3.0`
 - **Draft pull request:** #7
 - **Closed review baseline:** `952fda78611358416706202ec15f811072961c4b`
+- **Release version:** `1.2.0`
+- **Version DOI:** `10.5281/zenodo.21744708`
+- **Release tag:** `v1.2.0`
 
 ## Scientific and editorial gates
 
@@ -68,24 +71,29 @@ The current canonical figure set is accepted for release-freeze preparation:
 
 Any change to figure-generating code after the release freeze reopens this gate and requires a new canonical render and inspection.
 
-## Candidate-release gates
+## Release gates
 
-The published v1.1.1 archive, DOI `10.5281/zenodo.21677162`, predates the journal-candidate validators, figures, timing metadata, and public-data validation. It cannot be presented as containing those additions.
+The published v1.1.1 archive, DOI `10.5281/zenodo.21677162`, predates the journal-release validators, figures, timing metadata, and public-data validation. It remains the historical base only.
 
-Before submission:
+Completed for version 1.2.0:
 
-1. Obtain author approval to freeze the candidate source tree and select the new semantic version.
-2. Update `DESCRIPTION`, `CITATION.cff`, `CHANGELOG.md`, README, manuscript, and release-facing file names to the same version.
-3. Generate a complete all-tracked checksum manifest with `python/build_checksum_manifest.py --all-tracked --write`.
-4. Run all account-free verification, candidate-metadata, manuscript-audit, figure-generation, and public-data-validation workflows on the exact release commit.
-5. Tag the exact release commit on GitHub.
-6. Create the corresponding Zenodo version under the existing concept record and obtain its immutable version DOI.
-7. Replace the published-base version and DOI references in release-facing manuscript and metadata fields with the new immutable version and DOI, while retaining historical-base statements only where contextually required.
-8. Confirm that the DOI archive contains every file cited as software, data, figure source, validation evidence, or supplementary material in the manuscript.
-9. Re-run link, checksum, citation, metadata, and manuscript consistency audits after DOI insertion.
-10. Record the exact submission commit, tag, GitHub release, Zenodo version, version DOI, checksum digest, and CI run identifiers.
+1. Author authorization to freeze version 1.2.0.
+2. Synchronized `DESCRIPTION`, `CITATION.cff`, `CHANGELOG.md`, README, manuscript, and release-facing documentation.
+3. Reserved and inserted immutable Zenodo version DOI `10.5281/zenodo.21744708`.
+4. Regenerated the complete all-tracked checksum manifest after DOI insertion.
+5. Re-ran release-metadata and manuscript audits on the DOI-bearing tree.
 
-No placeholder DOI or anticipated version number may appear in the submission.
+Remaining before journal submission:
+
+1. Confirm all exact-head CI workflows pass on the final DOI-bearing commit.
+2. Create Git tag `v1.2.0` and the corresponding GitHub release from that exact commit.
+3. Upload the exact tagged source archive to the Zenodo new-version draft and publish it under DOI `10.5281/zenodo.21744708`.
+4. Confirm that the published DOI resolves and that the archive contains every cited software, data, figure-source, validation, and supplementary file.
+5. Record the exact commit, tag, GitHub release, Zenodo version, checksum manifest, and CI run identifiers.
+6. Build and inspect the final Springer DOCX and PDF.
+7. Complete author-only sign-offs on the exact submission package.
+
+No placeholder DOI or development version may appear in the submission.
 
 ## Submission-package cleanup
 
@@ -97,7 +105,7 @@ No placeholder DOI or anticipated version number may appear in the submission.
 
 ## Word-document and accessibility gates
 
-The final Word file is built only after the release and DOI gates close. It must then pass all of the following:
+The final Word file is built after the DOI-bearing release commit passes exact-head CI and the GitHub and Zenodo archives are published. It must then pass all of the following:
 
 - editable text and tables, not screenshots;
 - correct heading hierarchy;

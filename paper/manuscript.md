@@ -73,7 +73,7 @@ The provenance module consumes a register row containing an identifier, display 
 - unknown, incomplete, synthetic, and placeholder entries default to `illustrative`; and
 - illustrative outputs receive an explanatory note.
 
-Figure 3 separates the implementation into three independent controls. First, `surt_method_register_ok()` validates the required register structure, legal vocabularies, and the prohibition on combining `source-derived` evidence with a `placeholder` method. Second, `surt_output_is_illustrative()` applies the fail-closed display rule independently: an output remains illustrative unless its identifier is present and its `evidence_class` is exactly `source-derived`; this function does not inspect `method_class` or independently verify that real or public data were used. Third, `surt_illustrative_note()` selects one wording for a documented method on synthetic data and another for synthetic, placeholder, unknown, or incomplete material. The module validates declarations and presentation behaviour. It does not independently establish that a citation is correct, that every external application routes values through the module, or that a declared method was implemented faithfully outside the released repository. Provenance is recorded as human-readable file and feature metadata; the current candidate does not claim PROV-O or RO-Crate conformance.
+Figure 3 separates the implementation into three independent controls. First, `surt_method_register_ok()` validates the required register structure, legal vocabularies, and the prohibition on combining `source-derived` evidence with a `placeholder` method. Second, `surt_output_is_illustrative()` applies the fail-closed display rule independently: an output remains illustrative unless its identifier is present and its `evidence_class` is exactly `source-derived`; this function does not inspect `method_class` or independently verify that real or public data were used. Third, `surt_illustrative_note()` selects one wording for a documented method on synthetic data and another for synthetic, placeholder, unknown, or incomplete material. The module validates declarations and presentation behaviour. It does not independently establish that a citation is correct, that every external application routes values through the module, or that a declared method was implemented faithfully outside the released repository. Provenance is recorded as human-readable file and feature metadata; the current release does not claim PROV-O or RO-Crate conformance.
 
 ### Input and output contract
 
@@ -102,11 +102,11 @@ The runner executes 41 explicit outcomes in six groups:
 - five valid release-layer contract checks; and
 - five deliberate release-corruption rejections.
 
-Table 3 maps the principal software claims to the corresponding candidate evidence and verification mechanism.
+Table 3 maps the principal software claims to the corresponding release evidence and verification mechanism.
 
 The environmental fixture creates synthetic rasters in memory and exercises rainfall, temperature, NDVI, HAND, reprojection, mosaicking, temporal aggregation, zonal extraction, and GeoJSON writing. Its NDVI path uses two synthetic months and two same-month tiles in the MODIS sinusoidal coordinate system. Failure injection tests absent raster coverage, unconverted kelvin values, an inverted rainfall gradient, unscaled MODIS digital numbers, an incomplete MODIS year, all-no-data HAND input, and impossible HAND percentages. The runner records step durations and execution-environment metadata in machine-readable JSON.
 
-For the version 1.2.0 freeze, `CHECKSUMS.sha256` is generated with `python/build_checksum_manifest.py --all-tracked --write` and covers every tracked file except the manifest itself. The runner requires `--all-tracked --check` to reproduce that exact scope and then verifies every listed digest. `CHECKSUMS.scope` is retained as a historical development-scope record. The manifest must be regenerated after the reserved DOI is inserted. A checksum establishes byte integrity, not scientific validity.
+For version 1.2.0, `CHECKSUMS.sha256` is generated with `python/build_checksum_manifest.py --all-tracked --write` and covers every tracked file except the manifest itself. The runner requires `--all-tracked --check` to reproduce that exact scope and then verifies every listed digest. `CHECKSUMS.scope` is retained as a historical development-scope record. The committed manifest corresponds to the DOI-bearing release tree. A checksum establishes byte integrity, not scientific validity.
 
 GitHub Actions restores the locked environment, repeats the account-free checks on a clean hosted runner, generates manuscript figures from the GeoJSON files, and retains the evidence bundle.
 
@@ -177,7 +177,7 @@ The portability fixture narrows another claim. It demonstrates that the core fun
 
 The design is related to broader provenance and research-object approaches but remains intentionally lightweight. Human-readable provenance strings, file-level documentation, checksums, machine-readable test summaries, and a versioned archive improve inspectability. They do not constitute a formal provenance graph or a standards-conformant research object. Future packaging could adopt PROV-O, RO-Crate, or Workflow Run RO-Crate where the additional semantic and interoperability benefits justify the maintenance burden (Lebo et al. 2013; Soiland-Reyes et al. 2022).
 
-The release has further limitations. Annual district summaries suppress seasonality, extremes, and within-district heterogeneity. MODIS quality flags are not applied. Environmental values are point estimates without uncertainty or quality fields. Provider-dependent rebuilds require accounts and network access. The real-data implementation covers one country and one reference year. Only the CHIRPS layer currently has independent public-data computational validation. Version 1.2.0 extends the published v1.1.1 base archive; its immutable version DOI must be reserved, inserted, and archived on the exact tagged commit before journal submission. Table 4 consolidates these limitations and their interpretation consequences.
+The release has further limitations. Annual district summaries suppress seasonality, extremes, and within-district heterogeneity. MODIS quality flags are not applied. Environmental values are point estimates without uncertainty or quality fields. Provider-dependent rebuilds require accounts and network access. The real-data implementation covers one country and one reference year. Only the CHIRPS layer currently has independent public-data computational validation. Version 1.2.0 extends the published v1.1.1 base archive and is archived at DOI 10.5281/zenodo.21744708 under Git tag `v1.2.0`. Table 4 consolidates these limitations and their interpretation consequences.
 
 Future work should add MODIS quality filtering, monthly and seasonal summaries, uncertainty and data-quality fields, independent ERA5-Land, MODIS, and HAND comparisons, cross-platform real-data rebuilds, a second-country portability study, and standards-based research-object metadata. These additions would strengthen scientific validation and machine-actionable reuse without changing the core release contract.
 
@@ -190,7 +190,7 @@ The workflow converts four heterogeneous Earth-data products into standardized, 
 - **Project name:** SuRT-Virtual Rwanda reproducibility artifact
 - **Project home page:** https://github.com/PrinceAudre/surt-virtual-rwanda-repro
 - **Published base archive:** version 1.1.1, https://doi.org/10.5281/zenodo.21677162
-- **Release freeze:** version 1.2.0 on `codex/earth-science-informatics-refinement-v1.3.0`; the immutable Zenodo version DOI will be inserted after reservation and before exact tagging, archival publication, citation, or submission
+- **Release archive:** version 1.2.0, https://doi.org/10.5281/zenodo.21744708, Git tag `v1.2.0`
 - **Operating systems:** Linux, Windows, or macOS for the account-free workflow; real-data provider clients are subject to their own platform requirements
 - **Programming languages:** R 4.6.0 and Python 3
 - **Core dependencies:** `terra`, `sf`, `exactextractr`, and `jsonlite`, with versions recorded in `renv.lock`
@@ -199,7 +199,7 @@ The workflow converts four heterogeneous Earth-data products into standardized, 
 - **Licence:** MIT for code; data retain the per-file terms documented in `NOTICE.md`
 - **Restrictions on non-academic use:** none for the MIT-licensed code; users must comply with source-data terms
 
-The version 1.2.0 source tree, manuscript, metadata, and figures are frozen in a pre-DOI state, and the complete tracked-file checksum manifest is generated. Before submission, the reserved version DOI will be inserted, the manifest regenerated, and the exact commit tagged and archived. The final submitted manuscript will replace the branch reference above with that immutable version DOI.
+The version 1.2.0 source tree, manuscript, metadata, figures, and complete tracked-file checksum manifest are synchronized to the immutable archive DOI 10.5281/zenodo.21744708 and Git tag `v1.2.0`. Journal submission uses this exact archived version.
 
 ## Statements and Declarations
 
@@ -221,7 +221,7 @@ Tuyishime Audre Prince: Conceptualization, Data Curation, Methodology, Software,
 
 ### Data and software availability
 
-The published base outputs and software remain archived in Zenodo version 1.1.1 (Tuyishime 2026). Version 1.2.0 includes the additional verification, numerical-validation, figure, integrity, and journal-packaging files described here. Its immutable Zenodo version DOI is pending reservation and will be inserted before the exact commit is tagged, archived, cited, or submitted.
+The complete version 1.2.0 outputs, software, validators, numerical-validation workflow, figures, integrity metadata, and journal-packaging files are archived at Zenodo DOI 10.5281/zenodo.21744708 (Tuyishime 2026). The earlier version 1.1.1 archive remains the historical base at DOI 10.5281/zenodo.21677162.
 
 The repository contains district geometry and four environmental GeoJSON layers. `NOTICE.md` supplies per-file attribution and licence information, `DATA_DICTIONARY.md` defines fields, and `CHECKSUMS.sha256` supplies the complete all-tracked integrity contract; `CHECKSUMS.scope` is retained only as a historical development-scope record. No disease data are associated with the article.
 
@@ -251,7 +251,7 @@ Nobre AD, Cuartas LA, Hodnett M et al (2011) Height Above the Nearest Drainage â
 
 Soiland-Reyes S, Sefton P, Crosas M et al (2022) Packaging research artefacts with RO-Crate. Data Sci 5(2):97â€“138. https://doi.org/10.3233/DS-210053
 
-Tuyishime AP (2026) SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.1. Zenodo [Software]. https://doi.org/10.5281/zenodo.21677162
+Tuyishime AP (2026) SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.2.0. Zenodo [Software]. https://doi.org/10.5281/zenodo.21744708
 
 Wilkinson MD, Dumontier M, Aalbersberg IJ et al (2016) The FAIR Guiding Principles for scientific data management and stewardship. Sci Data 3:160018. https://doi.org/10.1038/sdata.2016.18
 
@@ -281,7 +281,7 @@ Zong L, Ngarukiyimana JP, Yang Y et al (2024) Malaria transmission risk is proje
 
 ### Table 3 Claim-to-evidence mapping
 
-| Software claim | Candidate evidence | Verification |
+| Software claim | Release evidence | Verification |
 |---|---|---|
 | Unknown or incomplete entries default to illustrative | `R/provenance_value_class.R` | Nine assertions in `R/demo_value_class.R` |
 | Environmental transformations execute on controlled inputs | Transformation modules and in-memory rasters | Nine assertions in `R/test_fixture_pipeline.R` |
@@ -291,8 +291,8 @@ Zong L, Ngarukiyimana JP, Yang Y et al (2024) Malaria transmission risk is proje
 | Schema drift and corrupted release content are rejected | Five corrupted in-memory copies | Five rejection checks in `python/validate_release_contract.py` |
 | Archived CHIRPS district values are computationally reproducible | Public CHIRPS 2023 GeoTIFF and archived geometry | 30/30 rounded matches in `R/validate_chirps_rainfall.R` |
 | CHIRPS extraction is stable across engines and area weighting | `exactextractr`, `terra`, and cell-area weights | Maximum differences of 0.000136 mm and 0.005127 mm |
-| Interim integrity manifest matches its declared scope | `CHECKSUMS.scope`, `CHECKSUMS.sha256`, and manifest builder | `python/build_checksum_manifest.py --check` |
-| Every interim listed file has its recorded digest | `CHECKSUMS.sha256` | SHA-256 verification in `python/run_all_checks.py` |
+| Complete release manifest matches the tracked-file scope | `CHECKSUMS.sha256` and manifest builder | `python/build_checksum_manifest.py --all-tracked --check` |
+| Every release file has its recorded digest | `CHECKSUMS.sha256` | SHA-256 verification in `python/run_all_checks.py` |
 | R dependencies are versioned | `renv.lock` and `environment.txt` | Clean-environment restore and continuous integration |
 
 ### Table 4 Principal limitations and interpretation
@@ -308,7 +308,7 @@ Zong L, Ngarukiyimana JP, Yang Y et al (2024) Malaria transmission risk is proje
 | Independent public-data validation covers CHIRPS only | ERA5-Land, MODIS, and HAND require equivalent checks before stronger numerical claims |
 | Provider-dependent rebuilds require accounts and network access | Only the fixtures, contract checks, and CHIRPS validation are fully account-free |
 | Lightweight provenance is not PROV-O or RO-Crate conformant | Machine-actionable interoperability remains limited |
-| Version 1.2.0 extends the published v1.1.1 base | The reserved version DOI, regenerated complete manifest, exact tag, and immutable archive are required before submission |
+| Version 1.2.0 extends the published v1.1.1 base | Reuse and submission must cite the immutable version DOI 10.5281/zenodo.21744708 and exact tag `v1.2.0` |
 
 ## Figure captions
 
@@ -322,7 +322,7 @@ Zong L, Ngarukiyimana JP, Yang Y et al (2024) Malaria transmission risk is proje
 
 ## Software Files
 
-Version 1.2.0 contains the base software and district outputs together with the validators, numerical-validation workflow, figure pipeline, machine-readable evidence summaries, manifest builder, and submission records described in this manuscript. Its immutable version DOI must be inserted and the exact commit tagged and archived before submission.
+Version 1.2.0 contains the base software and district outputs together with the validators, numerical-validation workflow, figure pipeline, machine-readable evidence summaries, manifest builder, and submission records described in this manuscript. The release is archived at https://doi.org/10.5281/zenodo.21744708 and identified by Git tag `v1.2.0`.
 
 Principal directories and files are:
 
@@ -331,7 +331,7 @@ Principal directories and files are:
 - `data/`: district geometry and four environmental GeoJSON layers;
 - `renv.lock` and `environment.txt`: dependency and execution-environment records;
 - `NOTICE.md` and `DATA_DICTIONARY.md`: source terms, attribution, and field definitions;
-- `CHECKSUMS.scope` and `CHECKSUMS.sha256`: interim stable-file scope and corresponding integrity manifest;
+- `CHECKSUMS.sha256`: complete all-tracked integrity manifest; `CHECKSUMS.scope`: historical development-scope record;
 - `.github/workflows/reproducibility.yml`: clean account-free verification and figure-generation workflow;
 - `.github/workflows/public-data-validation.yml`: public CHIRPS reproduction and sensitivity workflow; and
 - `paper/`: manuscript, journal-targeting record, dual-agent review ledger, editorial-readiness record, reviewer dossier, historical records, and figure-accessibility instructions.

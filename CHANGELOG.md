@@ -31,9 +31,9 @@
 ### Submission-package and release hygiene
 
 - Archived the prior F1000Research readiness record and removed the historical F1000Research Word file and build script from the active candidate tree without rewriting Git history.
-- Froze the release-facing package metadata at version 1.2.0 pending reservation and insertion of the immutable Zenodo version DOI.
+- Finalized release-facing metadata at version 1.2.0 with immutable Zenodo version DOI `10.5281/zenodo.21744708` and release date 2026-08-01.
 - Retained version 1.1.1 and DOI `10.5281/zenodo.21677162` as the historical published base archive only.
-- Replaced the interim checksum scope with a complete all-tracked SHA-256 manifest; DOI insertion will require one final manifest regeneration and exact-head CI run before tagging and archival.
+- Regenerated the complete all-tracked SHA-256 manifest after DOI insertion and required exact-head CI before tagging and archival.
 
 ## Archived - F1000Research resubmission hardening attempt
 

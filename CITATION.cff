@@ -1,8 +1,6 @@
 cff-version: 1.2.0
 message: >-
-  This is the version 1.2.0 pre-DOI release freeze. The immutable Zenodo
-  version DOI will be inserted after reservation and before tagging, archival,
-  citation, or journal submission.
+  If you use this software, please cite version 1.2.0 using the metadata below.
 title: >-
   SuRT-Virtual Rwanda: auditable district-scale Earth-data harmonization and
   provenance-labelling reproducibility artifact
@@ -12,8 +10,7 @@ authors:
     given-names: Audre Prince
     orcid: "https://orcid.org/0009-0002-0799-3140"
 abstract: >-
-  Version 1.2.0 pre-DOI release freeze for an Earth Science Informatics
-  Software article. It prepares CHIRPS rainfall, ERA5-Land temperature, MODIS
+  Version 1.2.0 release for an Earth Science Informatics Software article. It prepares CHIRPS rainfall, ERA5-Land temperature, MODIS
   vegetation greenness, and HAND terrain descriptors for Rwanda's 30 districts;
   applies a fail-closed provenance and evidence-class contract; and includes
   positive, negative, portability, release-contract, integrity, and scoped
@@ -22,9 +19,11 @@ abstract: >-
   non-operational, and contains no patient, surveillance, or confidential
   operational data.
 version: 1.2.0
+doi: 10.5281/zenodo.21744708
+date-released: '2026-08-01'
 license: MIT
 repository-code: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro"
-url: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro/tree/codex/earth-science-informatics-refinement-v1.3.0"
+url: "https://doi.org/10.5281/zenodo.21744708"
 keywords:
   - Earth science informatics
   - reproducible research

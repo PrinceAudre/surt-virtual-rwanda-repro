@@ -1,20 +1,20 @@
 # SuRT-Virtual Rwanda: reproducibility artifact
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21671788.svg)](https://doi.org/10.5281/zenodo.21671788)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21744708.svg)](https://doi.org/10.5281/zenodo.21744708)
 
 Companion reproducibility artifact for the working Software article *An auditable cross-provider workflow for district-scale Earth-data harmonization and provenance labelling: software design and a Rwanda implementation*.
 
-## Version 1.2.0 release freeze
+## Version 1.2.0 release
 
-The current branch is the **version 1.2.0 pre-DOI release freeze**. It extends the published version 1.1.1 base archive with additional validators, numerical-validation workflows, figures, evidence summaries, and submission records. Scientific and figure review are closed. The immutable Zenodo version DOI must still be reserved and inserted before the exact Git tag, archival publication, citation, or journal submission.
+Version 1.2.0 extends the published version 1.1.1 base archive with additional validators, numerical-validation workflows, figures, evidence summaries, and submission records. The release is identified by an immutable Zenodo version DOI and the exact Git tag `v1.2.0`.
 
-- **Release-freeze version:** `1.2.0`
-- **Published base archive:** version 1.1.1, DOI `10.5281/zenodo.21677162`
+- **Release version:** `1.2.0`
+- **Version DOI:** `10.5281/zenodo.21744708`
+- **Release tag:** `v1.2.0`
 - **Concept DOI for all versions:** `10.5281/zenodo.21671788`
-- **Version DOI:** not yet reserved; no placeholder DOI is asserted
-- **Freeze branch:** `codex/earth-science-informatics-refinement-v1.3.0`
+- **Historical base archive:** version 1.1.1, DOI `10.5281/zenodo.21677162`
 
-Until the version DOI is published, cite version 1.1.1 only for the historical base archive and do not represent it as containing the version 1.2.0 additions.
+Version 1.1.1 remains the historical base and must not be represented as containing the version 1.2.0 additions.
 
 ## Scope
 
@@ -102,7 +102,7 @@ CHIRPS and HAND require network access. ERA5-Land and MODIS additionally require
 
 `R/provenance_value_class.R` accepts `source-derived` status only when a register row declares a documented method applied to real or public data. Unknown, incomplete, synthetic, and placeholder entries default to `illustrative` and receive an explanatory note.
 
-The current candidate records lightweight human-readable provenance. It does not claim PROV-O, RO-Crate, or CWL conformance.
+The current release records lightweight human-readable provenance. It does not claim PROV-O, RO-Crate, or CWL conformance.
 
 ## Licences
 
@@ -111,10 +111,10 @@ The current candidate records lightweight human-readable provenance. It does not
 
 ## Citation
 
-For the published base software, cite version 1.1.1:
+Cite version 1.2.0:
 
-> Tuyishime AP (2026). SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.1.1. Zenodo. https://doi.org/10.5281/zenodo.21677162
+> Tuyishime AP (2026). SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.2.0. Zenodo. https://doi.org/10.5281/zenodo.21744708
 
-Version 1.2.0 is frozen pending DOI reservation. After the reserved version DOI is inserted, the complete manifest will be regenerated and the exact commit will be tagged and archived before journal submission.
+The complete all-tracked manifest is regenerated for the DOI-bearing release, and the archived source is identified by tag `v1.2.0`.
 
 See `REPRODUCIBILITY.md`, `SECURITY_REVIEW.md`, `paper/DUAL_AGENT_REVIEW.md`, and `paper/EDITORIAL_READINESS.md`.

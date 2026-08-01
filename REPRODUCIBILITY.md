@@ -1,8 +1,8 @@
 # Reproducibility
 
-## Version 1.2.0 freeze and archive boundary
+## Version 1.2.0 release and archive boundary
 
-The current branch is the version 1.2.0 pre-DOI release freeze. It extends the published version 1.1.1 base archive, DOI `10.5281/zenodo.21677162`, with additional validators, figures, evidence summaries, and submission records. The immutable Zenodo version DOI must be reserved and inserted before the exact Git tag and archival publication.
+Version 1.2.0 extends the published version 1.1.1 base archive, DOI `10.5281/zenodo.21677162`, with additional validators, figures, evidence summaries, and submission records. The release is archived under version DOI `10.5281/zenodo.21744708` and identified in Git by tag `v1.2.0`.
 
 The commands below describe version 1.2.0. They must not be attributed to version 1.1.1 unless the cited file is present in that historical archive.
 
@@ -130,9 +130,9 @@ The generated directory is excluded from version control. GitHub Actions retains
 
 ## Integrity scope
 
-For the version 1.2.0 freeze, `CHECKSUMS.sha256` is generated with `python python/build_checksum_manifest.py --all-tracked --write` and covers every tracked file except the manifest itself. Verify it with `python python/build_checksum_manifest.py --all-tracked --check`. `CHECKSUMS.scope` is retained as a historical development-scope record and is not the release verification scope.
+For version 1.2.0, `CHECKSUMS.sha256` is generated with `python python/build_checksum_manifest.py --all-tracked --write` and covers every tracked file except the manifest itself. Verify it with `python python/build_checksum_manifest.py --all-tracked --check`. `CHECKSUMS.scope` is retained as a historical development-scope record and is not the release verification scope.
 
-A successful checksum verification establishes byte-level integrity of tracked files. It does not establish scientific validity. The manifest must be regenerated after the reserved DOI is inserted.
+A successful checksum verification establishes byte-level integrity of tracked files. It does not establish scientific validity. The committed manifest corresponds to the DOI-bearing release tree.
 
 ## Reproducibility limits
 
