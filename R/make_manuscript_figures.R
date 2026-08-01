@@ -385,7 +385,7 @@ ord <- order(pc$x[, 1])
 values <- values[ord, , drop = FALSE]
 
 draw_profiles <- function() {
-  par(mar = c(8.4, 4.2, 2.2, 0.5), xpd = NA)
+  par(mar = c(8.4, 4.2, 2.2, 0.5), xpd = FALSE)
   matplot(
     seq_len(nrow(values)),
     values,
@@ -401,6 +401,7 @@ draw_profiles <- function() {
   )
   axis(1, at = seq_len(nrow(values)), labels = rownames(values), las = 2, cex.axis = 0.58)
   abline(h = 0, lty = 3)
+  par(xpd = NA)
   legend(
     "top",
     inset = c(0, -0.12),
