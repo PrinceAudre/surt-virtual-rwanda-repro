@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   account-free-checks:
@@ -43,3 +43,95 @@ jobs:
             paper/figures/generated/
             generated/verification_summary.json
           if-no-files-found: error
+
+  # BEGIN TEMPORARY V1.2.0 FREEZE JOB
+  freeze-v1-2-0:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/codex/earth-science-informatics-refinement-v1.3.0'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/earth-science-informatics-refinement-v1.3.0
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify exact helper parent
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "d5a60a041914e3bf1902600b6954dd5e991c4a8e"
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/reproducibility.yml"
+      - name: Apply reviewed v1.2.0 transformation
+        shell: python
+        run: |
+          from pathlib import Path
+          source = Path('.github/workflows/apply-v1.2.0-freeze.yml').read_text(encoding='utf-8')
+          marker = '      - name: Apply release-facing metadata and documentation edits\n        shell: python\n        run: |\n'
+          end = '\n      - name: Remove temporary workflow before manifest generation\n'
+          if source.count(marker) != 1 or source.count(end) != 1:
+              raise SystemExit('Reviewed transformation block not found exactly once')
+          block = source.split(marker, 1)[1].split(end, 1)[0]
+          lines = block.splitlines()
+          script = '\n'.join(line[10:] if line.startswith('          ') else line for line in lines) + '\n'
+          exec(compile(script, 'v1.2.0-freeze-transform.py', 'exec'), {})
+      - name: Align manuscript audit with freeze language
+        shell: python
+        run: |
+          from pathlib import Path
+          path = Path('python/audit_manuscript.py')
+          text = path.read_text(encoding='utf-8')
+          old = '''    require(
+              "new immutable" in text.casefold()
+              and "version doi" in text.casefold()
+              and "before submission" in text.casefold(),
+              "candidate release and DOI dependency is explicit",
+          )
+          '''
+          new = '''    require(
+              "version 1.2.0" in text.casefold()
+              and "reserved version doi" in text.casefold()
+              and "before submission" in text.casefold()
+              and "tagged and archived" in text.casefold(),
+              "v1.2.0 DOI, tag, and archive dependency is explicit",
+          )
+          '''
+          if text.count(old) != 1:
+              raise SystemExit('Expected manuscript-audit dependency block not found exactly once')
+          path.write_text(text.replace(old, new), encoding='utf-8', newline='\n')
+      - name: Remove temporary helpers and restore workflow
+        shell: python
+        run: |
+          from pathlib import Path
+          for name in (
+              '.github/workflows/apply-v1.2.0-freeze.yml',
+              '.github/workflows/execute-v1.2.0-freeze.yml',
+              '.github/workflows/execute-v1.2.0-freeze-final.yml',
+          ):
+              path = Path(name)
+              if path.exists():
+                  path.unlink()
+          path = Path('.github/workflows/reproducibility.yml')
+          text = path.read_text(encoding='utf-8')
+          marker = '\n  # BEGIN TEMPORARY V1.2.0 FREEZE JOB\n'
+          if text.count(marker) != 1:
+              raise SystemExit('Temporary workflow marker not found exactly once')
+          restored = text.split(marker, 1)[0].replace('permissions:\n  contents: write', 'permissions:\n  contents: read') + '\n'
+          path.write_text(restored, encoding='utf-8', newline='\n')
+      - name: Reject development tokens and generate complete manifest
+        run: |
+          set -euo pipefail
+          if git grep -nE '1\.2\.0\.9000|1\.2\.0-dev' -- ':!paper/archive/**'; then
+            exit 1
+          fi
+          python python/build_checksum_manifest.py --all-tracked --write
+          python python/build_checksum_manifest.py --all-tracked --check
+      - name: Run release preflights
+        run: |
+          python python/validate_candidate_metadata.py
+          python python/audit_manuscript.py
+      - name: Commit and push pre-DOI freeze
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "release: freeze version 1.2.0 pending Zenodo DOI"
+          git push origin HEAD:codex/earth-science-informatics-refinement-v1.3.0
