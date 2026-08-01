@@ -57,12 +57,22 @@ jobs:
       - name: Verify exact helper parent
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "0d5457b78abe360746be5f27751b6f96b2c8987f"
+          test "$(git rev-parse HEAD^)" = "031d576af223aa6ecdf19f6d566a927b5079e784"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/reproducibility.yml"
       - name: Insert reserved Zenodo DOI
+        shell: python
         run: |
-          sed -i '/"python\/validate_candidate_metadata.py",/d; /"python\/audit_manuscript.py",/d' python/apply_v1_2_0_doi.py
-          python python/apply_v1_2_0_doi.py
+          from pathlib import Path
+          path = Path('python/apply_v1_2_0_doi.py')
+          text = path.read_text(encoding='utf-8')
+          marker = '# Final cross-file assertions before the helper is removed.\n'
+          if text.count(marker) != 1:
+              raise SystemExit('Final hygiene marker not found exactly once')
+          before, after = text.split(marker, 1)
+          after = after.replace('    "python/validate_candidate_metadata.py",\n', '')
+          after = after.replace('    "python/audit_manuscript.py",\n', '')
+          path.write_text(before + marker + after, encoding='utf-8', newline='\n')
+          exec(compile(path.read_text(encoding='utf-8'), str(path), 'exec'), {})
       - name: Validate transformed release state
         run: |
           python python/validate_candidate_metadata.py
