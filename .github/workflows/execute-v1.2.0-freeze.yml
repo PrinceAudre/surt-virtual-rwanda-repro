@@ -28,7 +28,7 @@ jobs:
       - name: Verify helper-only branch state
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "dba458bd0ddb04769de651944e6f4e3d1a048593"
+          test "$(git rev-parse HEAD^)" = "055bdcfeba92db5649f8b0c4a1919ecd2d856f7b"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/execute-v1.2.0-freeze.yml"
 
       - name: Execute reviewed transformation block
@@ -73,8 +73,12 @@ jobs:
               raise SystemExit('Expected manuscript-audit release dependency block not found exactly once')
           path.write_text(text.replace(old, new), encoding='utf-8', newline='\n')
 
-      - name: Remove temporary helpers before manifest generation
-        run: git rm .github/workflows/apply-v1.2.0-freeze.yml .github/workflows/execute-v1.2.0-freeze.yml
+      - name: Remove all temporary helpers
+        run: |
+          git rm \
+            .github/workflows/apply-v1.2.0-freeze.yml \
+            .github/workflows/execute-v1.2.0-freeze.yml \
+            .github/workflows/execute-v1.2.0-freeze-final.yml
 
       - name: Reject residual development-version tokens
         run: |
