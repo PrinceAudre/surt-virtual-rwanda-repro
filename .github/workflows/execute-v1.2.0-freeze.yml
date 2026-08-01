@@ -28,7 +28,7 @@ jobs:
       - name: Verify helper-only branch state
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "0ed714ad108baef1f3f607b0662d8867a96982e0"
+          test "$(git rev-parse HEAD^)" = "dba458bd0ddb04769de651944e6f4e3d1a048593"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/execute-v1.2.0-freeze.yml"
 
       - name: Execute reviewed transformation block
@@ -47,6 +47,31 @@ jobs:
               for line in lines
           ) + '\n'
           exec(compile(script, 'v1.2.0-freeze-transform.py', 'exec'), {})
+
+      - name: Align manuscript audit with pre-DOI freeze language
+        shell: python
+        run: |
+          from pathlib import Path
+          path = Path('python/audit_manuscript.py')
+          text = path.read_text(encoding='utf-8')
+          old = '''    require(
+        "new immutable" in text.casefold()
+        and "version doi" in text.casefold()
+        and "before submission" in text.casefold(),
+        "candidate release and DOI dependency is explicit",
+    )
+'''
+          new = '''    require(
+        "version 1.2.0" in text.casefold()
+        and "reserved version doi" in text.casefold()
+        and "before submission" in text.casefold()
+        and "tagged and archived" in text.casefold(),
+        "v1.2.0 DOI, tag, and archive dependency is explicit",
+    )
+'''
+          if text.count(old) != 1:
+              raise SystemExit('Expected manuscript-audit release dependency block not found exactly once')
+          path.write_text(text.replace(old, new), encoding='utf-8', newline='\n')
 
       - name: Remove temporary helpers before manifest generation
         run: git rm .github/workflows/apply-v1.2.0-freeze.yml .github/workflows/execute-v1.2.0-freeze.yml
