@@ -28,6 +28,18 @@ Use the concise alternatives below in the final Word manuscript. They describe t
 
 ## Figure 3
 
+**Alternative text:** Three-column decision diagram showing independent provenance controls. Register validation checks required fields, legal class values, and rejects the combination of source-derived evidence with a placeholder method. Display classification treats an output as illustrative unless its identifier is present and its evidence class is exactly source-derived; this step does not test method class or independently verify real-data use. Illustrative-note selection returns no note for a source-derived display, a short “illustrative” label when requested, one full note for a documented method on synthetic data, and another full note for synthetic, placeholder, unknown, or incomplete material. A footer states that the three functions are independently callable.
+
+**Accessibility checks:**
+
+- The diagram is unfilled black line art and does not rely on colour.
+- Each control is identified by number, title, and function name.
+- Decision branches are labelled yes or no.
+- A footer explicitly prevents interpretation of register validity as a prerequisite for the other functions.
+- SVG and EPS vector outputs are generated from the same code.
+
+## Supplementary Figure S1
+
 **Alternative text:** Multi-line profile chart of standardized rainfall, temperature, NDVI, and HAND-share values for 30 Rwanda districts ordered by the first principal component. The four variables use different point symbols and line types. Values above and below zero indicate district values above and below each layer's national mean; the chart is not a composite score.
 
 **Accessibility checks:**
