@@ -57,7 +57,7 @@ jobs:
       - name: Verify exact helper parent
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "1a0ae1ee104a9a271d3fdcda2dbe5b49e49407c0"
+          test "$(git rev-parse HEAD^)" = "1628d4ad5c3e659147511afff9f23d0724241dc1"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/reproducibility.yml"
       - name: Apply reviewed v1.2.0 transformation
         shell: python
@@ -76,16 +76,18 @@ jobs:
         shell: python
         run: |
           from pathlib import Path
+          import re
           path = Path('python/audit_manuscript.py')
           text = path.read_text(encoding='utf-8')
-          old = '''    require(
-              "new immutable" in text.casefold()
-              and "version doi" in text.casefold()
-              and "before submission" in text.casefold(),
-              "candidate release and DOI dependency is explicit",
+          pattern = re.compile(
+              r'    require\(\n'
+              r'        "new immutable" in text\.casefold\(\)\n'
+              r'        and "version doi" in text\.casefold\(\)\n'
+              r'        and "before submission" in text\.casefold\(\),\n'
+              r'        "candidate release and DOI dependency is explicit",\n'
+              r'    \)\n'
           )
-          '''
-          new = '''    require(
+          replacement = '''    require(
               "version 1.2.0" in text.casefold()
               and "reserved version doi" in text.casefold()
               and "before submission" in text.casefold()
@@ -93,9 +95,10 @@ jobs:
               "v1.2.0 DOI, tag, and archive dependency is explicit",
           )
           '''
-          if text.count(old) != 1:
-              raise SystemExit('Expected manuscript-audit dependency block not found exactly once')
-          path.write_text(text.replace(old, new), encoding='utf-8', newline='\n')
+          text, count = pattern.subn(replacement, text)
+          if count != 1:
+              raise SystemExit(f'Expected one manuscript-audit dependency block; found {count}')
+          path.write_text(text, encoding='utf-8', newline='\n')
       - name: Remove temporary helpers and restore workflow
         shell: python
         run: |
