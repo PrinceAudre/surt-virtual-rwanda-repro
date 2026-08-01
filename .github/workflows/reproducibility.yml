@@ -57,10 +57,12 @@ jobs:
       - name: Verify exact helper parent
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "e03cc2ea5bdc9dff4055932b2e1e141a6e8c19b8"
+          test "$(git rev-parse HEAD^)" = "0d5457b78abe360746be5f27751b6f96b2c8987f"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/reproducibility.yml"
       - name: Insert reserved Zenodo DOI
-        run: python python/apply_v1_2_0_doi.py
+        run: |
+          sed -i '/"python\/validate_candidate_metadata.py",/d; /"python\/audit_manuscript.py",/d' python/apply_v1_2_0_doi.py
+          python python/apply_v1_2_0_doi.py
       - name: Validate transformed release state
         run: |
           python python/validate_candidate_metadata.py
