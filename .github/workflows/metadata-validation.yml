@@ -1,4 +1,4 @@
-name: Candidate metadata and manuscript validation
+name: Release metadata and manuscript validation
 
 on:
   push:
@@ -33,7 +33,7 @@ permissions:
   contents: read
 
 jobs:
-  validate-candidate-metadata:
+  validate-release-metadata:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -44,7 +44,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check cffconvert==2.0.0
       - name: Validate Citation File Format schema
         run: cffconvert --validate
-      - name: Validate candidate consistency and journal limits
+      - name: Validate v1.2.0 freeze consistency and journal limits
         run: python python/validate_candidate_metadata.py
       - name: Audit manuscript structure and references
         run: python python/audit_manuscript.py
