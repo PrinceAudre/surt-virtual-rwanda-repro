@@ -261,7 +261,7 @@ draw_provenance_decision <- function() {
   control_heading <- function(cx, number, title, function_name) {
     text(cx, 8.55, paste0("Control ", number, ": ", title),
          cex = 0.79, font = 2)
-    text(cx, 8.18, function_name, cex = 0.62, family = "mono")
+    text(cx, 8.18, function_name, cex = 0.62)
   }
 
   segments(3.67, 1.08, 3.67, 8.82, lty = 3, col = "grey45")
