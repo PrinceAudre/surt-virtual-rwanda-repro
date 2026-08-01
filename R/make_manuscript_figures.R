@@ -229,9 +229,145 @@ for (nm in names(specs)) {
   dev.off()
 }
 
-# Figure 3: standardized district distributions permit cross-layer comparison
-# without implying that the four variables share physical units. Distinct line
-# types and symbols ensure that interpretation does not depend on colour.
+# Figure 3: three independent provenance controls. The layout mirrors the
+# callable functions in R/provenance_value_class.R and deliberately does not
+# imply that register validation is an enforced prerequisite for the display
+# classification or note-selection functions.
+draw_provenance_decision <- function() {
+  par(mar = rep(0, 4))
+  plot.new()
+  plot.window(xlim = c(0, 11), ylim = c(0, 9))
+
+  box <- function(xleft, ybottom, xright, ytop, label,
+                  cex = 0.67, lwd = 1.05, font = 1) {
+    rect(xleft, ybottom, xright, ytop, lwd = lwd)
+    text((xleft + xright) / 2, (ybottom + ytop) / 2,
+         label, cex = cex, font = font)
+  }
+  diamond <- function(cx, cy, width, height, label, cex = 0.61, lwd = 1.05) {
+    polygon(
+      x = c(cx, cx + width / 2, cx, cx - width / 2),
+      y = c(cy + height / 2, cy, cy - height / 2, cy),
+      lwd = lwd
+    )
+    text(cx, cy, label, cex = cex)
+  }
+  arrow <- function(x0, y0, x1, y1, label = NULL,
+                    label_x = (x0 + x1) / 2, label_y = (y0 + y1) / 2,
+                    lty = 1) {
+    arrows(x0, y0, x1, y1, length = 0.065, lwd = 0.95, lty = lty)
+    if (!is.null(label)) text(label_x, label_y, label, cex = 0.56)
+  }
+  control_heading <- function(cx, number, title, function_name) {
+    text(cx, 8.55, paste0("Control ", number, ": ", title),
+         cex = 0.79, font = 2)
+    text(cx, 8.18, function_name, cex = 0.62, family = "mono")
+  }
+
+  segments(3.67, 1.08, 3.67, 8.82, lty = 3, col = "grey45")
+  segments(7.34, 1.08, 7.34, 8.82, lty = 3, col = "grey45")
+
+  # Control 1: register validation.
+  control_heading(1.84, 1, "register validation", "surt_method_register_ok()")
+  box(0.45, 7.15, 3.22, 7.78, "Method register supplied")
+  arrow(1.84, 7.15, 1.84, 6.73)
+  diamond(
+    1.84, 6.13, 2.50, 1.12,
+    "Required fields present,\nsingle non-empty strings,\nand legal class values?"
+  )
+  box(0.08, 4.78, 1.14, 5.42, "FALSE:\ninvalid shape", cex = 0.60)
+  arrow(0.59, 6.13, 0.59, 5.42, "No", 0.38, 5.78)
+  arrow(1.84, 5.57, 1.84, 5.12, "Yes", 2.08, 5.35)
+  diamond(
+    1.84, 4.45, 2.42, 1.08,
+    "source-derived AND\nplaceholder?"
+  )
+  box(0.08, 3.05, 1.14, 3.69, "FALSE:\nprohibited pair", cex = 0.57)
+  arrow(0.63, 4.45, 0.63, 3.69, "Yes", 0.39, 4.06)
+  box(1.20, 2.78, 3.18, 3.58, "TRUE:\nregister accepted", cex = 0.64)
+  arrow(1.84, 3.91, 2.18, 3.58, "No", 2.18, 3.78)
+  box(
+    0.30, 1.38, 3.38, 2.20,
+    "Validates declaration shape and the prohibited class\ncombination; it does not prove a citation or data source.",
+    cex = 0.57
+  )
+
+  # Control 2: display classification.
+  control_heading(5.51, 2, "display classification", "surt_output_is_illustrative()")
+  box(4.03, 7.15, 7.00, 7.78, "Output identifier and register")
+  arrow(5.51, 7.15, 5.51, 6.71)
+  diamond(
+    5.51, 6.02, 2.82, 1.28,
+    "Identifier is present AND\nevidence_class is exactly\nsource-derived?"
+  )
+  box(3.89, 4.63, 5.13, 5.35, "TRUE:\nillustrative", cex = 0.64)
+  arrow(4.10, 6.02, 4.51, 5.35, "No", 4.12, 5.67)
+  box(5.89, 4.63, 7.14, 5.35, "FALSE:\nsource-derived", cex = 0.62)
+  arrow(6.92, 6.02, 6.52, 5.35, "Yes", 6.91, 5.67)
+  box(
+    4.00, 3.20, 7.03, 4.12,
+    "Fail closed: unknown, missing, or non-source-derived\nentries remain illustrative.",
+    cex = 0.59
+  )
+  box(
+    4.00, 1.38, 7.03, 2.68,
+    "Does not inspect method_class and does not independently\nverify use of real or public data.",
+    cex = 0.57
+  )
+
+  # Control 3: illustrative note selection.
+  control_heading(9.18, 3, "illustrative-note selection", "surt_illustrative_note()")
+  box(7.70, 7.15, 10.67, 7.78, "Output identifier, register,\nand optional short flag")
+  arrow(9.18, 7.15, 9.18, 6.77)
+  diamond(9.18, 6.25, 2.48, 1.00, "Output is illustrative?")
+  box(9.70, 5.03, 10.91, 5.62, "Return empty string", cex = 0.58)
+  arrow(10.42, 6.25, 10.30, 5.62, "No", 10.57, 5.94)
+  arrow(9.18, 5.75, 9.18, 5.34, "Yes", 9.41, 5.54)
+  diamond(9.18, 4.81, 2.30, 0.94, "short is TRUE?")
+  box(9.71, 3.80, 10.91, 4.39, "Return \"illustrative\"", cex = 0.55)
+  arrow(10.33, 4.81, 10.30, 4.39, "Yes", 10.51, 4.59)
+  arrow(9.18, 4.34, 9.18, 3.91, "No", 9.41, 4.12)
+  diamond(
+    9.18, 3.32, 2.40, 1.04,
+    "Known entry AND\nmethod_class documented?"
+  )
+  box(
+    7.49, 1.73, 8.79, 2.64,
+    "Documented method\non synthetic data note",
+    cex = 0.54
+  )
+  arrow(7.98, 3.32, 8.14, 2.64, "Yes", 7.80, 2.97)
+  box(
+    9.58, 1.73, 10.91, 2.64,
+    "Synthetic or placeholder\noutput note",
+    cex = 0.54
+  )
+  arrow(10.38, 3.32, 10.24, 2.64, "No", 10.55, 2.97)
+
+  box(
+    0.30, 0.18, 10.70, 0.88,
+    "The functions are callable independently; register validity is not an enforced prerequisite for display classification or note selection.",
+    cex = 0.62
+  )
+}
+
+svg(
+  filename = file.path(output_dir, "Fig3_provenance_decision.svg"),
+  width = 11,
+  height = 9,
+  pointsize = 10,
+  onefile = TRUE
+)
+draw_provenance_decision()
+dev.off()
+
+open_eps(file.path(output_dir, "Fig3_provenance_decision.eps"), 11, 9, 10)
+draw_provenance_decision()
+dev.off()
+
+# Supplementary Figure S1: standardized district distributions permit
+# cross-layer comparison without implying that the four variables share
+# physical units. Distinct line types and symbols avoid reliance on colour.
 values <- do.call(
   cbind,
   lapply(names(specs), function(nm) {
@@ -282,7 +418,7 @@ draw_profiles <- function() {
 }
 
 tiff(
-  filename = file.path(output_dir, "Fig3_standardized_district_profiles.tiff"),
+  filename = file.path(output_dir, "FigS1_standardized_district_profiles.tiff"),
   width = 4800,
   height = 3300,
   units = "px",
@@ -292,7 +428,7 @@ tiff(
 draw_profiles()
 dev.off()
 
-open_eps(file.path(output_dir, "Fig3_standardized_district_profiles.eps"), 8, 5.5, 10)
+open_eps(file.path(output_dir, "FigS1_standardized_district_profiles.eps"), 8, 5.5, 10)
 draw_profiles()
 dev.off()
 
