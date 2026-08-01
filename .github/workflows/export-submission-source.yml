@@ -1,0 +1,44 @@
+name: Export submission source
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.6.0"
+          use-public-rspm: true
+      - name: Install geospatial system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            gdal-bin \
+            libabsl-dev \
+            libgdal-dev \
+            libgeos-dev \
+            libproj-dev \
+            libudunits2-dev
+      - uses: r-lib/actions/setup-renv@v2
+      - name: Generate canonical journal figures
+        run: Rscript R/make_manuscript_figures.R
+      - name: Export exact manuscript source and artwork
+        uses: actions/upload-artifact@v4
+        with:
+          name: submission-source
+          path: |
+            paper/manuscript.md
+            paper/figures/ALT_TEXT.md
+            paper/figures/README.md
+            paper/figures/generated/
+            paper/reviewer-suggestions.md
+            CITATION.cff
+          if-no-files-found: error
