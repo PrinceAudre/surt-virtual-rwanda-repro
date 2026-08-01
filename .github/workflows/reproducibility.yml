@@ -57,7 +57,7 @@ jobs:
       - name: Verify exact helper parent
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "031d576af223aa6ecdf19f6d566a927b5079e784"
+          test "$(git rev-parse HEAD^)" = "e94e53373ce5ee5e090cc2db981528851f05f217"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/reproducibility.yml"
       - name: Insert reserved Zenodo DOI
         shell: python
@@ -72,7 +72,10 @@ jobs:
           after = after.replace('    "python/validate_candidate_metadata.py",\n', '')
           after = after.replace('    "python/audit_manuscript.py",\n', '')
           path.write_text(before + marker + after, encoding='utf-8', newline='\n')
-          exec(compile(path.read_text(encoding='utf-8'), str(path), 'exec'), {})
+          exec(
+              compile(path.read_text(encoding='utf-8'), str(path), 'exec'),
+              {'__file__': str(path), '__name__': '__main__'},
+          )
       - name: Validate transformed release state
         run: |
           python python/validate_candidate_metadata.py
