@@ -1,0 +1,351 @@
+name: Apply guarded v1.2.0 release freeze
+
+on:
+  push:
+    branches:
+      - codex/earth-science-informatics-refinement-v1.3.0
+    paths:
+      - .github/workflows/apply-v1.2.0-freeze.yml
+
+permissions:
+  contents: write
+
+jobs:
+  freeze:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/earth-science-informatics-refinement-v1.3.0
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify exact reviewed parent
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "1f8dbc252074222183be547c224a887465952ee7"
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/apply-v1.2.0-freeze.yml"
+
+      - name: Apply release-facing metadata and documentation edits
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          def read(path):
+              return Path(path).read_text(encoding="utf-8")
+
+          def write(path, text):
+              Path(path).write_text(text, encoding="utf-8", newline="\n")
+
+          def replace_once(path, old, new):
+              text = read(path)
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path}: expected one occurrence, found {count}: {old[:90]!r}")
+              write(path, text.replace(old, new))
+
+          # DESCRIPTION
+          replace_once("DESCRIPTION", "Version: 1.2.0.9000", "Version: 1.2.0")
+          replace_once(
+              "DESCRIPTION",
+              "    numerical reproduction. This is an unreleased development candidate based\n"
+              "    on the published version 1.1.1 archive.",
+              "    numerical reproduction. This is the version 1.2.0 pre-DOI release freeze;\n"
+              "    the immutable Zenodo version DOI will be inserted before tagging and submission.",
+          )
+
+          # CITATION.cff
+          replace_once(
+              "CITATION.cff",
+              "message: >-\n"
+              "  This branch is an unreleased journal candidate. Cite the published version\n"
+              "  1.1.1 base archive for current reuse and replace this development metadata\n"
+              "  with the final immutable release DOI before citing the candidate additions.",
+              "message: >-\n"
+              "  This is the version 1.2.0 pre-DOI release freeze. The immutable Zenodo\n"
+              "  version DOI will be inserted after reservation and before tagging, archival,\n"
+              "  citation, or journal submission.",
+          )
+          replace_once(
+              "CITATION.cff",
+              "  Unreleased companion software candidate for an Earth Science Informatics\n"
+              "  Software article.",
+              "  Version 1.2.0 pre-DOI release freeze for an Earth Science Informatics\n"
+              "  Software article.",
+          )
+          replace_once(
+              "CITATION.cff",
+              "  public-data numerical validation. The candidate extends the published\n",
+              "  public-data numerical validation. Version 1.2.0 extends the published\n",
+          )
+          replace_once("CITATION.cff", "version: 1.2.0-dev", "version: 1.2.0")
+
+          # CHANGELOG.md
+          replace_once(
+              "CHANGELOG.md",
+              "## Unreleased - Earth Science Informatics journal candidate",
+              "## 1.2.0 - 2026-08-01",
+          )
+          replace_once(
+              "CHANGELOG.md",
+              "- Marked the working package as an unreleased development candidate rather than claiming that the new files are contained in published version 1.1.1.\n"
+              "- Retained version 1.1.1 and DOI `10.5281/zenodo.21677162` as the published base archive only.\n"
+              "- Added an explicit release gate requiring synchronized source, manuscript, figures, metadata, checksums, Git tag, and a new Zenodo version DOI before submission.",
+              "- Froze the release-facing package metadata at version 1.2.0 pending reservation and insertion of the immutable Zenodo version DOI.\n"
+              "- Retained version 1.1.1 and DOI `10.5281/zenodo.21677162` as the historical published base archive only.\n"
+              "- Replaced the interim checksum scope with a complete all-tracked SHA-256 manifest; DOI insertion will require one final manifest regeneration and exact-head CI run before tagging and archival.",
+          )
+
+          # README.md
+          old_status = """## Candidate status
+
+The current branch is an **unreleased journal candidate**. It extends the published version 1.1.1 base archive with additional validators, numerical-validation workflows, figures, evidence summaries, and submission records. It must receive a new immutable GitHub tag and Zenodo version DOI before journal submission.
+
+- **Published base archive:** version 1.1.1, DOI `10.5281/zenodo.21677162`
+- **Concept DOI for all versions:** `10.5281/zenodo.21671788`
+- **Candidate metadata version:** `1.2.0.9000`
+- **Candidate branch:** `codex/earth-science-informatics-refinement-v1.3.0`
+
+Do not cite the candidate branch as though it were contained in version 1.1.1.
+"""
+          new_status = """## Version 1.2.0 release freeze
+
+The current branch is the **version 1.2.0 pre-DOI release freeze**. It extends the published version 1.1.1 base archive with additional validators, numerical-validation workflows, figures, evidence summaries, and submission records. Scientific and figure review are closed. The immutable Zenodo version DOI must still be reserved and inserted before the exact Git tag, archival publication, citation, or journal submission.
+
+- **Release-freeze version:** `1.2.0`
+- **Published base archive:** version 1.1.1, DOI `10.5281/zenodo.21677162`
+- **Concept DOI for all versions:** `10.5281/zenodo.21671788`
+- **Version DOI:** not yet reserved; no placeholder DOI is asserted
+- **Freeze branch:** `codex/earth-science-informatics-refinement-v1.3.0`
+
+Until the version DOI is published, cite version 1.1.1 only for the historical base archive and do not represent it as containing the version 1.2.0 additions.
+"""
+          replace_once("README.md", old_status, new_status)
+          replace_once(
+              "README.md",
+              "The final journal submission will cite a new candidate release DOI after the source tree, manuscript, figures, metadata, and checksums are frozen to one exact version.",
+              "Version 1.2.0 is frozen pending DOI reservation. After the reserved version DOI is inserted, the complete manifest will be regenerated and the exact commit will be tagged and archived before journal submission.",
+          )
+
+          # REPRODUCIBILITY.md
+          replace_once(
+              "REPRODUCIBILITY.md",
+              "## Candidate and archive boundary\n\n"
+              "The current branch is an unreleased Earth Science Informatics journal candidate. It extends the published version 1.1.1 base archive, DOI `10.5281/zenodo.21677162`, with additional validators, figures, evidence summaries, and submission records. A new immutable GitHub tag and Zenodo version DOI are required before submission.\n\n"
+              "The commands below describe the candidate branch. They must not be attributed to version 1.1.1 unless the cited file is present in that archive.",
+              "## Version 1.2.0 freeze and archive boundary\n\n"
+              "The current branch is the version 1.2.0 pre-DOI release freeze. It extends the published version 1.1.1 base archive, DOI `10.5281/zenodo.21677162`, with additional validators, figures, evidence summaries, and submission records. The immutable Zenodo version DOI must be reserved and inserted before the exact Git tag and archival publication.\n\n"
+              "The commands below describe version 1.2.0. They must not be attributed to version 1.1.1 unless the cited file is present in that historical archive.",
+          )
+          replace_once(
+              "REPRODUCIBILITY.md",
+              "The runner also verifies every file currently listed in `CHECKSUMS.sha256` and writes:",
+              "The runner also verifies the complete all-tracked release manifest in `CHECKSUMS.sha256` and writes:",
+          )
+          replace_once(
+              "REPRODUCIBILITY.md",
+              "## Integrity scope\n\n"
+              "`CHECKSUMS.sha256` is currently an explicit listed-file contract. It is not a complete manifest for every file in the evolving candidate branch. The final candidate release must regenerate a complete frozen manifest after all source, manuscript, figure, metadata, and submission files are finalized and before the Git tag and Zenodo deposit are created.\n\n"
+              "A successful checksum verification establishes byte-level integrity of listed files. It does not establish scientific validity.",
+              "## Integrity scope\n\n"
+              "For the version 1.2.0 freeze, `CHECKSUMS.sha256` is generated with `python python/build_checksum_manifest.py --all-tracked --write` and covers every tracked file except the manifest itself. Verify it with `python python/build_checksum_manifest.py --all-tracked --check`. `CHECKSUMS.scope` is retained as a historical development-scope record and is not the release verification scope.\n\n"
+              "A successful checksum verification establishes byte-level integrity of tracked files. It does not establish scientific validity. The manifest must be regenerated after the reserved DOI is inserted.",
+          )
+
+          # SECURITY_REVIEW.md
+          replace_once(
+              "SECURITY_REVIEW.md",
+              "## Candidate status\n\nThe current branch is an unreleased candidate based on published version 1.1.1. Historical F1000Research submission artifacts were removed from the active candidate tree without rewriting Git history. No new release or DOI is claimed by this branch.",
+              "## Version 1.2.0 freeze status\n\nThe current branch is the version 1.2.0 pre-DOI release freeze based on published version 1.1.1. Historical F1000Research submission artifacts were removed from the active tree without rewriting Git history. No version DOI, Git tag, GitHub release, Zenodo publication, or journal submission is claimed yet.",
+          )
+          replace_once(
+              "SECURITY_REVIEW.md",
+              "| Branch metadata may be mistaken for a published release | `CITATION.cff`, `DESCRIPTION`, README, manuscript, and readiness records identify the package as unreleased |",
+              "| The pre-DOI freeze may be mistaken for a published release | `CITATION.cff`, `DESCRIPTION`, README, manuscript, and readiness records state that DOI reservation, exact tagging, and archival publication remain pending |",
+          )
+
+          # paper/manuscript.md
+          replace_once(
+              "paper/manuscript.md",
+              "The interim integrity manifest is generated from the stable-file list in `CHECKSUMS.scope`. `python/build_checksum_manifest.py --check` requires the manifest to match that scope exactly, after which the runner verifies every listed digest. The evolving journal documents and development-only validators are intentionally outside the interim scope. At candidate freeze, `python/build_checksum_manifest.py --all-tracked --write` must replace it with a complete tracked-file manifest for the exact release commit. A checksum establishes byte integrity, not scientific validity.",
+              "For the version 1.2.0 freeze, `CHECKSUMS.sha256` is generated with `python/build_checksum_manifest.py --all-tracked --write` and covers every tracked file except the manifest itself. The runner requires `--all-tracked --check` to reproduce that exact scope and then verifies every listed digest. `CHECKSUMS.scope` is retained as a historical development-scope record. The manifest must be regenerated after the reserved DOI is inserted. A checksum establishes byte integrity, not scientific validity.",
+          )
+          replace_once(
+              "paper/manuscript.md",
+              "The checksum builder confirmed that the interim manifest matched its declared stable-file scope, and every listed digest was verified.",
+              "The checksum builder confirmed that the complete all-tracked manifest matched the frozen repository scope, and every listed digest was verified.",
+          )
+          replace_once(
+              "paper/manuscript.md",
+              "The candidate branch also extends the published v1.1.1 base archive; therefore a new immutable release and version DOI are required before journal submission.",
+              "Version 1.2.0 extends the published v1.1.1 base archive; its immutable version DOI must be reserved, inserted, and archived on the exact tagged commit before journal submission.",
+          )
+          replace_once(
+              "paper/manuscript.md",
+              "- **Journal candidate:** development version 1.2.0.9000 on `codex/earth-science-informatics-refinement-v1.3.0`; this branch contains validation and submission-package additions not present in version 1.1.1 and must receive a new immutable version archive before submission",
+              "- **Release freeze:** version 1.2.0 on `codex/earth-science-informatics-refinement-v1.3.0`; the immutable Zenodo version DOI will be inserted after reservation and before exact tagging, archival publication, citation, or submission",
+          )
+          replace_once(
+              "paper/manuscript.md",
+              "Before submission, the candidate branch, manuscript, metadata, figures, complete tracked-file checksum manifest, release tag, and Zenodo version DOI will be frozen to one exact version. The final submitted manuscript will replace the branch reference above with that immutable version DOI.",
+              "The version 1.2.0 source tree, manuscript, metadata, and figures are frozen in a pre-DOI state, and the complete tracked-file checksum manifest is generated. Before submission, the reserved version DOI will be inserted, the manifest regenerated, and the exact commit tagged and archived. The final submitted manuscript will replace the branch reference above with that immutable version DOI.",
+          )
+          replace_once(
+              "paper/manuscript.md",
+              "The published base outputs and software are archived in Zenodo version 1.1.1 (Tuyishime 2026). The additional verification, numerical-validation, and journal-packaging files described in this working manuscript are in the named candidate branch and will be included in a new immutable archive before submission. The final manuscript will cite that exact archive.",
+              "The published base outputs and software remain archived in Zenodo version 1.1.1 (Tuyishime 2026). Version 1.2.0 includes the additional verification, numerical-validation, figure, integrity, and journal-packaging files described here. Its immutable Zenodo version DOI is pending reservation and will be inserted before the exact commit is tagged, archived, cited, or submitted.",
+          )
+          replace_once(
+              "paper/manuscript.md",
+              "`NOTICE.md` supplies per-file attribution and licence information, `DATA_DICTIONARY.md` defines fields, `CHECKSUMS.scope` defines the interim stable-file scope, and `CHECKSUMS.sha256` supplies the corresponding listed-file integrity contract.",
+              "`NOTICE.md` supplies per-file attribution and licence information, `DATA_DICTIONARY.md` defines fields, and `CHECKSUMS.sha256` supplies the complete all-tracked integrity contract; `CHECKSUMS.scope` is retained only as a historical development-scope record.",
+          )
+          replace_once(
+              "paper/manuscript.md",
+              "| Journal candidate extends the published v1.1.1 base | A new exact release, complete tracked-file manifest, and version DOI are required before submission |",
+              "| Version 1.2.0 extends the published v1.1.1 base | The reserved version DOI, regenerated complete manifest, exact tag, and immutable archive are required before submission |",
+          )
+          replace_once(
+              "paper/manuscript.md",
+              "The published v1.1.1 archive contains the base software and district outputs. The current journal candidate adds the validators, numerical-validation workflow, figure pipeline, machine-readable evidence summaries, manifest builder, and submission records described in this manuscript. A new immutable release containing the complete candidate package is required before submission.",
+              "Version 1.2.0 contains the base software and district outputs together with the validators, numerical-validation workflow, figure pipeline, machine-readable evidence summaries, manifest builder, and submission records described in this manuscript. Its immutable version DOI must be inserted and the exact commit tagged and archived before submission.",
+          )
+
+          # python/validate_candidate_metadata.py
+          replace_once(
+              "python/validate_candidate_metadata.py",
+              '"""Validate candidate metadata and active submission-package consistency."""',
+              '"""Validate the version 1.2.0 pre-DOI release freeze and package consistency."""',
+          )
+          replace_once(
+              "python/validate_candidate_metadata.py",
+              'EXPECTED_DESCRIPTION_VERSION = "1.2.0.9000"',
+              'EXPECTED_DESCRIPTION_VERSION = "1.2.0"',
+          )
+          replace_once(
+              "python/validate_candidate_metadata.py",
+              'EXPECTED_CFF_VERSION = "1.2.0-dev"',
+              'EXPECTED_CFF_VERSION = "1.2.0"',
+          )
+          replace_once(
+              "python/validate_candidate_metadata.py",
+              'f"CITATION.cff development version is {EXPECTED_CFF_VERSION}"',
+              'f"CITATION.cff freeze version is {EXPECTED_CFF_VERSION}"',
+          )
+          replace_once(
+              "python/validate_candidate_metadata.py",
+              '"unreleased CITATION.cff has no top-level DOI"',
+              '"pre-DOI freeze has no invented top-level DOI"',
+          )
+          replace_once(
+              "python/validate_candidate_metadata.py",
+              '"unreleased CITATION.cff has no release date"',
+              '"pre-DOI freeze has no premature release date"',
+          )
+          replace_once(
+              "python/validate_candidate_metadata.py",
+              '        "unreleased" in citation.casefold(),\n        "CITATION.cff explicitly labels the package as unreleased",',
+              '        "release freeze" in citation.casefold() and "doi" in citation.casefold(),\n        "CITATION.cff explicitly labels the pre-DOI release freeze",',
+          )
+          replace_once(
+              "python/validate_candidate_metadata.py",
+              '        "new immutable" in manuscript.casefold(),\n        "manuscript requires a new immutable archive before submission",',
+              '        "reserved version doi" in manuscript.casefold() and "before submission" in manuscript.casefold(),\n        "manuscript requires DOI insertion and immutable archival before submission",',
+          )
+          replace_once(
+              "python/validate_candidate_metadata.py",
+              '    print("\\nCandidate metadata validation passed.")',
+              '    print("\\nVersion 1.2.0 pre-DOI release-freeze metadata validation passed.")',
+          )
+
+          # python/run_all_checks.py
+          replace_once(
+              "python/run_all_checks.py",
+              '            "version": "1.2.0.9000",\n            "status": "unreleased Earth Science Informatics journal candidate",\n            "version_doi": None,',
+              '            "version": "1.2.0",\n            "status": "pre-DOI release freeze",\n            "version_doi": None,',
+          )
+          replace_once(
+              "python/run_all_checks.py",
+              '            "scope": "interim stable files listed in CHECKSUMS.scope",\n            "manifest": "CHECKSUMS.sha256",\n            "final_release_requirement": "regenerate with --all-tracked",',
+              '            "scope": "complete tracked-file release scope",\n            "manifest": "CHECKSUMS.sha256",\n            "final_release_requirement": "insert reserved DOI, regenerate manifest, and rerun on exact tag",',
+          )
+          replace_once(
+              "python/run_all_checks.py",
+              '                "--check",\n            ],',
+              '                "--all-tracked",\n                "--check",\n            ],',
+          )
+          replace_once(
+              "python/run_all_checks.py",
+              '"checksum scope and manifest consistency"',
+              '"complete tracked-file manifest consistency"',
+          )
+          replace_once(
+              "python/run_all_checks.py",
+              '"candidate metadata and submission-package consistency"',
+              '"v1.2.0 freeze metadata and submission-package consistency"',
+          )
+
+          # python/build_checksum_manifest.py
+          replace_once(
+              "python/build_checksum_manifest.py",
+              "The default mode reads CHECKSUMS.scope, which defines the interim stable-file\ncontract used while the journal candidate is evolving. Release preparation must\nuse --all-tracked so that every tracked file, except the manifest itself, is\nincluded in the frozen candidate archive.",
+              "The default mode reads CHECKSUMS.scope, retained as a historical development\nscope. Versioned release verification uses --all-tracked so that every tracked\nfile, except the manifest itself, is included in the frozen release archive.",
+          )
+          replace_once(
+              "python/build_checksum_manifest.py",
+              '            "complete tracked-file candidate scope generated with "',
+              '            "complete tracked-file release scope generated with "',
+          )
+          replace_once(
+              "python/build_checksum_manifest.py",
+              '        "# Verify or rebuild: python python/build_checksum_manifest.py --check",\n        "# Final release: python python/build_checksum_manifest.py --all-tracked --write",',
+              '        "# Verify release: python python/build_checksum_manifest.py --all-tracked --check",\n        "# Rebuild release: python python/build_checksum_manifest.py --all-tracked --write",',
+          )
+
+          # Metadata workflow labels
+          replace_once(
+              ".github/workflows/metadata-validation.yml",
+              "name: Candidate metadata and manuscript validation",
+              "name: Release metadata and manuscript validation",
+          )
+          replace_once(
+              ".github/workflows/metadata-validation.yml",
+              "  validate-candidate-metadata:",
+              "  validate-release-metadata:",
+          )
+          replace_once(
+              ".github/workflows/metadata-validation.yml",
+              "      - name: Validate candidate consistency and journal limits",
+              "      - name: Validate v1.2.0 freeze consistency and journal limits",
+          )
+
+      - name: Remove temporary workflow before manifest generation
+        run: git rm .github/workflows/apply-v1.2.0-freeze.yml
+
+      - name: Reject residual development-version tokens
+        run: |
+          set -euo pipefail
+          if git grep -nE '1\.2\.0\.9000|1\.2\.0-dev' -- ':!paper/archive/**'; then
+            echo "Residual development-version token found" >&2
+            exit 1
+          fi
+
+      - name: Generate complete tracked-file manifest
+        run: |
+          python python/build_checksum_manifest.py --all-tracked --write
+          python python/build_checksum_manifest.py --all-tracked --check
+
+      - name: Run release-freeze editorial preflights
+        run: |
+          python python/validate_candidate_metadata.py
+          python python/audit_manuscript.py
+
+      - name: Commit exact pre-DOI release freeze
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "release: freeze version 1.2.0 pending Zenodo DOI"
+          git push origin HEAD:codex/earth-science-informatics-refinement-v1.3.0
