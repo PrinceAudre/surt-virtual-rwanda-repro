@@ -320,12 +320,12 @@ draw_provenance_decision <- function() {
   box(7.70, 7.15, 10.67, 7.78, "Output identifier, register,\nand optional short flag")
   arrow(9.18, 7.15, 9.18, 6.77)
   diamond(9.18, 6.25, 2.48, 1.00, "Output is illustrative?")
-  box(9.70, 5.03, 10.91, 5.62, "Return empty string", cex = 0.58)
-  arrow(10.42, 6.25, 10.30, 5.62, "No", 10.57, 5.94)
+  box(9.78, 5.00, 10.82, 5.54, "Return empty string", cex = 0.58)
+  arrow(10.42, 6.25, 10.30, 5.54, "No", 10.57, 5.94)
   arrow(9.18, 5.75, 9.18, 5.34, "Yes", 9.41, 5.54)
   diamond(9.18, 4.81, 2.30, 0.94, "short is TRUE?")
-  box(9.71, 3.80, 10.91, 4.39, "Return \"illustrative\"", cex = 0.55)
-  arrow(10.33, 4.81, 10.30, 4.39, "Yes", 10.51, 4.59)
+  box(9.78, 3.80, 10.82, 4.36, "Return \"illustrative\"", cex = 0.55)
+  arrow(10.33, 4.81, 10.30, 4.36, "Yes", 10.51, 4.59)
   arrow(9.18, 4.34, 9.18, 3.91, "No", 9.41, 4.12)
   diamond(
     9.18, 3.32, 2.40, 1.04,
@@ -338,11 +338,11 @@ draw_provenance_decision <- function() {
   )
   arrow(7.98, 3.32, 8.14, 2.64, "Yes", 7.80, 2.97)
   box(
-    9.58, 1.73, 10.91, 2.64,
+    9.58, 1.73, 10.82, 2.64,
     "Synthetic or placeholder\noutput note",
     cex = 0.54
   )
-  arrow(10.38, 3.32, 10.24, 2.64, "No", 10.55, 2.97)
+  arrow(10.38, 3.32, 10.20, 2.64, "No", 10.52, 2.97)
 
   box(
     0.30, 0.18, 10.70, 0.88,
@@ -367,7 +367,8 @@ dev.off()
 
 # Supplementary Figure S1: standardized district distributions permit
 # cross-layer comparison without implying that the four variables share
-# physical units. Distinct line types and symbols avoid reliance on colour.
+# physical units. Colour-blind-friendly hues, line types, and symbols provide
+# redundant visual encoding.
 values <- do.call(
   cbind,
   lapply(names(specs), function(nm) {
@@ -379,6 +380,7 @@ values <- do.call(
   })
 )
 colnames(values) <- c("Rainfall", "Temperature", "NDVI", "HAND share")
+profile_colours <- c("#0072B2", "#E69F00", "#009E73", "#CC79A7")
 
 pc <- prcomp(values, center = FALSE, scale. = FALSE)
 ord <- order(pc$x[, 1])
@@ -397,7 +399,7 @@ draw_profiles <- function() {
     ylab = "Standardized district value (z score)",
     cex = 0.60,
     lwd = 0.90,
-    col = rep("black", 4)
+    col = profile_colours
   )
   axis(1, at = seq_len(nrow(values)), labels = rownames(values), las = 2, cex.axis = 0.58)
   abline(h = 0, lty = 3)
@@ -414,7 +416,7 @@ draw_profiles <- function() {
     cex = 0.72,
     seg.len = 1.5,
     x.intersp = 0.55,
-    col = rep("black", 4)
+    col = profile_colours
   )
 }
 

@@ -40,11 +40,11 @@ Use the concise alternatives below in the final Word manuscript. They describe t
 
 ## Supplementary Figure S1
 
-**Alternative text:** Multi-line profile chart of standardized rainfall, temperature, NDVI, and HAND-share values for 30 Rwanda districts ordered by the first principal component. The four variables use different point symbols and line types. Values above and below zero indicate district values above and below each layer's national mean; the chart is not a composite score.
+**Alternative text:** Multi-line profile chart of standardized rainfall, temperature, NDVI, and HAND-share values for 30 Rwanda districts ordered by the first principal component. The four variables use distinct colour-blind-friendly hues, point symbols, and line types. Values above and below zero indicate district values above and below each layer's national mean; the chart is not a composite score.
 
 **Accessibility checks:**
 
-- All four series are black and differentiated by both symbols and line types.
+- The four series use distinct colour-blind-friendly hues and are also differentiated by symbols and line types, so colour is not the sole encoding.
 - A horizontal zero reference line is shown.
 - District labels are printed on the horizontal axis.
 - The plot is generated as 600 dpi TIFF and EPS.
