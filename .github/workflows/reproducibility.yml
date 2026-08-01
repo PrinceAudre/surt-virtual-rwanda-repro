@@ -35,11 +35,16 @@ jobs:
         run: python python/run_all_checks.py
       - name: Generate journal figures from archived GeoJSON files
         run: Rscript R/make_manuscript_figures.R
-      - name: Upload manuscript evidence bundle
+      - name: Upload manuscript evidence and submission source
         uses: actions/upload-artifact@v4
         with:
-          name: manuscript-evidence
+          name: submission-source
           path: |
+            paper/manuscript.md
+            paper/figures/ALT_TEXT.md
+            paper/figures/README.md
             paper/figures/generated/
+            paper/reviewer-suggestions.md
+            CITATION.cff
             generated/verification_summary.json
           if-no-files-found: error
