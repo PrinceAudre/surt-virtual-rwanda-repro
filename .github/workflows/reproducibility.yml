@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   account-free-checks:
@@ -43,83 +43,3 @@ jobs:
             paper/figures/generated/
             generated/verification_summary.json
           if-no-files-found: error
-
-  # BEGIN TEMPORARY V1.2.0 FREEZE JOB
-  freeze-v1-2-0:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: codex/earth-science-informatics-refinement-v1.3.0
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Verify exact helper parent
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "99b7b1c33088d5a583ecf042168eee437e12ecc5"
-          test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/reproducibility.yml"
-      - name: Apply reviewed v1.2.0 transformation
-        shell: python
-        run: |
-          from pathlib import Path
-          source = Path('.github/workflows/apply-v1.2.0-freeze.yml').read_text(encoding='utf-8')
-          marker = '      - name: Apply release-facing metadata and documentation edits\n        shell: python\n        run: |\n'
-          end = '\n      - name: Remove temporary workflow before manifest generation\n'
-          if source.count(marker) != 1 or source.count(end) != 1:
-              raise SystemExit('Reviewed transformation block not found exactly once')
-          block = source.split(marker, 1)[1].split(end, 1)[0]
-          lines = block.splitlines()
-          script = '\n'.join(line[10:] if line.startswith('          ') else line for line in lines) + '\n'
-          exec(compile(script, 'v1.2.0-freeze-transform.py', 'exec'), {})
-      - name: Align manuscript audit with freeze language
-        shell: python
-        run: |
-          from pathlib import Path
-          import re
-          path = Path('python/audit_manuscript.py')
-          text = path.read_text(encoding='utf-8')
-          pattern = re.compile(
-              r'    require\(\n'
-              r'        "new immutable" in text\.casefold\(\)\n'
-              r'        and "version doi" in text\.casefold\(\)\n'
-              r'        and "before submission" in text\.casefold\(\),\n'
-              r'        "candidate release and DOI dependency is explicit",\n'
-              r'    \)\n'
-          )
-          replacement = '''    require(
-              "version 1.2.0" in text.casefold()
-              and "reserved version doi" in text.casefold()
-              and "before submission" in text.casefold()
-              and "tagged and archived" in text.casefold(),
-              "v1.2.0 DOI, tag, and archive dependency is explicit",
-          )
-          '''
-          text, count = pattern.subn(replacement, text)
-          if count != 1:
-              raise SystemExit(f'Expected one manuscript-audit dependency block; found {count}')
-          path.write_text(text, encoding='utf-8', newline='\n')
-      - name: Validate transformed release state
-        run: |
-          set -euo pipefail
-          if git grep -nE '1\.2\.0\.9000|1\.2\.0-dev' -- ':!paper/archive/**' ':!.github/workflows/**'; then
-            exit 1
-          fi
-          python python/validate_candidate_metadata.py
-          python python/audit_manuscript.py
-      - name: Restore workflow files and generate manifest
-        run: |
-          set -euo pipefail
-          git restore --source=HEAD --staged --worktree .github/workflows
-          git add -A
-          python python/build_checksum_manifest.py --all-tracked --write
-          python python/build_checksum_manifest.py --all-tracked --check
-          test -z "$(git diff --name-only HEAD -- .github/workflows)"
-      - name: Commit and push pre-DOI freeze
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "release: freeze version 1.2.0 pending Zenodo DOI"
-          git push origin HEAD:codex/earth-science-informatics-refinement-v1.3.0
