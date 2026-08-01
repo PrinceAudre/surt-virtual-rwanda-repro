@@ -1,0 +1,34 @@
+name: Fix Figure 3 PostScript font
+
+on:
+  push:
+    branches:
+      - codex/earth-science-informatics-refinement-v1.3.0
+    paths:
+      - .github/workflows/fix-figure-postscript-font.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out candidate branch
+        uses: actions/checkout@v4
+        with:
+          ref: codex/earth-science-informatics-refinement-v1.3.0
+          fetch-depth: 0
+
+      - name: Apply exact-base font fix
+        run: python python/fix_figure_postscript_font.py
+
+      - name: Commit fix and remove temporary integration files
+        run: |
+          rm python/fix_figure_postscript_font.py
+          rm .github/workflows/fix-figure-postscript-font.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Fix Figure 3 PostScript font compatibility"
+          git push origin HEAD:codex/earth-science-informatics-refinement-v1.3.0
