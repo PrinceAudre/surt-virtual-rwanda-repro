@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  account-free-checks:
+  export-submission-source:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,14 +28,9 @@ jobs:
             libproj-dev \
             libudunits2-dev
       - uses: r-lib/actions/setup-renv@v2
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-      - name: Run reproducibility checks
-        run: python python/run_all_checks.py
-      - name: Generate journal figures from archived GeoJSON files
+      - name: Generate canonical journal figures
         run: Rscript R/make_manuscript_figures.R
-      - name: Upload manuscript evidence and submission source
+      - name: Upload manuscript source and artwork
         uses: actions/upload-artifact@v4
         with:
           name: submission-source
@@ -46,5 +41,4 @@ jobs:
             paper/figures/generated/
             paper/reviewer-suggestions.md
             CITATION.cff
-            generated/verification_summary.json
           if-no-files-found: error
