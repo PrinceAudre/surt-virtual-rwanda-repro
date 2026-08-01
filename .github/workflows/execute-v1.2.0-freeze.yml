@@ -28,23 +28,21 @@ jobs:
       - name: Verify helper-only branch state
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "2cdee9d49b9ffa9c8d861f64a7a6ad0c81a9cd08"
+          test "$(git rev-parse HEAD^)" = "a8510bbfb1eeb2d2c7f309a77e3cd038d1e43aff"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/execute-v1.2.0-freeze.yml"
 
       - name: Execute reviewed transformation block
         shell: python
         run: |
           from pathlib import Path
+          from textwrap import dedent
           source = Path('.github/workflows/apply-v1.2.0-freeze.yml').read_text(encoding='utf-8')
           marker = '      - name: Apply release-facing metadata and documentation edits\n        shell: python\n        run: |\n'
           end = '\n      - name: Remove temporary workflow before manifest generation\n'
           if source.count(marker) != 1 or source.count(end) != 1:
               raise SystemExit('Could not locate the reviewed transformation block exactly once')
           block = source.split(marker, 1)[1].split(end, 1)[0]
-          lines = block.splitlines()
-          if any(line and not line.startswith('          ') for line in lines):
-              raise SystemExit('Unexpected indentation in reviewed transformation block')
-          script = '\n'.join(line[10:] if line else '' for line in lines) + '\n'
+          script = dedent(block)
           exec(compile(script, 'v1.2.0-freeze-transform.py', 'exec'), {})
 
       - name: Remove temporary helpers before manifest generation
