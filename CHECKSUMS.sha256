@@ -3,12 +3,9 @@
 # Verify release: python python/build_checksum_manifest.py --all-tracked --check
 # Rebuild release: python python/build_checksum_manifest.py --all-tracked --write
 fbf815468cd887b5898ba8b2fc367f78f5ea8f30f83ec75dac923b12479e7a7d  .gitattributes
-17e228f7f98247610dc1e07c26752b938e3b21a8fa3d6abd086d7bc6705267b0  .github/workflows/apply-v1.2.0-freeze.yml
-1521757db6c5e4f840480059bfade23827ee43490d845b102f00cd8224089af5  .github/workflows/execute-v1.2.0-freeze-final.yml
-df387f452a86aa09798c45ce64f3f47fb609a921dd2a1c898e72d419a0cd022a  .github/workflows/execute-v1.2.0-freeze.yml
-78e841310b7afddc8333001e2e14316388ee924c715b90ed5ceed1f1578f8796  .github/workflows/metadata-validation.yml
+c2025427a54fbd62f7f4b9c91467eb6d76279f9d03acfb4f2f218b02ebd9d7e4  .github/workflows/metadata-validation.yml
 836503537851c418e040d5ca98c6ae20f6e1c23518fce6b86555e40d098807a3  .github/workflows/public-data-validation.yml
-fc6a25f17a2e0a66b786e0ad63983eb1a2a5a3849e0de6aceaf335e5a2b37334  .github/workflows/reproducibility.yml
+7a883f621629b05a9ce74ff73d6d67be4878fffe390514bee715e92cc8b58793  .github/workflows/reproducibility.yml
 91e1c0f9bd0d6b30d23159d1a7d4e4b980c07a7bb2764883d344fced9eb45e21  .gitignore
 3fd40d8feb72ad06f8d990233991f66cf565a0541fe58c2475fa5f41ae594387  CHANGELOG.md
 c05bbb8bf522cc20a95c20a0cc2b9d55041bc83d24c2508f65df12f1ec315b82  CHECKSUMS.scope
