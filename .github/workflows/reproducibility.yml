@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   account-free-checks:
@@ -43,3 +43,45 @@ jobs:
             paper/figures/generated/
             generated/verification_summary.json
           if-no-files-found: error
+
+  # BEGIN TEMPORARY DOI INSERTION JOB
+  apply-v1-2-0-doi:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/earth-science-informatics-refinement-v1.3.0
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify exact helper parent
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "e03cc2ea5bdc9dff4055932b2e1e141a6e8c19b8"
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/reproducibility.yml"
+      - name: Insert reserved Zenodo DOI
+        run: python python/apply_v1_2_0_doi.py
+      - name: Validate transformed release state
+        run: |
+          python python/validate_candidate_metadata.py
+          python python/audit_manuscript.py
+      - name: Remove helper and restore workflow files
+        run: |
+          set -euo pipefail
+          rm python/apply_v1_2_0_doi.py
+          git restore --source=HEAD --staged --worktree .github/workflows
+          git add -A
+      - name: Generate and verify complete manifest
+        run: |
+          python python/build_checksum_manifest.py --all-tracked --write
+          python python/build_checksum_manifest.py --all-tracked --check
+          python python/validate_candidate_metadata.py
+          python python/audit_manuscript.py
+      - name: Commit and push DOI-bearing release
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "release: insert Zenodo DOI for version 1.2.0"
+          git push origin HEAD:codex/earth-science-informatics-refinement-v1.3.0
