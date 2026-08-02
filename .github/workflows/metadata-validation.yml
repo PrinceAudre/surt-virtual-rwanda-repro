@@ -1,0 +1,50 @@
+name: Release metadata and manuscript validation
+
+on:
+  push:
+    paths:
+      - "CITATION.cff"
+      - "DESCRIPTION"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "paper/manuscript.md"
+      - "paper/REFERENCE_AUDIT.md"
+      - "paper/submission/**"
+      - "paper/archive/**"
+      - "python/validate_candidate_metadata.py"
+      - "python/audit_manuscript.py"
+      - ".github/workflows/metadata-validation.yml"
+  pull_request:
+    paths:
+      - "CITATION.cff"
+      - "DESCRIPTION"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "paper/manuscript.md"
+      - "paper/REFERENCE_AUDIT.md"
+      - "paper/submission/**"
+      - "paper/archive/**"
+      - "python/validate_candidate_metadata.py"
+      - "python/audit_manuscript.py"
+      - ".github/workflows/metadata-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-release-metadata:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Install pinned CFF validator
+        run: python -m pip install --disable-pip-version-check cffconvert==2.0.0
+      - name: Validate Citation File Format schema
+        run: cffconvert --validate
+      - name: Validate v1.2.0 freeze consistency and journal limits
+        run: python python/validate_candidate_metadata.py
+      - name: Audit manuscript structure and references
+        run: python python/audit_manuscript.py

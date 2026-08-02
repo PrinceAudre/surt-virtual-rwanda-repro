@@ -1,0 +1,35 @@
+# Interim stable-file scope for CHECKSUMS.sha256.
+#
+# This list intentionally excludes evolving journal-candidate documents,
+# generated figures, workflow artifacts, and development-only validators.
+# The final tagged release must use:
+#   python python/build_checksum_manifest.py --all-tracked --write
+# and must archive that complete manifest with the exact release commit.
+.gitattributes
+DATA_DICTIONARY.md
+data/relief_climate_ndvi.geojson
+data/relief_climate_rainfall.geojson
+data/relief_climate_temp.geojson
+data/relief_districts.geojson
+data/relief_low_lying_hand.geojson
+environment.txt
+LICENSE
+NOTICE.md
+python/fetch_era5land_temperature.py
+python/fetch_modis_ndvi.py
+R/build_relief_climate_ndvi_real.R
+R/build_relief_climate_rainfall.R
+R/build_relief_climate_temperature.R
+R/build_relief_districts.R
+R/build_relief_low_lying_hand.R
+R/demo_value_class.R
+R/example_register.R
+R/honesty_markers.R
+R/provenance_value_class.R
+R/relief_geojson_common.R
+R/relief_low_lying_transform.R
+R/relief_ndvi_transform.R
+R/relief_rainfall_transform.R
+R/relief_temp_transform.R
+R/test_fixture_pipeline.R
+renv.lock

@@ -1,79 +1,78 @@
-# Suggested referees for F1000Research
+# Suggested reviewers for Earth Science Informatics
 
-Prepared for the Software Tool Article:
+Prepared for the Software article:
 
-> An R pipeline for district-level environmental layers and provenance labelling: a Rwanda proof of concept
+> An auditable cross-provider workflow for district-scale Earth-data harmonization and provenance labelling: software design and a Rwanda implementation
 
-F1000Research asks authors to suggest at least five qualified referees. The
-five candidates below cover spatial R, reproducible geocomputation, remote
-sensing, climate data, climate-health early warning, and the HAND terrain
-method. They are based in five countries and five separate institutions.
+This is an internal candidate dossier, not evidence that the journal requires reviewer suggestions or that any person will be invited. The submission system and current journal instructions remain controlling.
 
-The author must reconfirm before submission that there has been no recent
-collaboration, coauthorship, supervisory relationship, personal conflict, or
-other competing interest with any candidate. The candidates should not be
-contacted by the author.
+The candidates cover spatial R infrastructure, reproducible geocomputation, Earth-science workflow portability, provenance and research-object metadata, and CHIRPS product science. They are based at distinct institutions. The author must personally screen every candidate for recent collaboration, coauthorship, supervision, employment overlap, financial interest, personal conflict, or other relationship before submission. Candidates must not be contacted by the author.
 
 ## Primary candidates
 
-1. **Prof. Dr. Edzer Pebesma**
-   - Institution: Institute for Geoinformatics, University of Münster, Germany
-   - Email: edzer.pebesma@uni-muenster.de
-   - ORCID: 0000-0001-8049-7069
-   - Fit: spatial statistics, environmental modelling, geoinformatics,
-     reproducible research, and the R spatial-software ecosystem.
-   - Institutional source:
-     https://ifgi.uni-muenster.de/ifgilogin/imperia/staff_detail.php?lang=en&name=119
+### 1. Prof. Dr. Edzer Pebesma
 
-2. **Prof. Catherine Linard**
-   - Institution: Department of Geography, University of Namur, Belgium
-   - Email: catherine.linard@unamur.be
-   - ORCID: 0000-0002-0819-7755
-   - Fit: spatial epidemiology, GIS, remote sensing, population and
-     environmental data in health research.
-   - Institutional sources:
-     https://researchportal.unamur.be/en/persons/clinard/ and
-     https://www.unamur.be/fr/entite/departement-de-geographie
+- **Institution:** Institute for Geoinformatics, University of Münster, Germany
+- **Email:** edzer.pebesma@uni-muenster.de
+- **ORCID:** 0000-0001-8049-7069
+- **Fit:** geoinformatics, geostatistics, spatiotemporal modelling, R spatial infrastructure, and reproducible spatial software.
+- **Institutional source:** https://www.uni-muenster.de/Geoinformatics/en/institute/staff/index.php/119/edzer_pebesma
+- **Conflict note:** the manuscript depends on the broader R spatial ecosystem with which Prof. Pebesma is closely associated. This is scientific fit, but the author should verify that no direct interaction or collaboration exists.
 
-3. **Dr. Chris Funk**
-   - Institution: Climate Hazards Center, University of California,
-     Santa Barbara, United States
-   - Email: chrisfunk@ucsb.edu
-   - Fit: CHIRPS, gridded precipitation, climate monitoring, data products,
-     and early-warning systems.
-   - Institutional source:
-     https://www.geog.ucsb.edu/people/researchers/chris-funk
+### 2. Dr. Daniel Nüst
 
-4. **Dr. Donnie Mategula**
-   - Institution: Liverpool School of Tropical Medicine, United Kingdom;
-     Malawi-Liverpool-Wellcome Research Programme, Malawi
-   - Email: dmategula@mlw.mw
-   - ORCID: 0000-0001-7109-9042
-   - Fit: malaria early-warning systems, geostatistics, reproducible
-     climate-health analysis, and African implementation context.
-   - Institutional profile:
-     https://research.lstmed.ac.uk/en/persons/donnie-mategula-7/
+- **Institution:** Chair of Geoinformatics, TUD Dresden University of Technology, Germany
+- **Email:** daniel.nuest@tu-dresden.de
+- **ORCID:** 0000-0002-0024-5046
+- **Fit:** open and reproducible geoscientific research, geospatial research software engineering, executable research compendia, and independent computational reproducibility review.
+- **Institutional source:** https://tu-dresden.de/bu/umwelt/geo/geoinformatik/die-professur/team/dnuest?set_language=en
+- **Conflict note:** Dr. Nüst has worked in the same broad reproducible-geocomputation community as several cited authors. Personal or recent professional overlap must be checked rather than inferred absent.
 
-5. **Dr. Luz Adriana Cuartas Pineda**
-   - Institution: National Center for Monitoring and Early Warning of Natural
-     Disasters (CEMADEN/MCTI), Brazil
-   - Email: adriana.cuartas@cemaden.gov.br
-   - Lattes ID: http://lattes.cnpq.br/4296700463843468
-   - Fit: hydrology, remote sensing, natural-disaster modelling, and
-     co-development and application of the Height Above Nearest Drainage
-     terrain model used in the article.
-   - Institutional sources:
-     https://www2.cemaden.gov.br/quem-e-quem/ and
-     https://www2.cemaden.gov.br/hand-model/
+### 3. Dr. Ziheng Sun
 
-## Conflict and eligibility check
+- **Institution:** Center for Spatial Information Science and Systems, Department of Geography and Geoinformation Science, George Mason University, United States
+- **Email:** zsun@gmu.edu
+- **Fit:** Earth-observation workflows, geospatial cyberinfrastructure, workflow sharing and reuse, high-performance geocomputation, and Earth-science informatics.
+- **Institutional source:** https://science.gmu.edu/directory/ziheng-sun
+- **Conflict note:** Dr. Sun coauthored the Geoweaver_cwl article cited as adjacent workflow literature. Citation alone is not a conflict, but the author must confirm no collaboration or relationship.
 
-- No candidate is listed as an author or contributor to the submitted work.
-- The institutions and countries are distinct.
-- Each candidate has a doctoral qualification or demonstrable senior
-  expertise and a substantial publication record in a directly relevant
-  field.
-- No known conflict was identified from public records; this is not a
-  substitute for the author's personal conflict check.
-- F1000Research's current referee criteria remain controlling:
-  https://f1000research.com/for-authors/tips-for-finding-referees
+### 4. Dr. Stian Soiland-Reyes
+
+- **Institution:** Department of Computer Science and eScience Lab, University of Manchester, United Kingdom
+- **Email:** soiland-reyes@manchester.ac.uk
+- **ORCID:** 0000-0001-9842-9718
+- **Fit:** FAIR and reproducible digital research, computational-workflow provenance, Linked Data, RO-Crate, research-object packaging, and open science.
+- **Institutional source:** https://research.manchester.ac.uk/en/persons/soiland-reyes/
+- **Conflict note:** Dr. Soiland-Reyes is a lead author of the RO-Crate article cited in the manuscript. The author must check for any direct interaction; his inclusion is based on metadata and provenance expertise.
+
+### 5. Dr. Chris Funk
+
+- **Institution:** Climate Hazards Center, Department of Geography, University of California, Santa Barbara, United States
+- **Email:** chrisfunk@ucsb.edu
+- **Fit:** CHIRPS development, gridded precipitation, climate-data products, monitoring systems, and the scientific interpretation limits of the rainfall layer.
+- **Institutional source:** https://www.geog.ucsb.edu/people/researchers/chris-funk
+- **Conflict note:** Dr. Funk is a lead developer and author of CHIRPS, the product used in the independently reproduced layer. The editor may prefer an evaluator independent of the product team; retain him as a product-science candidate rather than the sole numerical-validation reviewer.
+
+## Selection balance
+
+A balanced set would normally include:
+
+1. one spatial-software or geocomputation specialist;
+2. one reproducibility or research-software evaluation specialist;
+3. one workflow/provenance or metadata specialist; and
+4. one Earth-observation product specialist.
+
+Do not suggest multiple candidates from the same institution or tightly connected collaboration network. Do not claim that public-profile review excludes a conflict.
+
+## Author conflict checklist
+
+For each candidate, answer and document:
+
+- Any coauthored publication, grant, software project, dataset, conference committee, or institutional project within the journal's restricted period?
+- Any current or former supervisory, employment, consultancy, or close mentoring relationship?
+- Any personal dispute, close friendship, financial interest, or other relationship that could affect impartiality?
+- Any direct communication about this manuscript or repository?
+- Is the current institutional email verified on an official source at the time of submission?
+- Is the candidate active in the relevant field and able to assess the manuscript's principal contribution?
+
+A candidate is submitted only after the author records an explicit conflict-screening decision. The editor retains full discretion over reviewer selection.

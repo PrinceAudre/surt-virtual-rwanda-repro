@@ -1,0 +1,59 @@
+name: Public CHIRPS validation
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "R/validate_chirps_rainfall.R"
+      - ".github/workflows/public-data-validation.yml"
+      - "data/relief_districts.geojson"
+      - "data/relief_climate_rainfall.geojson"
+      - "renv.lock"
+  pull_request:
+    paths:
+      - "R/validate_chirps_rainfall.R"
+      - ".github/workflows/public-data-validation.yml"
+      - "data/relief_districts.geojson"
+      - "data/relief_climate_rainfall.geojson"
+      - "renv.lock"
+
+permissions:
+  contents: read
+
+jobs:
+  chirps-2023-validation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.6.0"
+          use-public-rspm: true
+      - name: Install geospatial system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            gdal-bin \
+            libabsl-dev \
+            libgdal-dev \
+            libgeos-dev \
+            libproj-dev \
+            libudunits2-dev
+      - uses: r-lib/actions/setup-renv@v2
+      - name: Cache public CHIRPS annual raster
+        uses: actions/cache@v4
+        with:
+          path: cache/chirps
+          key: chirps-v2.0-annual-2023
+      - name: Reproduce and cross-check archived rainfall
+        run: Rscript R/validate_chirps_rainfall.R 2023
+      - name: Record public source-file digest
+        run: sha256sum cache/chirps/chirps-v2.0.2023.tif > generated/chirps_validation/chirps-v2.0.2023.tif.sha256
+      - name: Upload numerical validation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: chirps-2023-numerical-validation
+          path: generated/chirps_validation/
+          if-no-files-found: error
+          retention-days: 90
