@@ -1,4 +1,4 @@
-# SHA-256 checksums for the SuRT-Virtual Rwanda reproducibility artifact.
+# SHA-256 checksums for SuRT-GeoHarmonizer.
 # Scope: complete tracked-file release scope generated with --all-tracked.
 # Verify release: python python/build_checksum_manifest.py --all-tracked --check
 # Rebuild release: python python/build_checksum_manifest.py --all-tracked --write
@@ -40,7 +40,7 @@ d4735d537b3a22a1d68d327d7884ec198f6aafdcf7a4f4c59ba43e81e259d258  paper/REFERENC
 981de697979bb8f4ea9d201ea2705ec93f5f49ed1575cece674c0042883cf01b  paper/submission/README.md
 442e204d3dc0dbc2f6f5b041e968f81c30f0db5a38b03ef29e542321a94b81c4  paper/submission/SOFTWAREX_SUBMISSION_CHECKLIST.md
 8560d48aa4ae548e612794d27e2ae9baf0d2c5dbf547a99a8a4b3baafe3be812  python/audit_manuscript.py
-69abae79cb807da86c950d990c8efa0377fb01a8c5eda2e466335ed5e31e45dc  python/build_checksum_manifest.py
+c411e7e395c09116ad6bd686bddcce638e832bd839f3021ef96c73e600ffc273  python/build_checksum_manifest.py
 f72c8b0b0c9e487771e6c62e4998122167ea14edc9131e33758e597da5fb1bce  python/fetch_era5land_temperature.py
 3646b9cef11fd040b20af29b4e679068b1bcf62e6cbbab3cb33ffb7692c0f652  python/fetch_modis_ndvi.py
 1d3f723a110a746648186d1a3f11fa16af4ba91d4c974c5e8db14206284fde43  python/run_all_checks.py
@@ -53,7 +53,7 @@ c93276c0e3d83d059906fa08b13f1de7fc0d657b1847a46520ffada55f2cd1a4  R/build_relief
 db89a6b3403de56110d0ed926c77a9d28430d8a50cf0ead1f64e1aaff162cde0  R/build_relief_low_lying_hand.R
 0b19bd310dc4fb0bfc7384ea594cbbe4c013ecfddeab45e711137f9646c9cd54  R/demo_value_class.R
 678d5bc7a1d44450041ee10a7c63c402b9b7d74eacff3c07d916df656f035522  R/example_register.R
-7ca4f38002e3f90a5c2f6f42196b7e711363cc71210c04ddb248270bbfab7a62  R/harmonize_admin_raster.R
+26fe26945650d3859c88d1558b1e948c1638bd508d99f6222cb38ed19758a9fc  R/harmonize_admin_raster.R
 5b63a70fa4ad5bb681be5b276667912de8b0a114117abb12752681c6954dab15  R/honesty_markers.R
 c738fdafff4c032428f68f01039a8b26ebaa2f8a1f12855e685e7eb8bdad3f95  R/make_manuscript_figures.R
 ebbf2c19fd1c3a10fdc42e85fe9025238525b78e8aeb2c2eca34df3f7c069651  R/provenance_value_class.R
