@@ -1,10 +1,10 @@
 # Reproducibility
 
-## Version 1.2.0 release and archive boundary
+## Release boundary
 
-Version 1.2.0 extends the published version 1.1.1 base archive, DOI `10.5281/zenodo.21677162`, with additional validators, figures, evidence summaries, and submission records. The release is archived under version DOI `10.5281/zenodo.21744708` and identified in Git by tag `v1.2.0`.
+The active SoftwareX candidate is SuRT-GeoHarmonizer version `1.3.0` on branch `codex/softwarex-submission-v1.3.0`.
 
-The commands below describe version 1.2.0. They must not be attributed to version 1.1.1 unless the cited file is present in that historical archive.
+The historical release `v1.2.0`, DOI `10.5281/zenodo.21744708`, remains immutable. Version `1.3.0` must receive its own Git tag and Zenodo version DOI after the exact candidate commit passes all checks. The concept DOI for all releases is `10.5281/zenodo.21671788`.
 
 ## Environment restoration
 
@@ -14,9 +14,17 @@ The commands below describe version 1.2.0. They must not be attributed to versio
 Rscript -e "renv::restore(prompt = FALSE)"
 ```
 
-The published base archive was prepared with R 4.6.0. `environment.txt` records its execution environment. Clean GitHub-hosted runners restore the lockfile before verification.
+The validated Linux workflow uses R 4.6.0 with geospatial system libraries for GDAL, GEOS, PROJ, and UDUNITS. Python 3 orchestrates validation and provider clients.
 
-## Account-free verification
+Optional real-data provider clients are pinned in `requirements-providers.txt`:
+
+```text
+python -m pip install -r requirements-providers.txt
+```
+
+The account-free pathway does not require those packages.
+
+## Complete account-free verification
 
 Run:
 
@@ -24,34 +32,79 @@ Run:
 python python/run_all_checks.py
 ```
 
-The command executes 41 explicit outcomes in six groups:
+The command executes 48 explicit behavioural and contract outcomes:
 
 1. nine provenance-labelling assertions in `R/demo_value_class.R`;
 2. nine controlled environmental-transformation assertions in `R/test_fixture_pipeline.R`;
-3. six geometry-agnostic portability assertions in `R/test_portability_fixture.R`;
-4. seven deliberate transformation failure-injection assertions in `R/test_failure_modes.R`;
-5. five valid GeoJSON release-layer contract checks in `python/validate_release_contract.py`; and
-6. five deliberate release-corruption rejections in the same Python validator.
+3. six geometry-agnostic transformation assertions in `R/test_portability_fixture.R`;
+4. seven generic administrative-harmonizer assertions in `R/test_generic_harmonizer.R`;
+5. seven deliberate transformation failure assertions in `R/test_failure_modes.R`;
+6. five valid GeoJSON release checks in `python/validate_release_contract.py`; and
+7. five deliberate release-corruption rejections in the same Python validator.
 
-The runner also verifies the complete all-tracked release manifest in `CHECKSUMS.sha256` and writes:
+The runner also:
 
-- `generated/fixture_pipeline_output.geojson`;
-- `generated/release_contract_summary.json`; and
-- `generated/verification_summary.json`.
+- validates SoftwareX candidate metadata;
+- audits the SoftwareX manuscript;
+- verifies the complete tracked-file manifest;
+- writes `generated/verification_summary.json`;
+- writes `generated/generic_admin_example.geojson`;
+- writes the existing controlled fixture outputs.
 
-The synthetic fixtures require no private repository, provider account, network call, or unpublished data. They test specified transformation behaviour, interface independence, failure handling, and release-contract enforcement. They do not validate provider-product accuracy, the scientific meaning of the HAND threshold, or suitability for a downstream model.
+The fixtures require no private repository, provider account, network request, or unpublished data.
 
-### Direct component commands
+## Generic administrative-unit interface
+
+Display the command-line help:
+
+```text
+Rscript R/harmonize_admin_raster.R --help
+```
+
+Minimal invocation:
+
+```text
+Rscript R/harmonize_admin_raster.R \
+  --raster input.tif \
+  --boundaries units.geojson \
+  --id-field admin_code \
+  --value-name environmental_mean \
+  --output generated/environmental_mean.geojson \
+  --provenance "Source, product, period, method and applicable terms"
+```
+
+Optional arguments support:
+
+- raster layer selection;
+- scale and offset conversion;
+- lower and upper no-data masking;
+- output rounding;
+- fail-closed minimum and maximum bounds.
+
+The interface transforms extraction geometry to the raster CRS, calculates coverage-fraction-weighted polygon means, requires a finite value for every unit, normalizes output geometry to EPSG:4326, and writes only `unit_id`, the requested measurement property, `provenance`, and geometry.
+
+Run the self-contained arbitrary-region example:
+
+```text
+Rscript R/test_generic_harmonizer.R
+```
+
+It creates projected polygons and a raster in a temporary directory and writes a deterministic GeoJSON example under `generated/`.
+
+## Direct component commands
 
 ```text
 Rscript R/demo_value_class.R
 Rscript R/test_fixture_pipeline.R
 Rscript R/test_portability_fixture.R
+Rscript R/test_generic_harmonizer.R
 Rscript R/test_failure_modes.R
 python python/validate_release_contract.py
+python python/validate_candidate_metadata.py
+python python/audit_manuscript.py
 ```
 
-`python/validate_release_contract.py --skip-failure-tests` validates the committed release files without injecting corrupted copies.
+`python/validate_release_contract.py --skip-failure-tests` validates the committed reference layers without injecting corrupted copies.
 
 ## Public CHIRPS numerical validation
 
@@ -67,30 +120,26 @@ Optional positional arguments are:
 2. CHIRPS cache directory; and
 3. output directory.
 
-The default source is the public CHIRPS v2.0 annual GeoTIFF for 2023. The workflow:
+The workflow:
 
-1. downloads or reuses the annual raster;
+1. downloads or reuses the public CHIRPS v2.0 annual raster;
 2. masks negative no-data values;
-3. recomputes district means with `exactextractr`, matching the release method;
-4. cross-checks the same source raster and geometry with `terra::extract(..., exact = TRUE)`;
+3. recomputes district means with `exactextractr`;
+4. cross-checks the same source and geometry with `terra::extract(..., exact = TRUE)`;
 5. recalculates means with cell-area weights; and
-6. writes district-level CSV and machine-readable JSON evidence.
+6. writes district-level CSV and JSON evidence.
 
-The GitHub workflow `.github/workflows/public-data-validation.yml` also records the downloaded raster's SHA-256 digest and uploads the evidence as an artifact.
+Current results for the tested 2023 source and Rwanda geometry are:
 
-Current clean-CI results for the tested source raster, year, and Rwanda geometry are:
-
-- 30 of 30 archived district values reproduced exactly after rounding to whole millimetres;
-- maximum absolute `terra` versus `exactextractr` difference: 0.000136 mm;
+- 30 of 30 archived values reproduced exactly after rounding;
+- maximum `terra` versus `exactextractr` difference: 0.000136 mm;
 - root mean square cross-engine difference: 0.000064 mm;
-- maximum absolute cell-area-weighting difference: 0.005127 mm; and
-- root mean square cell-area-weighting difference: 0.002385 mm.
+- maximum cell-area-weighting difference: 0.005127 mm;
+- root mean square weighting difference: 0.002385 mm.
 
 This is computational reproduction of the CHIRPS layer, not validation of CHIRPS observational accuracy. Equivalent independent numerical validation has not been completed for ERA5-Land, MODIS, or HAND.
 
-## Rebuilding the real-data layers
-
-The builders use repository-relative defaults and accept explicit output, geometry, and cache paths:
+## Rwanda reference builders
 
 ```text
 Rscript R/build_relief_climate_rainfall.R 2023
@@ -99,47 +148,60 @@ Rscript R/build_relief_climate_ndvi_real.R 2023
 Rscript R/build_relief_low_lying_hand.R 5
 ```
 
-Outputs default to `generated/`, and source downloads default to `cache/`. Both locations are excluded from Git. The committed district geometry is the default aggregation frame.
-
 Access requirements:
 
-- **CHIRPS:** public network download; no account.
-- **HAND:** public network download; no account.
-- **ERA5-Land:** free Copernicus Climate Data Store account, accepted product terms, and provider-standard `.cdsapirc` configuration.
-- **MODIS:** free NASA Earthdata account and provider-standard authentication managed by `earthaccess`.
+- CHIRPS: public network download, no account;
+- HAND: public network download, no account;
+- ERA5-Land: Copernicus Climate Data Store account, accepted terms, and `.cdsapirc`;
+- MODIS: NASA Earthdata account and non-interactive `earthaccess` credentials.
 
-No credential is stored in the repository. Real-data rebuilds are provider- and network-dependent and may fail if external services, terms, products, or clients change.
+No credential is stored in the repository. Provider services and products can change independently of this release.
 
 ## Manuscript figures
 
-Generate all manuscript artwork and its numerical summary from the committed GeoJSON files:
+Generate the existing architecture, map, and profile figures from committed GeoJSON files:
 
 ```text
 Rscript R/make_manuscript_figures.R
 ```
 
-Outputs are written to `paper/figures/generated/` and include:
+Outputs are written to `paper/figures/generated/` and are excluded from version control. GitHub Actions retain the exact evidence bundle. `paper/figures/ALT_TEXT.md` records accessibility text.
 
-- caption-free SVG and EPS architecture line art;
-- a 600 dpi four-panel TIFF map;
-- individual SVG and EPS map panels;
-- a 600 dpi TIFF and EPS standardized-profile chart; and
-- `environmental_layer_summary.csv`.
+## Integrity and final release
 
-The generated directory is excluded from version control. GitHub Actions retains the exact figure and machine-readable evidence bundle for inspection. `paper/figures/ALT_TEXT.md` records alternative text and accessibility checks for the final Word file.
+During development, `CHECKSUMS.sha256` must match the complete tracked candidate tree. Validate it with:
 
-## Integrity scope
+```text
+python python/build_checksum_manifest.py --all-tracked --check
+```
 
-For version 1.2.0, `CHECKSUMS.sha256` is generated with `python python/build_checksum_manifest.py --all-tracked --write` and covers every tracked file except the manifest itself. Verify it with `python python/build_checksum_manifest.py --all-tracked --check`. `CHECKSUMS.scope` is retained as a historical development-scope record and is not the release verification scope.
+After every other file is frozen, regenerate it:
 
-A successful checksum verification establishes byte-level integrity of tracked files. It does not establish scientific validity. The committed manifest corresponds to the DOI-bearing release tree.
+```text
+python python/build_checksum_manifest.py --all-tracked --write
+```
+
+The final release sequence is:
+
+1. run all checks on the exact candidate commit;
+2. regenerate the all-tracked manifest;
+3. rerun all checks;
+4. merge the reviewed candidate without additional file changes;
+5. tag the exact commit `v1.3.0`;
+6. create the corresponding GitHub release;
+7. archive that tag as a new Zenodo version;
+8. insert the new version DOI into the README, `CITATION.cff`, manuscript, and release validator;
+9. regenerate the manifest and rerun exact-head validation;
+10. submit the exact archived source to SoftwareX.
+
+A checksum establishes byte-level integrity. It does not establish scientific validity.
 
 ## Reproducibility limits
 
-- The fully account-free pathway covers fixtures, failure injection, release-contract checks, listed-file integrity, and public CHIRPS validation.
+- The account-free pathway validates specified transformations, interfaces, failure handling, schemas, and integrity.
+- The generic example demonstrates an end-to-end arbitrary polygon/raster pathway but is synthetic, not a second-country scientific validation.
 - ERA5-Land and MODIS rebuilds require provider accounts.
-- The portability fixture establishes function-level identifier and geometry independence, not end-to-end deployment in another country.
 - Annual administrative summaries suppress seasonality, extremes, and within-unit heterogeneity.
-- MODIS quality flags are not applied in the current implementation.
-- HAND at or below 5 m is a terrain descriptor, not observed flooding or validated hazard.
-- Only CHIRPS currently has an independent public-data computational cross-check.
+- MODIS quality and reliability flags are not applied in the current reference implementation.
+- HAND at or below 5 m is a terrain descriptor, not observed flooding or a validated hazard.
+- Only CHIRPS currently has an independent public-data numerical cross-check.
