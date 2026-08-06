@@ -1,93 +1,142 @@
-# SuRT-Virtual Rwanda: reproducibility artifact
+# SuRT-GeoHarmonizer
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21744708.svg)](https://doi.org/10.5281/zenodo.21744708)
+**Auditable administrative-scale Earth-data harmonization and provenance labelling in R and Python**
 
-Companion reproducibility artifact for the working Software article *An auditable cross-provider workflow for district-scale Earth-data harmonization and provenance labelling: software design and a Rwanda implementation*.
+SuRT-GeoHarmonizer is an open command-line workflow for converting heterogeneous raster products into consistent, provenance-labelled administrative-unit GeoJSON layers. It combines provider-specific preparation, coverage-fraction-weighted polygon aggregation, fail-closed evidence classification, executable positive and negative tests, release-contract validation, and versioned archival practice.
 
-## Version 1.2.0 release
+Rwanda is the reference implementation, not a hard-coded product boundary. The generic interface accepts an arbitrary raster, polygon boundary file, unique identifier field, output measurement name, transformation controls, and provenance statement.
 
-Version 1.2.0 extends the published version 1.1.1 base archive with additional validators, numerical-validation workflows, figures, evidence summaries, and submission records. The release is identified by an immutable Zenodo version DOI and the exact Git tag `v1.2.0`.
+The software is descriptive and research-oriented. It does not generate validated hazards, forecasts, epidemiological effects, exposure estimates, or operational recommendations.
 
-- **Release version:** `1.2.0`
-- **Version DOI:** `10.5281/zenodo.21744708`
-- **Release tag:** `v1.2.0`
-- **Concept DOI for all versions:** `10.5281/zenodo.21671788`
-- **Historical base archive:** version 1.1.1, DOI `10.5281/zenodo.21677162`
+## Software status
 
-Version 1.1.1 remains the historical base and must not be represented as containing the version 1.2.0 additions.
+- **SoftwareX candidate version:** `1.3.0`
+- **Candidate branch:** `codex/softwarex-submission-v1.3.0`
+- **Repository:** `PrinceAudre/surt-virtual-rwanda-repro`
+- **Zenodo concept DOI:** `10.5281/zenodo.21671788`
+- **Historical immutable release:** `v1.2.0`, DOI `10.5281/zenodo.21744708`
+- **Code licence:** MIT
+- **Validated continuous-integration environment:** Ubuntu Linux
 
-## Scope
+Version `1.2.0` remains immutable. The SoftwareX candidate will receive a new `v1.3.0` tag and version-specific Zenodo DOI only after exact-head verification and metadata freeze.
 
-This is a reduced, honestly scoped artifact. It is not the whole SuRT-Virtual Rwanda application.
+## What the software does
 
-It includes:
+SuRT-GeoHarmonizer provides four connected layers:
 
-- provider-specific preparation of CHIRPS rainfall, ERA5-Land temperature, MODIS NDVI, and HAND terrain data;
-- district-level GeoJSON outputs for Rwanda's 30 districts;
-- a fail-closed provenance and evidence-class module;
-- positive transformation fixtures, projected non-Rwanda portability checks, and deliberate failure injection;
-- independent release-contract and corruption validation;
-- scoped public CHIRPS numerical reproduction and weighting sensitivity;
-- machine-readable verification summaries, figures, source terms, and integrity metadata.
+1. **Generic administrative harmonization.** `R/harmonize_admin_raster.R` accepts a raster and polygon boundary file and writes a WGS84 GeoJSON containing `unit_id`, a user-defined measurement field, provenance, and geometry.
+2. **Provider-specific reference builders.** The Rwanda implementation prepares CHIRPS rainfall, ERA5-Land temperature, MODIS NDVI, and HAND terrain descriptors.
+3. **Fail-closed evidence and release controls.** The provenance module defaults unknown, incomplete, synthetic, or placeholder outputs to illustrative status. Independent validators reject malformed transformations and corrupted release files.
+4. **Executable evidence.** A one-command account-free suite exercises controlled transformations, arbitrary projected geometry, the generic input contract, deliberate failure modes, GeoJSON contracts, and checksum integrity.
 
-It excludes:
+## Five-minute quick start
 
-- the private interactive application and its full methodology register;
-- disease, patient, surveillance, or confidential operational data;
-- decision, forecast, supply, workforce, clinical, or resource-allocation interfaces; and
-- any claim that the prepared layers are validated hazards, forecasts, epidemiological effects, or operational recommendations.
+### 1. Requirements
 
-`operational_use_allowed = FALSE`.
+The verified workflow uses:
 
-## Repository map
+- R 4.6.0;
+- `terra`, `sf`, `exactextractr`, and `jsonlite` from `renv.lock`;
+- Python 3 for standard-library validation and orchestration;
+- GDAL, GEOS, PROJ, and UDUNITS system libraries on Linux.
 
-- `R/`: provider transformations and builders, provenance functions, positive fixtures, portability fixture, failure-injection tests, CHIRPS numerical validation, and manuscript-figure generation.
-- `python/`: provider fetch clients, the cross-platform verification runner, and the independent GeoJSON release-contract validator.
-- `data/`: district geometry and four environmental GeoJSON layers.
-- `.github/workflows/`: clean account-free verification and public CHIRPS validation.
-- `paper/`: manuscript, journal-targeting analysis, dual-agent review ledger, readiness record, reviewer dossier, figure accessibility record, and historical submission records under `paper/archive/`.
-- `NOTICE.md`, `DATA_DICTIONARY.md`, and `CHECKSUMS.sha256`: source terms, field definitions, and the current listed-file integrity scope.
+Restore the locked R environment from the repository root:
 
-Historical F1000Research submission files were removed from the active candidate tree and remain available in Git history. See `paper/archive/F1000_ARTIFACT_INDEX.md`.
+```text
+Rscript -e "renv::restore(prompt = FALSE)"
+```
 
-## Account-free verification
+The account-free test pathway uses only bundled data and generated fixtures. Provider downloads are optional and have separate credential requirements.
 
-After restoring `renv.lock`, run:
+### 2. Run all account-free checks
 
 ```text
 python python/run_all_checks.py
 ```
 
-The runner executes **41 explicit outcomes**:
+The suite currently evaluates 48 explicit behavioural and contract outcomes:
 
 - 9 provenance assertions;
 - 9 controlled environmental-transformation assertions;
-- 6 geometry-agnostic portability assertions;
-- 7 transformation failure-injection assertions;
-- 5 valid release-layer contract checks; and
-- 5 deliberate release-corruption rejections.
+- 6 geometry-agnostic transformation assertions;
+- 7 generic administrative-harmonizer assertions;
+- 7 deliberate transformation failures;
+- 5 valid release-contract checks; and
+- 5 corrupted-release rejections.
 
-It also writes machine-readable summaries, creates an inspectable fixture GeoJSON, and verifies every file currently listed in `CHECKSUMS.sha256`. No private repository, provider account, or network call is required for this command.
+The command also validates release metadata and verifies every file listed in `CHECKSUMS.sha256`.
 
-## Public CHIRPS numerical validation
-
-Run:
+### 3. Run the generic example directly
 
 ```text
-Rscript R/validate_chirps_rainfall.R 2023
+Rscript R/test_generic_harmonizer.R
 ```
 
-The workflow independently downloads the public CHIRPS 2023 annual GeoTIFF, reproduces the 30 archived district values, cross-checks `exactextractr` against `terra`, and quantifies cell-area weighting sensitivity.
+This test creates a projected synthetic raster and three arbitrary polygon units named `ALPHA-01`, `BETA-02`, and `GAMMA-03`. It invokes the public generic interface and writes `generated/generic_admin_example.geojson`.
 
-Current clean-CI results:
+## Generic command-line interface
 
-- 30/30 archived values reproduce exactly after rounding;
-- maximum cross-engine difference: 0.000136 mm;
-- maximum cell-area-weighting difference: 0.005127 mm.
+```text
+Rscript R/harmonize_admin_raster.R \
+  --raster input.tif \
+  --boundaries administrative_units.geojson \
+  --id-field admin_code \
+  --value-name environmental_mean \
+  --output generated/environmental_mean.geojson \
+  --provenance "Source, product, period, method and applicable terms"
+```
 
-This validates computational reproduction of the CHIRPS layer only. It does not validate CHIRPS observational accuracy or the ERA5-Land, MODIS, and HAND layers.
+Optional controls support:
 
-## Real-data builders
+- raster layer selection;
+- scale and offset conversion;
+- lower and upper no-data masking;
+- output rounding;
+- minimum and maximum fail-closed bounds.
+
+Display the full interface:
+
+```text
+Rscript R/harmonize_admin_raster.R --help
+```
+
+### Generic input contract
+
+The raster must:
+
+- be readable by `terra`;
+- have a declared coordinate reference system;
+- contain at least one selected layer;
+- provide finite values for every polygon after optional masking.
+
+The boundary file must:
+
+- be readable by `sf`;
+- contain valid polygon or multipolygon geometry;
+- have a declared coordinate reference system;
+- contain the requested identifier field;
+- provide unique, non-empty identifiers.
+
+The output is normalized to EPSG:4326 and contains only:
+
+- `unit_id`;
+- the requested measurement property;
+- `provenance`;
+- polygon geometry.
+
+The generic interface validates processing behaviour. It does not determine whether a selected source, period, threshold, unit conversion, or scientific interpretation is appropriate.
+
+## Rwanda reference implementation
+
+The archived Rwanda layers contain one feature for each of 30 districts:
+
+- CHIRPS v2.0 annual rainfall for 2023;
+- ERA5-Land 2 m mean temperature for 2023;
+- MODIS/Terra MOD13A3 v061 mean NDVI for 2023;
+- Global 30 m HAND share at or below 5 m;
+- common World Bank district geometry.
+
+Run the real-data builders from any working directory:
 
 ```text
 Rscript R/build_relief_climate_rainfall.R 2023
@@ -96,25 +145,87 @@ Rscript R/build_relief_climate_ndvi_real.R 2023
 Rscript R/build_relief_low_lying_hand.R 5
 ```
 
-CHIRPS and HAND require network access. ERA5-Land and MODIS additionally require the user's own free Copernicus Climate Data Store and NASA Earthdata credentials. Credentials are read from provider-standard local files and are not stored in the repository.
+Access requirements:
+
+- CHIRPS and HAND require network access but no account.
+- ERA5-Land requires a free Copernicus Climate Data Store account and accepted product terms.
+- MODIS requires a free NASA Earthdata account.
+- Credentials are read from provider-standard local configuration and are never committed.
+
+Provider client versions used for the candidate are recorded in `requirements-providers.txt`.
+
+## Public CHIRPS numerical validation
+
+```text
+Rscript R/validate_chirps_rainfall.R 2023
+```
+
+The workflow independently reacquires the public annual CHIRPS raster, reproduces the archived district values, compares `exactextractr` with `terra::extract`, and evaluates cell-area weighting sensitivity.
+
+Current verified results for the tested source, year, and Rwanda geometry are:
+
+- 30 of 30 archived values reproduce exactly after rounding;
+- maximum cross-engine difference: 0.000136 mm;
+- maximum cell-area-weighting difference: 0.005127 mm.
+
+This validates computational reproduction of the CHIRPS layer only. Equivalent independent numerical validation has not been completed for ERA5-Land, MODIS, or HAND.
+
+## Repository map
+
+- `R/harmonize_admin_raster.R`: generic public command-line interface.
+- `R/test_generic_harmonizer.R`: account-free arbitrary-region example.
+- `R/`: provider transformations, builders, fixtures, failure tests, and figure generation.
+- `python/`: provider clients, orchestration, release validation, and metadata checks.
+- `data/`: Rwanda reference geometry and environmental GeoJSON layers.
+- `paper/`: SoftwareX manuscript source, submission records, figures, and independent review material.
+- `.github/workflows/`: reproducibility, metadata, and public-data validation.
+- `DATA_DICTIONARY.md`: output-field definitions.
+- `NOTICE.md`: source attribution, data terms, and scope boundaries.
+- `REPRODUCIBILITY.md`: complete execution and evidence instructions.
+- `CONTRIBUTING.md`: contribution and review rules.
+- `codemeta.json` and `CITATION.cff`: machine-readable software metadata.
+
+Historical journal-targeting records are retained for transparency but do not define the active SoftwareX product.
 
 ## Provenance contract
 
 `R/provenance_value_class.R` accepts `source-derived` status only when a register row declares a documented method applied to real or public data. Unknown, incomplete, synthetic, and placeholder entries default to `illustrative` and receive an explanatory note.
 
-The current release records lightweight human-readable provenance. It does not claim PROV-O, RO-Crate, or CWL conformance.
+The current release records lightweight human-readable provenance. It does not claim PROV-O, RO-Crate, Common Workflow Language, or workflow-engine conformance.
 
-## Licences
+## Reproducibility and integrity
+
+- `renv.lock` records the R dependency graph.
+- `python/run_all_checks.py` runs the account-free evidence suite.
+- `python/validate_release_contract.py` independently checks committed GeoJSON files and rejects controlled corruptions.
+- `CHECKSUMS.sha256` covers the complete tracked candidate scope and is regenerated only after the source tree is frozen.
+- GitHub Actions reruns the evidence suite on a clean hosted runner.
+- The final `v1.3.0` tag and Zenodo version archive must identify the same exact commit.
+
+Checksums establish byte integrity, not scientific validity.
+
+## Licences and attribution
 
 - **Code:** MIT, see `LICENSE`.
-- **Data:** source-specific. District boundaries are World Bank CC BY 4.0; CHIRPS is public domain/CC0; ERA5-Land uses the Copernicus Products licence; MODIS and HAND are CC0. See `NOTICE.md`.
+- **District geometry:** World Bank CC BY 4.0.
+- **CHIRPS:** public domain or CC0.
+- **ERA5-Land:** Copernicus Products licence.
+- **MODIS and HAND outputs:** CC0.
+
+See `NOTICE.md` for complete attribution and interpretation boundaries.
+
+## Contributing and support
+
+Use GitHub Issues for reproducible bug reports, documentation defects, provider changes, and feature proposals. Include the command, operating system, R and Python versions, input schema, and the smallest non-sensitive example that reproduces the problem.
+
+Security-sensitive reports should follow `SECURITY_REVIEW.md` rather than being posted with credentials or private data.
+
+Support contact: `priplee@gmail.com`.
 
 ## Citation
 
-Cite version 1.2.0:
+Until the SoftwareX candidate is frozen, cite the historical immutable release:
 
 > Tuyishime AP (2026). SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.2.0. Zenodo. https://doi.org/10.5281/zenodo.21744708
 
-The complete all-tracked manifest is regenerated for the DOI-bearing release, and the archived source is identified by tag `v1.2.0`.
-
-See `REPRODUCIBILITY.md`, `SECURITY_REVIEW.md`, `paper/DUAL_AGENT_REVIEW.md`, and `paper/EDITORIAL_READINESS.md`.
+After the `v1.3.0` archive is created, `CITATION.cff`, this section, and the SoftwareX manuscript will be updated to the new version-specific DOI before submission.
