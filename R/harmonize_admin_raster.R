@@ -63,7 +63,7 @@ usage <- function() {
     "Required options:\n",
     "  --raster PATH          Single- or multi-layer raster readable by terra\n",
     "  --boundaries PATH      Polygon vector file readable by sf\n",
-    "  --id-field NAME        Unique non-empty identifier column\n",
+    "  --id-field NAME        Unique non-empty non-geometry identifier column\n",
     "  --value-name NAME      Output measurement property name\n",
     "  --output PATH          Destination GeoJSON\n",
     "  --provenance TEXT      Human-readable source, method, period and terms\n\n",
@@ -102,6 +102,8 @@ harmonize_admin_raster <- function(
   if (!file.exists(boundary_path)) fail(sprintf("boundary file not found: %s", boundary_path))
   if (!grepl("^[A-Za-z][A-Za-z0-9_]*$", value_name))
     fail("value-name must begin with a letter and contain only letters, digits and underscores")
+  if (value_name %in% c("unit_id", "provenance", "geometry"))
+    fail(sprintf("value-name '%s' is reserved by the output contract", value_name))
   if (!is.finite(scale) || !is.finite(offset)) fail("scale and offset must be finite")
 
   raster <- terra::rast(raster_path)
@@ -123,13 +125,15 @@ harmonize_admin_raster <- function(
   boundaries <- sf::st_read(boundary_path, quiet = TRUE, stringsAsFactors = FALSE)
   if (!nrow(boundaries)) fail("boundary file contains no features")
   if (!(id_field %in% names(boundaries))) fail(sprintf("boundary file lacks id-field '%s'", id_field))
+  geometry_column <- attr(boundaries, "sf_column")
+  if (identical(id_field, geometry_column)) fail("id-field must name a non-geometry attribute column")
   if (is.na(sf::st_crs(boundaries))) fail("boundary CRS is missing")
-  if (any(sf::st_geometry_type(boundaries) %in% c("POINT", "MULTIPOINT", "LINESTRING", "MULTILINESTRING")))
+  if (any(sf::st_geometry_type(boundaries) %in% c("POINT", "MULTIPOINT", "LINESTRING", "MULTILINESTRING", "GEOMETRYCOLLECTION")))
     fail("all boundary features must be polygons or multipolygons")
   if (any(!sf::st_is_valid(boundaries))) fail("boundary geometry contains invalid features")
 
   ids <- trimws(as.character(boundaries[[id_field]]))
-  if (any(!nzchar(ids)) || any(is.na(ids))) fail("administrative identifiers must be non-empty")
+  if (any(is.na(ids)) || any(!nzchar(ids))) fail("administrative identifiers must be non-empty")
   if (anyDuplicated(ids)) fail("administrative identifiers must be unique")
 
   extraction_geometry <- sf::st_transform(boundaries, terra::crs(raster, proj = TRUE))
