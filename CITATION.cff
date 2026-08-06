@@ -1,34 +1,33 @@
 cff-version: 1.2.0
 message: >-
-  If you use this software, please cite version 1.2.0 using the metadata below.
+  If you use SuRT-GeoHarmonizer, cite the software release identified below.
 title: >-
-  SuRT-Virtual Rwanda: auditable district-scale Earth-data harmonization and
-  provenance-labelling reproducibility artifact
+  SuRT-GeoHarmonizer: auditable administrative-scale Earth-data harmonization
+  and provenance labelling
+version: 1.3.0
 type: software
 authors:
   - family-names: Tuyishime
     given-names: Audre Prince
     orcid: "https://orcid.org/0009-0002-0799-3140"
 abstract: >-
-  Version 1.2.0 release for an Earth Science Informatics Software article. It prepares CHIRPS rainfall, ERA5-Land temperature, MODIS
-  vegetation greenness, and HAND terrain descriptors for Rwanda's 30 districts;
-  applies a fail-closed provenance and evidence-class contract; and includes
-  positive, negative, portability, release-contract, integrity, and scoped
-  public-data numerical validation. Version 1.2.0 extends the published
-  version 1.1.1 base archive, DOI 10.5281/zenodo.21677162. It is descriptive,
-  non-operational, and contains no patient, surveillance, or confidential
-  operational data.
-version: 1.2.0
-doi: 10.5281/zenodo.21744708
-date-released: '2026-08-01'
+  SuRT-GeoHarmonizer is an open R and Python command-line workflow for
+  converting heterogeneous environmental rasters into consistent,
+  provenance-labelled administrative-unit GeoJSON layers. It provides a
+  provider-agnostic raster and polygon interface, Rwanda reference builders
+  for CHIRPS rainfall, ERA5-Land temperature, MODIS NDVI, and HAND terrain,
+  fail-closed evidence classification, positive and negative tests,
+  independent release-contract validation, and versioned integrity records.
+  The software produces descriptive environmental summaries and does not
+  claim validated hazards, forecasts, epidemiological effects, or operational
+  recommendations.
 license: MIT
 repository-code: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro"
-url: "https://doi.org/10.5281/zenodo.21744708"
+url: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro"
 keywords:
-  - Earth science informatics
-  - reproducible research
-  - environmental data
-  - geospatial workflow
+  - geospatial software
+  - environmental data harmonization
   - data provenance
   - zonal statistics
-  - R
+  - reproducible research
+  - GeoJSON
