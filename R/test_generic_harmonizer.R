@@ -63,6 +63,30 @@ result <- harmonize_admin_raster(
   max_value = 100
 )
 
+reserved_name_rejected <- tryCatch({
+  harmonize_admin_raster(
+    raster_path = raster_path,
+    boundary_path = boundary_path,
+    id_field = "admin_code",
+    value_name = "provenance",
+    output_path = file.path(work, "reserved.geojson"),
+    provenance = "Synthetic fixture"
+  )
+  FALSE
+}, error = function(error) grepl("reserved", conditionMessage(error), fixed = TRUE))
+
+geometry_id_rejected <- tryCatch({
+  harmonize_admin_raster(
+    raster_path = raster_path,
+    boundary_path = boundary_path,
+    id_field = "geometry",
+    value_name = "environment_mean",
+    output_path = file.path(work, "geometry-id.geojson"),
+    provenance = "Synthetic fixture"
+  )
+  FALSE
+}, error = function(error) grepl("non-geometry", conditionMessage(error), fixed = TRUE))
+
 written <- st_read(output_path, quiet = TRUE)
 check("generic interface writes one feature per arbitrary unit", nrow(written) == 3L)
 check("generic interface preserves arbitrary identifiers",
@@ -74,6 +98,7 @@ check("output contract contains only identifier, value, provenance and geometry"
 check("output GeoJSON is normalized to WGS84", identical(st_crs(written)$epsg, 4326L))
 check("provenance is present for every feature",
       all(nzchar(written$provenance)) && length(unique(written$provenance)) == 1L)
-check("sourceable interface returns the same three-unit result", nrow(result) == 3L)
+check("sourceable interface returns output and rejects schema collisions",
+      nrow(result) == 3L && reserved_name_rejected && geometry_id_rejected)
 
 cat(sprintf("\n=== generic administrative harmonizer: %d passed, 0 failed ===\n", passed))
