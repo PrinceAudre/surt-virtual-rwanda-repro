@@ -1,0 +1,1 @@
+The version-specific DOI for SuRT-GeoHarmonizer v1.3.0 must be inserted only after Zenodo archives the exact validated tag. Do not invent or prefill it.
