@@ -81,6 +81,26 @@ def section(text: str, heading: str, next_heading: str | None = None) -> str:
     return text[start:end]
 
 
+def cited_reference_numbers(narrative: str) -> set[int]:
+    """Expand numeric citations such as [1-4], [1–4], and [9,10]."""
+    cited: set[int] = set()
+    for block in re.findall(r"\[([0-9,;\s\-–]+)\]", narrative):
+        normalized = block.replace("–", "-").replace(";", ",")
+        for item in normalized.split(","):
+            item = item.strip()
+            if not item:
+                continue
+            if "-" in item:
+                start_text, end_text = [part.strip() for part in item.split("-", 1)]
+                if start_text.isdigit() and end_text.isdigit():
+                    start, end = int(start_text), int(end_text)
+                    if start <= end:
+                        cited.update(range(start, end + 1))
+            elif item.isdigit():
+                cited.add(int(item))
+    return cited
+
+
 def main() -> None:
     require(MANUSCRIPT.is_file(), "paper/manuscript.md exists")
     text = MANUSCRIPT.read_text(encoding="utf-8")
@@ -119,8 +139,10 @@ def main() -> None:
     require("### 2.2. Generic interface" in text, "generic-interface subsection is present")
     require("### 2.3. Rwanda reference builders" in text, "reference-builder subsection is present")
 
+    narrative_citations = cited_reference_numbers(text[:references_start])
+    require(narrative_citations == set(range(1, 11)),
+            "grouped and ranged narrative citations cover references 1 through 10")
     for number in range(1, 11):
-        require(f"[{number}]" in text[:references_start], f"reference [{number}] is cited in the narrative")
         require(re.search(rf"^\[{number}\]\s", text[references_start:metadata_start], re.MULTILINE) is not None,
                 f"reference [{number}] appears in the reference list")
 
