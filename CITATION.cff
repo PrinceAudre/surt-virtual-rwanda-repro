@@ -9,6 +9,8 @@ type: software
 authors:
   - family-names: Tuyishime
     given-names: Audre Prince
+    affiliation: Independent Researcher, Kigali, Rwanda
+    email: priplee@gmail.com
     orcid: "https://orcid.org/0009-0002-0799-3140"
 abstract: >-
   SuRT-GeoHarmonizer is an open R and Python command-line workflow for
