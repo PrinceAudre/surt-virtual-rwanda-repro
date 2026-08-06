@@ -91,7 +91,7 @@ def render(entries: list[str], mode: str) -> str:
     else:
         scope_text = "interim stable-file scope defined in CHECKSUMS.scope"
     header = [
-        "# SHA-256 checksums for the SuRT-Virtual Rwanda reproducibility artifact.",
+        "# SHA-256 checksums for SuRT-GeoHarmonizer.",
         f"# Scope: {scope_text}.",
         "# Verify release: python python/build_checksum_manifest.py --all-tracked --check",
         "# Rebuild release: python python/build_checksum_manifest.py --all-tracked --write",
