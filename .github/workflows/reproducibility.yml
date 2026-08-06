@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   account-free-checks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: r-lib/actions/setup-r@v2
@@ -30,16 +30,18 @@ jobs:
       - uses: r-lib/actions/setup-renv@v2
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
-      - name: Run reproducibility checks
+          python-version: "3.12"
+      - name: Run complete account-free SoftwareX candidate checks
         run: python python/run_all_checks.py
-      - name: Generate journal figures from archived GeoJSON files
+      - name: Generate manuscript figures from archived GeoJSON files
         run: Rscript R/make_manuscript_figures.R
-      - name: Upload manuscript evidence bundle
+      - name: Upload SoftwareX evidence bundle
         uses: actions/upload-artifact@v4
         with:
-          name: manuscript-evidence
+          name: softwarex-candidate-evidence
           path: |
             paper/figures/generated/
             generated/verification_summary.json
+            generated/generic_admin_example.geojson
+            generated/release_contract_summary.json
           if-no-files-found: error
