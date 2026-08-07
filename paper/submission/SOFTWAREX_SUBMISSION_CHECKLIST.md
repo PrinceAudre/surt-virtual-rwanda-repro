@@ -43,7 +43,7 @@
 - [x] Account-free suite reports 48 explicit behavioural and contract outcomes.
 - [x] Positive transformations are separated from deliberate failure tests.
 - [x] GeoJSON validation uses an independent Python implementation.
-- [x] Public CHIRPS numerical validation is separately documented.
+- [x] Public CHIRPS numerical validation is separately documented and green.
 - [x] Only CHIRPS is claimed to have equivalent independent numerical validation.
 - [x] Generic synthetic example is not presented as second-country scientific validation.
 - [x] HAND is described as a terrain descriptor, not a flood hazard.
@@ -71,23 +71,27 @@
 
 ## Final exact-release actions
 
-Complete these in order after the final Claude and Codex review changes are merged:
+The version-specific Zenodo DOI `10.5281/zenodo.21840177` has been reserved in a new-version draft. Complete the remaining release actions in this order:
 
-1. [ ] Run `python python/run_all_checks.py` on the exact final commit.
-2. [ ] Run the public CHIRPS validation or confirm the most recent exact-code result remains applicable.
-3. [ ] Regenerate `CHECKSUMS.sha256` with `--all-tracked --write`.
-4. [ ] Rerun all account-free checks and manifest verification.
-5. [ ] Confirm all GitHub Actions are green on the exact commit.
-6. [ ] Create immutable tag `v1.3.0` on that exact commit.
-7. [ ] Publish the corresponding GitHub release.
-8. [ ] Archive tag `v1.3.0` as a new Zenodo version.
-9. [ ] Insert the genuine new version DOI into `CITATION.cff`, CodeMeta if used, README, manuscript, cover letter, and release validator.
-10. [ ] Regenerate the checksum manifest after DOI insertion and rerun exact-head validation.
-11. [ ] Upload the manuscript as an Original Software Publication.
-12. [ ] Upload highlights as a separate editable Highlights file.
-13. [ ] Upload the cover letter.
-14. [ ] Enter the author affiliation as `Independent Researcher, Kigali, Rwanda`.
-15. [ ] Confirm that Elsevier's Rights and Access workflow applies the Rwanda waiver before authorizing any payment.
-16. [ ] Verify that no simultaneous journal submission remains active.
+1. [x] Run the complete account-free reproducibility workflow on the pre-DOI candidate and confirm green.
+2. [x] Run the public CHIRPS 2023 validation and confirm green.
+3. [x] Reserve the genuine v1.3.0 Zenodo DOI without publishing the draft.
+4. [x] Insert DOI `10.5281/zenodo.21840177` into `CITATION.cff`, CodeMeta, README, manuscript, cover letter, and release validation metadata.
+5. [ ] Regenerate `CHECKSUMS.sha256` with `--all-tracked --write` after all DOI-bearing edits are frozen.
+6. [ ] Run the complete account-free checks again on the exact DOI-bearing commit.
+7. [ ] Confirm metadata/manuscript validation and checksum verification are green on that exact commit.
+8. [ ] Create immutable tag `v1.3.0` on that exact commit.
+9. [ ] Publish the corresponding GitHub release without changing tagged files.
+10. [ ] Upload/archive the exact `v1.3.0` release content in the existing Zenodo new-version draft.
+11. [ ] Confirm Zenodo title, version, creator, licence, and DOI metadata match the software release, then publish the Zenodo record so DOI `10.5281/zenodo.21840177` is registered.
+12. [ ] Confirm the DOI resolves to the published v1.3.0 record.
+13. [ ] Regenerate the final manuscript DOCX from the DOI-bearing manuscript source and visually inspect it.
+14. [ ] Regenerate the final cover letter, Highlights file, submission ZIP, and package SHA-256 record.
+15. [ ] Upload the manuscript as an Original Software Publication.
+16. [ ] Upload highlights as a separate editable Highlights file.
+17. [ ] Upload the cover letter.
+18. [ ] Enter the author affiliation as `Independent Researcher, Kigali, Rwanda`.
+19. [ ] Confirm that Elsevier's Rights and Access workflow applies the Rwanda waiver before authorizing any payment.
+20. [ ] Verify that no simultaneous journal submission remains active.
 
-Do not create or cite a version-specific DOI until Zenodo has actually issued it for the exact final tag.
+Do not publish the Zenodo draft until the DOI-bearing exact release commit has passed all required checks and has been tagged `v1.3.0`.
