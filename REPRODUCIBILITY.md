@@ -4,7 +4,7 @@
 
 The active SoftwareX candidate is SuRT-GeoHarmonizer version `1.3.0` on branch `codex/softwarex-submission-v1.3.0`.
 
-The historical release `v1.2.0`, DOI `10.5281/zenodo.21744708`, remains immutable. Version `1.3.0` must receive its own Git tag and Zenodo version DOI after the exact candidate commit passes all checks. The concept DOI for all releases is `10.5281/zenodo.21671788`.
+The historical release `v1.2.0`, DOI `10.5281/zenodo.21744708`, remains immutable. The version-specific DOI `10.5281/zenodo.21840177` is reserved for version `1.3.0` and will be registered when the exact validated `v1.3.0` archive is published. The concept DOI for all releases is `10.5281/zenodo.21671788`.
 
 ## Environment restoration
 
@@ -183,16 +183,18 @@ python python/build_checksum_manifest.py --all-tracked --write
 
 The final release sequence is:
 
-1. run all checks on the exact candidate commit;
-2. regenerate the all-tracked manifest;
-3. rerun all checks;
-4. merge the reviewed candidate without additional file changes;
-5. tag the exact commit `v1.3.0`;
-6. create the corresponding GitHub release;
-7. archive that tag as a new Zenodo version;
-8. insert the new version DOI into the README, `CITATION.cff`, manuscript, and release validator;
-9. regenerate the manifest and rerun exact-head validation;
-10. submit the exact archived source to SoftwareX.
+1. reserve the version-specific Zenodo DOI in a new-version draft without publishing it;
+2. insert DOI `10.5281/zenodo.21840177` into the release-facing metadata and manuscript;
+3. freeze all DOI-bearing source and documentation changes;
+4. regenerate the all-tracked checksum manifest;
+5. run the complete account-free checks on that exact DOI-bearing commit;
+6. confirm the public CHIRPS validation remains green for the unchanged numerical-validation code and data;
+7. tag the exact passing commit `v1.3.0`;
+8. create the corresponding GitHub release without altering tagged files;
+9. upload/archive the exact `v1.3.0` release content in the reserved Zenodo version draft;
+10. verify Zenodo title, creator, version, licence, and DOI metadata, then publish the record so DOI `10.5281/zenodo.21840177` is registered;
+11. confirm the DOI resolves to the published v1.3.0 record;
+12. render the final DOI-bearing journal package and submit it to SoftwareX.
 
 A checksum establishes byte-level integrity. It does not establish scientific validity.
 
