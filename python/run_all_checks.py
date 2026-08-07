@@ -98,14 +98,16 @@ def write_summary(steps: list[dict[str, Any]], total_seconds: float) -> Path:
             "status": "SoftwareX release candidate",
             "branch": "codex/softwarex-submission-v1.3.0",
             "zenodo_concept_doi": "10.5281/zenodo.21671788",
-            "version_archive_status": "create after exact-head validation",
+            "zenodo_version_doi": "10.5281/zenodo.21840177",
+            "version_archive_status": "DOI reserved; publish exact validated v1.3.0 tag",
         },
         "integrity": {
             "scope": "complete tracked-file candidate scope",
             "manifest": "CHECKSUMS.sha256",
             "final_release_requirement": (
                 "freeze the exact candidate commit, regenerate the all-tracked manifest, "
-                "create tag v1.3.0, and archive that tag as a new Zenodo version"
+                "create tag v1.3.0, and publish that exact tag under reserved Zenodo DOI "
+                "10.5281/zenodo.21840177"
             ),
         },
         "status": "passed",
