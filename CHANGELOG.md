@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.3.0 - SoftwareX candidate, 2026-08-06
+## 1.3.0 - SoftwareX release candidate, 2026-08-07
 
 ### Productization and reuse
 
@@ -16,7 +16,9 @@
 - Rebuilt the active manuscript as a SoftwareX Original Software Publication within the journal's 3,000-word limit.
 - Added the SoftwareX code-metadata table, impact and reuse section, clear generic interface, and explicit separation between software verification and scientific validation.
 - Preserved `v1.2.0` and DOI `10.5281/zenodo.21744708` as immutable history.
-- Defined a controlled `v1.3.0` exact-head release and Zenodo archival gate.
+- Completed the account-free reproducibility workflow and public CHIRPS 2023 numerical validation on the release candidate.
+- Reserved version-specific Zenodo DOI `10.5281/zenodo.21840177` for the exact validated `v1.3.0` archive.
+- Defined a controlled DOI-bearing exact-head validation, immutable tag, GitHub release, and Zenodo publication gate.
 
 ## 1.2.0 - 2026-08-01
 
