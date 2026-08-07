@@ -15,6 +15,7 @@ BRANCH = "codex/softwarex-submission-v1.3.0"
 HISTORICAL_VERSION = "1.2.0"
 HISTORICAL_DOI = "10.5281/zenodo.21744708"
 CONCEPT_DOI = "10.5281/zenodo.21671788"
+VERSION_DOI = "10.5281/zenodo.21840177"
 ORCID = "0009-0002-0799-3140"
 EMAIL = "priplee@gmail.com"
 
@@ -93,6 +94,15 @@ def main() -> None:
             "SoftwareX candidate branch is explicitly identified")
 
     for label, text in {
+        "README": readme,
+        "CITATION.cff": citation,
+        "manuscript": manuscript,
+        "codemeta.json": codemeta_text,
+        "verification runner": runner,
+    }.items():
+        require(VERSION_DOI in text, f"{label} records the reserved version-specific Zenodo DOI")
+
+    for label, text in {
         "CITATION.cff": citation,
         "manuscript": manuscript,
         "codemeta.json": codemeta_text,
@@ -102,8 +112,11 @@ def main() -> None:
 
     require(yaml_value(citation, "cff-version") == "1.2.0", "CITATION.cff uses schema 1.2.0")
     require(yaml_value(citation, "license") == "MIT", "CITATION.cff declares the MIT licence")
+    require(yaml_value(citation, "doi") == VERSION_DOI, "CITATION.cff DOI matches the reserved v1.3.0 DOI")
     require(codemeta.get("license") == "https://spdx.org/licenses/MIT.html",
             "CodeMeta declares the MIT SPDX licence")
+    require(codemeta.get("identifier") == f"https://doi.org/{VERSION_DOI}",
+            "CodeMeta identifier matches the reserved v1.3.0 DOI")
     require(codemeta.get("codeRepository") == "https://github.com/PrinceAudre/surt-virtual-rwanda-repro",
             "CodeMeta repository is canonical")
 
@@ -142,8 +155,8 @@ def main() -> None:
             "manuscript uses the truthful independent Rwanda affiliation")
     require("R/harmonize_admin_raster.R" in readme and "R/harmonize_admin_raster.R" in manuscript,
             "generic public interface is described in README and manuscript")
-    require("create after exact-head validation" in runner,
-            "verification evidence states the controlled version-archive gate")
+    require("DOI reserved; publish exact validated v1.3.0 tag" in runner,
+            "verification evidence records the reserved-DOI release gate")
     require("TODO" not in active_release_facing and "TBD" not in active_release_facing,
             "active release-facing records contain no unresolved placeholders")
 
