@@ -13,6 +13,8 @@ EXPECTED_TITLE = (
     "SuRT-GeoHarmonizer: An auditable R and Python workflow for "
     "administrative-scale Earth-data harmonization and provenance labelling"
 )
+VERSION_DOI = "10.5281/zenodo.21840177"
+RELEASE_TAG_URL = "https://github.com/PrinceAudre/surt-virtual-rwanda-repro/tree/v1.3.0"
 REQUIRED_HEADINGS = [
     "Abstract",
     "1. Motivation and significance",
@@ -152,12 +154,13 @@ def main() -> None:
     }
     require(dois == EXPECTED_DOIS, "reference DOI set matches the verified SoftwareX manuscript registry")
 
+    metadata = text[metadata_start:captions_start]
     for code in range(1, 10):
-        require(re.search(rf"^\| C{code} \|", text[metadata_start:captions_start], re.MULTILINE) is not None,
+        require(re.search(rf"^\| C{code} \|", metadata, re.MULTILINE) is not None,
                 f"SoftwareX code metadata row C{code} is present")
-    require("MIT License" in text[metadata_start:captions_start], "approved MIT licence is declared")
-    require("github.com/PrinceAudre/surt-virtual-rwanda-repro" in text[metadata_start:captions_start],
-            "GitHub repository is recorded in the metadata table")
+    require("MIT License" in metadata, "approved MIT licence is declared")
+    require(RELEASE_TAG_URL in metadata, "v1.3.0 tag URL is recorded in code metadata")
+    require(f"https://doi.org/{VERSION_DOI}" in metadata, "version-specific Zenodo DOI is recorded in code metadata")
 
     captions = re.findall(r"^\*\*Fig\. (\d+)\.\*\*", text[captions_start:], re.MULTILINE)
     require(captions == ["1", "2"], "two non-duplicated figure captions are supplied")
@@ -169,7 +172,7 @@ def main() -> None:
             "manuscript contains no unresolved editorial placeholder")
     require("48 explicit" in text, "manuscript reports the current 48-outcome suite")
     require("R/harmonize_admin_raster.R" in text, "manuscript identifies the public generic interface")
-    require("codex/softwarex-submission-v1.3.0" in text, "candidate source branch is identified")
+    require(VERSION_DOI in text, "manuscript records the reserved v1.3.0 Zenodo DOI")
     require("10.5281/zenodo.21744708" in text and "10.5281/zenodo.21671788" in text,
             "historical version DOI and concept DOI are recorded")
 
