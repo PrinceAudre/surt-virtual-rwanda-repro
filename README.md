@@ -12,13 +12,13 @@ The software is descriptive and research-oriented. It does not generate validate
 
 - **SoftwareX candidate version:** `1.3.0`
 - **Candidate branch:** `codex/softwarex-submission-v1.3.0`
-- **Repository:** `PrinceAudre/surt-virtual-rwanda-repro`
+- **Reserved v1.3.0 Zenodo DOI:** `10.5281/zenodo.21840177`
 - **Zenodo concept DOI:** `10.5281/zenodo.21671788`
 - **Historical immutable release:** `v1.2.0`, DOI `10.5281/zenodo.21744708`
 - **Code licence:** MIT
 - **Validated continuous-integration environment:** Ubuntu Linux
 
-Version `1.2.0` remains immutable. The SoftwareX candidate will receive a new `v1.3.0` tag and version-specific Zenodo DOI only after exact-head verification and metadata freeze.
+Version `1.2.0` remains immutable. The version-specific DOI `10.5281/zenodo.21840177` is reserved for the SoftwareX-facing `v1.3.0` release and will be registered when the exact validated `v1.3.0` archive is published on Zenodo.
 
 ## What the software does
 
@@ -200,7 +200,7 @@ The current release records lightweight human-readable provenance. It does not c
 - `python/validate_release_contract.py` independently checks committed GeoJSON files and rejects controlled corruptions.
 - `CHECKSUMS.sha256` covers the complete tracked candidate scope and is regenerated only after the source tree is frozen.
 - GitHub Actions reruns the evidence suite on a clean hosted runner.
-- The final `v1.3.0` tag and Zenodo version archive must identify the same exact commit.
+- The final `v1.3.0` tag and the Zenodo version registered as DOI `10.5281/zenodo.21840177` must identify the same exact release content.
 
 Checksums establish byte integrity, not scientific validity.
 
@@ -224,8 +224,8 @@ Support contact: `priplee@gmail.com`.
 
 ## Citation
 
-Until the SoftwareX candidate is frozen, cite the historical immutable release:
+For version `1.3.0`, cite:
 
-> Tuyishime AP (2026). SuRT-Virtual Rwanda: reproducibility artifact for district-level environmental-layer preparation and provenance labelling. Version 1.2.0. Zenodo. https://doi.org/10.5281/zenodo.21744708
+> Tuyishime AP (2026). SuRT-GeoHarmonizer: auditable administrative-scale Earth-data harmonization and provenance labelling. Version 1.3.0. Zenodo. https://doi.org/10.5281/zenodo.21840177
 
-After the `v1.3.0` archive is created, `CITATION.cff`, this section, and the SoftwareX manuscript will be updated to the new version-specific DOI before submission.
+The DOI above is reserved for the exact validated `v1.3.0` archive and becomes registered when that Zenodo version is published. Historical version `1.2.0` remains permanently available at https://doi.org/10.5281/zenodo.21744708.
