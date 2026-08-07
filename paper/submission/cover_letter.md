@@ -1,4 +1,4 @@
-6 August 2026
+7 August 2026
 
 Editors-in-Chief
 SoftwareX
@@ -17,7 +17,7 @@ The code is released under the MIT License. Bundled source-derived data and geom
 
 https://github.com/PrinceAudre/surt-virtual-rwanda-repro
 
-The current SoftwareX candidate is version 1.3.0. The exact validated release will be tagged and archived as a new Zenodo version before journal submission; the existing Zenodo concept record is https://doi.org/10.5281/zenodo.21671788.
+The SoftwareX-facing release is version 1.3.0. Its version-specific Zenodo DOI is `10.5281/zenodo.21840177`, reserved for the exact validated `v1.3.0` archive and registered when that archive is published. The Zenodo concept DOI for the software series is `10.5281/zenodo.21671788`.
 
 I confirm that this manuscript is original, is not under consideration elsewhere, and has not undergone external peer review. An earlier manuscript version was not advanced to peer review by another journal because its editorial scope did not align with the work. The present submission has been substantively rebuilt around the SoftwareX Original Software Publication format, reusable software interface, and open-software evidence expected by this journal.
 
