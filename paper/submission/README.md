@@ -8,4 +8,4 @@ This directory contains the editable source materials for the SuRT-GeoHarmonizer
 
 The active manuscript source is `paper/manuscript.md`. The rendered DOCX manuscript, cover letter, and Highlights file are generated outside the repository after visual inspection.
 
-The submission must use the exact validated version `1.3.0` release and its genuine version-specific Zenodo DOI. Do not invent or cite that DOI before the final tag has been archived.
+The submission must use the exact validated version `1.3.0` release and version-specific Zenodo DOI `10.5281/zenodo.21840177`. The DOI is reserved in the Zenodo version draft and must be registered by publishing the exact validated `v1.3.0` archive before journal submission.
