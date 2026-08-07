@@ -4,6 +4,7 @@
   "name": "SuRT-GeoHarmonizer",
   "alternateName": "SuRT-Virtual Rwanda environmental harmonization component",
   "version": "1.3.0",
+  "identifier": "https://doi.org/10.5281/zenodo.21840177",
   "description": "Open R and Python command-line workflow for auditable administrative-scale environmental raster harmonization, provenance labelling, executable verification, and release-contract validation.",
   "codeRepository": "https://github.com/PrinceAudre/surt-virtual-rwanda-repro",
   "issueTracker": "https://github.com/PrinceAudre/surt-virtual-rwanda-repro/issues",
