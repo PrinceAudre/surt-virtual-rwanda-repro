@@ -5,6 +5,7 @@ title: >-
   SuRT-GeoHarmonizer: auditable administrative-scale Earth-data harmonization
   and provenance labelling
 version: 1.3.0
+doi: 10.5281/zenodo.21840177
 type: software
 authors:
   - family-names: Tuyishime
@@ -25,7 +26,7 @@ abstract: >-
   recommendations.
 license: MIT
 repository-code: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro"
-url: "https://github.com/PrinceAudre/surt-virtual-rwanda-repro"
+url: "https://doi.org/10.5281/zenodo.21840177"
 keywords:
   - geospatial software
   - environmental data harmonization
