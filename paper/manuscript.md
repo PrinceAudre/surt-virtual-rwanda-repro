@@ -119,7 +119,7 @@ This work received no specific grant from public, commercial, or not-for-profit 
 
 ## Data and software availability
 
-The public repository is `https://github.com/PrinceAudre/surt-virtual-rwanda-repro`. The active SoftwareX candidate is version 1.3.0 on branch `codex/softwarex-submission-v1.3.0`. The immutable historical version 1.2.0 is archived at `https://doi.org/10.5281/zenodo.21744708`; the concept DOI is `https://doi.org/10.5281/zenodo.21671788`. The final SoftwareX submission will cite the version-specific archive created from the exact validated `v1.3.0` tag.
+The public repository is `https://github.com/PrinceAudre/surt-virtual-rwanda-repro`. The SoftwareX-facing software version is 1.3.0. Its version-specific Zenodo DOI is `https://doi.org/10.5281/zenodo.21840177`, reserved for the exact validated `v1.3.0` archive. The immutable historical version 1.2.0 is archived at `https://doi.org/10.5281/zenodo.21744708`; the concept DOI is `https://doi.org/10.5281/zenodo.21671788`. The DOI `10.5281/zenodo.21840177` becomes registered when the exact `v1.3.0` archive is published on Zenodo.
 
 ## Declaration of generative AI and AI-assisted technologies in the writing process
 
@@ -152,8 +152,8 @@ During preparation, the author used OpenAI ChatGPT and Codex and Anthropic Claud
 | Nr. | Code metadata description | Metadata |
 |---|---|---|
 | C1 | Current code version | 1.3.0 |
-| C2 | Permanent link to code/repository used for this code version | https://github.com/PrinceAudre/surt-virtual-rwanda-repro/tree/codex/softwarex-submission-v1.3.0 |
-| C3 | Permanent link to reproducible capsule | Account-free reproduction is provided by the repository, `renv.lock`, GitHub Actions, and the final Zenodo version archive |
+| C2 | Permanent link to code/repository used for this code version | https://github.com/PrinceAudre/surt-virtual-rwanda-repro/tree/v1.3.0 |
+| C3 | Permanent link to reproducible capsule | https://doi.org/10.5281/zenodo.21840177 |
 | C4 | Legal code licence | MIT License |
 | C5 | Code versioning system used | Git |
 | C6 | Software code languages, tools and services used | R, Python, terra, sf, exactextractr, jsonlite, GitHub Actions, Zenodo |
