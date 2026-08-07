@@ -1,0 +1,5 @@
+# Optional provider clients used only for real-data acquisition.
+# The complete account-free verification suite uses the Python standard library
+# and does not require these packages.
+cdsapi==0.7.7
+earthaccess==0.18.0

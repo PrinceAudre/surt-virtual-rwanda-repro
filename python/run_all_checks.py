@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run all account-free reproducibility checks from any working directory."""
+"""Run all account-free SuRT-GeoHarmonizer checks from any working directory."""
 
 from __future__ import annotations
 
@@ -78,27 +78,37 @@ def write_summary(steps: list[dict[str, Any]], total_seconds: float) -> Path:
         "provenance": 9,
         "environmental_fixture": 9,
         "geometry_agnostic_portability_fixture": 6,
+        "generic_administrative_harmonizer": 7,
         "transformation_failure_injection": 7,
         "release_layer_contracts": 5,
         "release_contract_corruptions_rejected": 5,
     }
     summary = {
-        "schema_version": "1.2",
+        "schema_version": "1.3",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "software": "SuRT-GeoHarmonizer",
         "repository": "PrinceAudre/surt-virtual-rwanda-repro",
-        "published_base_archive": {
-            "version": "1.1.1",
-            "zenodo_doi": "10.5281/zenodo.21677162",
+        "historical_release": {
+            "version": "1.2.0",
+            "git_tag": "v1.2.0",
+            "zenodo_version_doi": "10.5281/zenodo.21744708",
         },
         "working_package": {
-            "version": "1.2.0",
-            "status": "pre-DOI release freeze",
-            "version_doi": None,
+            "version": "1.3.0",
+            "status": "SoftwareX release candidate",
+            "branch": "codex/softwarex-submission-v1.3.0",
+            "zenodo_concept_doi": "10.5281/zenodo.21671788",
+            "zenodo_version_doi": "10.5281/zenodo.21840177",
+            "version_archive_status": "DOI reserved; publish exact validated v1.3.0 tag",
         },
         "integrity": {
-            "scope": "complete tracked-file release scope",
+            "scope": "complete tracked-file candidate scope",
             "manifest": "CHECKSUMS.sha256",
-            "final_release_requirement": "insert reserved DOI, regenerate manifest, and rerun on exact tag",
+            "final_release_requirement": (
+                "freeze the exact candidate commit, regenerate the all-tracked manifest, "
+                "create tag v1.3.0, and publish that exact tag under reserved Zenodo DOI "
+                "10.5281/zenodo.21840177"
+            ),
         },
         "status": "passed",
         "assertions": {
@@ -134,8 +144,12 @@ def main() -> None:
             [rscript, str(ROOT / "R" / "test_fixture_pipeline.R")],
         ),
         run(
-            "geometry-agnostic portability fixture",
+            "geometry-agnostic transformation fixture",
             [rscript, str(ROOT / "R" / "test_portability_fixture.R")],
+        ),
+        run(
+            "generic administrative-unit harmonizer",
+            [rscript, str(ROOT / "R" / "test_generic_harmonizer.R")],
         ),
         run(
             "transformation failure injection",
@@ -155,7 +169,7 @@ def main() -> None:
             ],
         ),
         run(
-            "v1.2.0 freeze metadata and submission-package consistency",
+            "SoftwareX candidate metadata and manuscript consistency",
             [sys.executable, str(ROOT / "python" / "validate_candidate_metadata.py")],
         ),
     ]

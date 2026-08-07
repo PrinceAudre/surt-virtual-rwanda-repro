@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.3.0 - SoftwareX release candidate, 2026-08-07
+
+### Productization and reuse
+
+- Introduced the standalone product identity **SuRT-GeoHarmonizer** while retaining the repository and SuRT-Virtual Rwanda relationship.
+- Added `R/harmonize_admin_raster.R`, a provider-agnostic command-line interface for raster and polygon inputs, arbitrary unique identifiers, scale and offset conversion, no-data masking, bounds, provenance, and WGS84 GeoJSON output.
+- Added `R/test_generic_harmonizer.R`, a complete account-free projected non-Rwanda example that writes and validates a three-unit GeoJSON output.
+- Increased the account-free behavioural and contract suite from 41 to 48 explicit outcomes.
+- Added a direct installation and quick-start pathway, generic input contract, contribution policy, CodeMeta record, and pinned optional provider clients.
+
+### SoftwareX submission preparation
+
+- Replaced Earth Science Informatics-specific identity in active README, CFF, project metadata, verification summaries, and candidate validation.
+- Rebuilt the active manuscript as a SoftwareX Original Software Publication within the journal's 3,000-word limit.
+- Added the SoftwareX code-metadata table, impact and reuse section, clear generic interface, and explicit separation between software verification and scientific validation.
+- Preserved `v1.2.0` and DOI `10.5281/zenodo.21744708` as immutable history.
+- Completed the account-free reproducibility workflow and public CHIRPS 2023 numerical validation on the release candidate.
+- Reserved version-specific Zenodo DOI `10.5281/zenodo.21840177` for the exact validated `v1.3.0` archive.
+- Defined a controlled DOI-bearing exact-head validation, immutable tag, GitHub release, and Zenodo publication gate.
+
 ## 1.2.0 - 2026-08-01
 
 ### Scientific and software evaluation

@@ -1,16 +1,18 @@
-Package: surtvirtualrwandarepro
+Package: surtgeoharmonizer
 Type: Project
-Title: Auditable District-Scale Earth-Data Harmonization and Provenance Labelling
-Version: 1.2.0
+Title: Auditable Administrative-Scale Earth-Data Harmonization and Provenance Labelling
+Version: 1.3.0
 Authors@R: person("Audre Prince", "Tuyishime", role = c("aut", "cre"),
+                  email = "priplee@gmail.com",
                   comment = c(ORCID = "0009-0002-0799-3140"))
-Description: Reproducible preparation of district-level rainfall, temperature,
-    vegetation-greenness, and terrain layers for Rwanda, together with a
-    fail-closed provenance-labelling contract, controlled transformation
-    fixtures, failure-injection tests, geometry-agnostic portability checks,
-    independent GeoJSON release-contract validation, and scoped public CHIRPS
-    numerical reproduction. Version 1.2.0 is archived at
-    DOI 10.5281/zenodo.21744708.
+Description: Open R and Python command-line workflow for converting
+    heterogeneous environmental rasters into consistent administrative-unit
+    GeoJSON layers with explicit provenance, fail-closed evidence
+    classification, provider-specific reference builders, controlled
+    transformation fixtures, generic-region examples, failure-injection tests,
+    independent release-contract validation, and scoped public-data numerical
+    reproduction. Rwanda is the reference implementation rather than a
+    hard-coded software boundary.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Imports:

@@ -1,29 +1,35 @@
-name: Release metadata and manuscript validation
+name: SoftwareX metadata and manuscript validation
 
 on:
   push:
     paths:
       - "CITATION.cff"
+      - "codemeta.json"
       - "DESCRIPTION"
       - "README.md"
+      - "REPRODUCIBILITY.md"
       - "CHANGELOG.md"
+      - "CONTRIBUTING.md"
+      - "requirements-providers.txt"
+      - "R/harmonize_admin_raster.R"
+      - "R/test_generic_harmonizer.R"
       - "paper/manuscript.md"
-      - "paper/REFERENCE_AUDIT.md"
-      - "paper/submission/**"
-      - "paper/archive/**"
       - "python/validate_candidate_metadata.py"
       - "python/audit_manuscript.py"
       - ".github/workflows/metadata-validation.yml"
   pull_request:
     paths:
       - "CITATION.cff"
+      - "codemeta.json"
       - "DESCRIPTION"
       - "README.md"
+      - "REPRODUCIBILITY.md"
       - "CHANGELOG.md"
+      - "CONTRIBUTING.md"
+      - "requirements-providers.txt"
+      - "R/harmonize_admin_raster.R"
+      - "R/test_generic_harmonizer.R"
       - "paper/manuscript.md"
-      - "paper/REFERENCE_AUDIT.md"
-      - "paper/submission/**"
-      - "paper/archive/**"
       - "python/validate_candidate_metadata.py"
       - "python/audit_manuscript.py"
       - ".github/workflows/metadata-validation.yml"
@@ -33,18 +39,18 @@ permissions:
   contents: read
 
 jobs:
-  validate-release-metadata:
+  validate-softwarex-candidate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.12"
       - name: Install pinned CFF validator
         run: python -m pip install --disable-pip-version-check cffconvert==2.0.0
       - name: Validate Citation File Format schema
         run: cffconvert --validate
-      - name: Validate v1.2.0 freeze consistency and journal limits
+      - name: Validate SoftwareX candidate consistency
         run: python python/validate_candidate_metadata.py
-      - name: Audit manuscript structure and references
+      - name: Audit SoftwareX manuscript structure, length and references
         run: python python/audit_manuscript.py

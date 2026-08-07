@@ -1,0 +1,44 @@
+name: Refresh SoftwareX candidate manifest
+
+on:
+  push:
+    branches:
+      - codex/softwarex-submission-v1.3.0
+    paths-ignore:
+      - CHECKSUMS.sha256
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: softwarex-candidate-manifest
+  cancel-in-progress: true
+
+jobs:
+  refresh-manifest:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/softwarex-submission-v1.3.0
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Regenerate complete tracked-file manifest
+        run: python python/build_checksum_manifest.py --all-tracked --write
+      - name: Validate generated manifest
+        run: python python/build_checksum_manifest.py --all-tracked --check
+      - name: Commit manifest when changed
+        run: |
+          if git diff --quiet -- CHECKSUMS.sha256; then
+            echo 'Manifest already current.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add CHECKSUMS.sha256
+          git commit -m 'ci: refresh SoftwareX candidate checksum manifest'
+          git push origin HEAD:codex/softwarex-submission-v1.3.0

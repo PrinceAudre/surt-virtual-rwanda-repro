@@ -1,0 +1,5 @@
+A generic interface converts rasters and polygons into provenance-labelled GeoJSON
+Account-free tests verify transformations, failures, schemas and release integrity
+Rwanda builders demonstrate rainfall, temperature, vegetation and terrain workflows
+Independent validation exactly reproduces all 30 archived rainfall values
+Fail-closed provenance rules keep unknown or synthetic outputs illustrative
