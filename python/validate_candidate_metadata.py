@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOFTWARE_NAME = "SuRT-GeoHarmonizer"
 VERSION = "1.3.0"
 BRANCH = "codex/softwarex-submission-v1.3.0"
+RELEASE_TAG_URL = "https://github.com/PrinceAudre/surt-virtual-rwanda-repro/tree/v1.3.0"
 HISTORICAL_VERSION = "1.2.0"
 HISTORICAL_DOI = "10.5281/zenodo.21744708"
 CONCEPT_DOI = "10.5281/zenodo.21671788"
@@ -90,8 +91,10 @@ def main() -> None:
                 f"{label} preserves immutable historical version {HISTORICAL_VERSION}")
     require(CONCEPT_DOI in readme and CONCEPT_DOI in manuscript and CONCEPT_DOI in runner,
             "concept DOI is consistent across candidate records")
-    require(BRANCH in readme and BRANCH in manuscript and BRANCH in runner,
-            "SoftwareX candidate branch is explicitly identified")
+    require(BRANCH in readme and BRANCH in runner,
+            "SoftwareX candidate branch is identified in development-facing records")
+    require(RELEASE_TAG_URL in manuscript,
+            "manuscript records the immutable v1.3.0 release-tag URL")
 
     for label, text in {
         "README": readme,
