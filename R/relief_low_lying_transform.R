@@ -13,15 +13,27 @@ suppressWarnings(suppressMessages({
   library(exactextractr)
 }))
 
-hand_clamp_fraction <- function(x) {
-  pmin(1, pmax(0, as.numeric(x)))
+# Reuse the shared v1.4 footprint/coverage contract. This avoids mixing one
+# geometry-area engine for polygon denominators with a different cell-area engine
+# for valid raster support.
+if (!exists("surt_raster_coverage_fraction", mode = "function")) {
+  .hand_file <- tryCatch(
+    normalizePath(sys.frame(1)$ofile, winslash = "/", mustWork = TRUE),
+    error = function(error) ""
+  )
+  if (!nzchar(.hand_file)) {
+    .file_arg <- grep("^--file=", commandArgs(), value = TRUE)
+    .hand_file <- if (length(.file_arg))
+      normalizePath(sub("^--file=", "", .file_arg[[1]]), winslash = "/", mustWork = FALSE) else
+      normalizePath(file.path("R", "relief_low_lying_transform.R"), winslash = "/", mustWork = FALSE)
+  }
+  source(file.path(dirname(.hand_file), "zonal_area_summary.R"))
+  rm(.hand_file)
+  if (exists(".file_arg")) rm(.file_arg)
 }
 
-hand_polygon_area_m2 <- function(polygons) {
-  vapply(seq_len(nrow(polygons)), function(i) {
-    geom <- sf::st_geometry(polygons[i, , drop = FALSE])
-    as.numeric(sum(sf::st_area(sf::st_transform(geom, 4326))))
-  }, numeric(1))
+hand_clamp_fraction <- function(x) {
+  pmin(1, pmax(0, as.numeric(x)))
 }
 
 # Return auditable HAND area quantities for each polygon.
@@ -29,8 +41,10 @@ hand_polygon_area_m2 <- function(polygons) {
 # `low_lying_share_pct` = 100 * threshold_area_m2 / valid_hand_area_m2.
 # Negative HAND sentinels are masked before aggregation. Cell contributions are
 # weighted by both polygon-cell overlap fraction and square-metre cell area.
-# `valid_hand_area_fraction` reports valid HAND area divided by total polygon
-# area, so users can distinguish a finite threshold share from complete coverage.
+# Coverage follows the same three-part contract as the generic harmonizer:
+# raster footprint coverage, valid HAND fraction within that footprint, and
+# overall valid-data fraction of the polygon. `valid_hand_area_fraction` is kept
+# as a semantic alias of `valid_data_fraction` for backward compatibility.
 low_lying_summary <- function(hand, d, threshold_m = 5) {
   if (!is.finite(threshold_m) || threshold_m < 0) {
     stop("FAIL-CLOSED: HAND threshold must be a finite non-negative value.")
@@ -38,7 +52,8 @@ low_lying_summary <- function(hand, d, threshold_m = 5) {
   if (terra::nlyr(hand) != 1L) {
     stop("FAIL-CLOSED: HAND summary requires exactly one raster layer.")
   }
-  if (!nzchar(terra::crs(hand, proj = TRUE))) {
+  raster_crs <- sf::st_crs(terra::crs(hand, proj = TRUE))
+  if (is.na(raster_crs)) {
     stop("FAIL-CLOSED: HAND raster CRS is missing.")
   }
   if (is.na(sf::st_crs(d))) {
@@ -46,12 +61,7 @@ low_lying_summary <- function(hand, d, threshold_m = 5) {
   }
 
   hand <- terra::ifel(hand < 0, NA, hand)
-  transformed <- sf::st_transform(d, terra::crs(hand, proj = TRUE))
-  polygon_area <- hand_polygon_area_m2(transformed)
-  if (any(!is.finite(polygon_area)) || any(polygon_area <= 0)) {
-    stop("FAIL-CLOSED: one or more HAND polygons have non-positive area.")
-  }
-
+  transformed <- sf::st_transform(d, raster_crs)
   cell_area <- terra::cellSize(hand, mask = FALSE, unit = "m", transform = TRUE)
   extracted <- exactextractr::exact_extract(
     hand,
@@ -65,7 +75,8 @@ low_lying_summary <- function(hand, d, threshold_m = 5) {
           low_lying_share_pct = NA_real_,
           threshold_area_m2 = 0,
           valid_hand_area_m2 = 0,
-          raster_covered_area_m2 = 0
+          raster_covered_area_m2 = 0,
+          valid_within_raster_fraction = 0
         ))
       }
 
@@ -79,7 +90,8 @@ low_lying_summary <- function(hand, d, threshold_m = 5) {
           low_lying_share_pct = NA_real_,
           threshold_area_m2 = 0,
           valid_hand_area_m2 = 0,
-          raster_covered_area_m2 = raster_covered_area
+          raster_covered_area_m2 = raster_covered_area,
+          valid_within_raster_fraction = 0
         ))
       }
 
@@ -88,7 +100,8 @@ low_lying_summary <- function(hand, d, threshold_m = 5) {
         low_lying_share_pct = 100 * threshold_area / valid_area,
         threshold_area_m2 = threshold_area,
         valid_hand_area_m2 = valid_area,
-        raster_covered_area_m2 = raster_covered_area
+        raster_covered_area_m2 = raster_covered_area,
+        valid_within_raster_fraction = valid_area / raster_covered_area
       )
     },
     progress = FALSE
@@ -102,11 +115,15 @@ low_lying_summary <- function(hand, d, threshold_m = 5) {
   }
 
   extracted$raster_coverage_fraction <- hand_clamp_fraction(
-    extracted$raster_covered_area_m2 / polygon_area
+    surt_raster_coverage_fraction(hand, transformed)
   )
-  extracted$valid_hand_area_fraction <- hand_clamp_fraction(
-    extracted$valid_hand_area_m2 / polygon_area
+  extracted$valid_within_raster_fraction <- hand_clamp_fraction(
+    extracted$valid_within_raster_fraction
   )
+  extracted$valid_data_fraction <- hand_clamp_fraction(
+    extracted$raster_coverage_fraction * extracted$valid_within_raster_fraction
+  )
+  extracted$valid_hand_area_fraction <- extracted$valid_data_fraction
   extracted$low_lying_share_pct <- as.numeric(extracted$low_lying_share_pct)
 
   extracted[, c(
@@ -114,6 +131,8 @@ low_lying_summary <- function(hand, d, threshold_m = 5) {
     "threshold_area_m2",
     "valid_hand_area_m2",
     "raster_coverage_fraction",
+    "valid_within_raster_fraction",
+    "valid_data_fraction",
     "valid_hand_area_fraction"
   )]
 }
