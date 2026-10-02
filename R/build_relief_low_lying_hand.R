@@ -5,8 +5,8 @@
 # a validated hazard model, a forecast, surveillance output, or operational advice.
 #
 # Metric: percentage of VALID HAND-covered district area at or below threshold
-# (default 5 m above nearest drainage). Valid HAND area coverage is emitted as a
-# separate fraction so no-data is never silently treated as non-low-lying land.
+# (default 5 m above nearest drainage). Three explicit coverage fractions are
+# emitted so raster extent and HAND no-data are never silently conflated.
 #
 # DATA: Global 30 m HAND, CC0 1.0 Public Domain. Cloud-Optimized GeoTIFF 1x1
 # degree tiles are fetched from the anonymous public S3 bucket over HTTPS.
@@ -68,7 +68,12 @@ r <- terra::crop(r, terra::ext(bb[["xmin"]], bb[["xmax"]], bb[["ymin"]], bb[["ym
 
 hand_summary <- low_lying_summary(r, d, THRESH)
 d$low_lying_share_pct <- round(hand_summary$low_lying_share_pct, 1)
-d$valid_hand_area_fraction <- round(hand_summary$valid_hand_area_fraction, 4)
+d$raster_coverage_fraction <- round(hand_summary$raster_coverage_fraction, 6)
+d$valid_within_raster_fraction <- round(hand_summary$valid_within_raster_fraction, 6)
+d$valid_data_fraction <- round(hand_summary$valid_data_fraction, 6)
+# Retain the domain-specific name in the output while making its equivalence to
+# the standard overall valid-data fraction explicit.
+d$valid_hand_area_fraction <- d$valid_data_fraction
 .gt <- low_lying_consistency_gate(
   d$district, d$low_lying_share_pct, low_lying_district_lon(d)
 )
@@ -76,11 +81,16 @@ d$valid_hand_area_fraction <- round(hand_summary$valid_hand_area_fraction, 4)
 d$provenance <- sprintf(
   paste0(
     "HAND (Height Above Nearest Drainage, CC0; ASF/HydroSAR from Copernicus GLO-30 DEM); ",
-    "area-weighted %% of valid HAND-covered district area <= %g m; valid HAND area fraction reported separately"
+    "surface-area-weighted %% of valid HAND-covered district area <= %g m; ",
+    "raster-footprint and valid-data coverage fractions reported"
   ),
   THRESH
 )
-keep <- d[, c("district", "low_lying_share_pct", "valid_hand_area_fraction", "provenance")]
+keep <- d[, c(
+  "district", "low_lying_share_pct", "raster_coverage_fraction",
+  "valid_within_raster_fraction", "valid_data_fraction",
+  "valid_hand_area_fraction", "provenance"
+)]
 v <- terra::vect(keep)
 dir.create(dirname(OUT), recursive = TRUE, showWarnings = FALSE)
 if (file.exists(OUT)) file.remove(OUT)
@@ -88,9 +98,9 @@ terra::writeVector(v, OUT, filetype = "GeoJSON")
 cat(sprintf(
   paste0(
     "low-lying HAND share: %d districts | %.1f-%.1f %% of valid HAND area <= %g m | ",
-    "valid area fraction %.3f-%.3f | east mean %.1f > west mean %.1f -> %s\n"
+    "valid-data fraction %.3f-%.3f | east mean %.1f > west mean %.1f -> %s\n"
   ),
   nrow(keep), min(keep$low_lying_share_pct), max(keep$low_lying_share_pct), THRESH,
-  min(keep$valid_hand_area_fraction), max(keep$valid_hand_area_fraction),
+  min(keep$valid_data_fraction), max(keep$valid_data_fraction),
   .gt[["east"]], .gt[["west"]], OUT
 ))
