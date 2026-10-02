@@ -4,13 +4,11 @@
 # The public contract separates three quantities that were previously conflated:
 # 1. how much of a polygon intersects the raster footprint;
 # 2. how much of the raster-covered polygon has finite values; and
-# 3. the area-weighted value summary over those finite values.
+# 3. the surface-area-weighted value summary over those finite values.
 #
-# exactextractr's `weights = "area"` supplies raster-cell area weights. The
-# custom summary multiplies those weights by polygon-cell coverage fractions.
-# For longitude/latitude rasters exactextractr calculates cell areas in square
-# metres using its documented spherical approximation. For projected rasters,
-# cell areas are Cartesian in the raster CRS.
+# terra::cellSize(..., transform = TRUE) supplies square-metre surface-area
+# weights for both longitude/latitude and projected rasters. exactextractr then
+# multiplies those cell areas by polygon-cell coverage fractions.
 
 suppressWarnings(suppressMessages({
   library(terra)
@@ -64,10 +62,12 @@ surt_area_weighted_summary <- function(raster, polygons) {
   if (is.na(sf::st_crs(polygons))) stop("Polygon CRS is required for zonal aggregation.")
 
   transformed <- sf::st_transform(polygons, raster_crs)
+  cell_area <- terra::cellSize(raster, mask = FALSE, unit = "m", transform = TRUE)
+
   extracted <- exactextractr::exact_extract(
     raster,
     transformed,
-    weights = "area",
+    weights = cell_area,
     fun = function(values, coverage_fraction, weights) {
       touched <- is.finite(coverage_fraction) & coverage_fraction > 0 &
         is.finite(weights) & weights > 0
