@@ -40,9 +40,22 @@ surt_raster_footprint <- function(raster) {
   sf::st_as_sfc(sf::st_bbox(bbox_values, crs = raster_crs))
 }
 
-surt_geodesic_area <- function(geometry) {
+# Raster-footprint coverage is an areal overlap ratio. Compute both polygon and
+# footprint in a global equal-area CRS before intersection. This avoids a subtle
+# s2 artefact for longitude/latitude rectangles: the same constant-latitude edge
+# represented as one long geodesic segment versus several shorter segments can
+# otherwise yield a fraction slightly below 1 even when the polygon is exactly
+# inside the raster extent.
+surt_equal_area_crs <- function() sf::st_crs(6933)
+
+surt_equal_area_geometry <- function(geometry) {
+  if (is.na(sf::st_crs(geometry))) stop("Geometry CRS is required for area calculation.")
+  suppressWarnings(sf::st_transform(geometry, surt_equal_area_crs()))
+}
+
+surt_surface_area_m2 <- function(geometry) {
   if (!length(geometry)) return(0)
-  as.numeric(sum(sf::st_area(sf::st_transform(geometry, 4326))))
+  as.numeric(sum(sf::st_area(surt_equal_area_geometry(geometry))))
 }
 
 surt_raster_coverage_fraction <- function(raster, polygons) {
@@ -52,14 +65,17 @@ surt_raster_coverage_fraction <- function(raster, polygons) {
 
   transformed <- sf::st_transform(polygons, raster_crs)
   footprint <- surt_raster_footprint(raster)
+  transformed_equal_area <- surt_equal_area_geometry(transformed)
+  footprint_equal_area <- surt_equal_area_geometry(footprint)
 
-  vapply(seq_len(nrow(transformed)), function(i) {
-    geom <- sf::st_geometry(transformed[i, , drop = FALSE])
-    total_area <- surt_geodesic_area(geom)
+  vapply(seq_len(nrow(transformed_equal_area)), function(i) {
+    geom <- sf::st_geometry(transformed_equal_area[i, , drop = FALSE])
+    total_area <- as.numeric(sum(sf::st_area(geom)))
     if (!is.finite(total_area) || total_area <= 0) return(NA_real_)
-    overlap <- suppressWarnings(sf::st_intersection(geom, footprint))
+    overlap <- suppressWarnings(sf::st_intersection(geom, footprint_equal_area))
     if (!length(overlap)) return(0)
-    surt_clamp_fraction(surt_geodesic_area(overlap) / total_area)
+    overlap_area <- as.numeric(sum(sf::st_area(overlap)))
+    surt_clamp_fraction(overlap_area / total_area)
   }, numeric(1))
 }
 
