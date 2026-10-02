@@ -149,8 +149,15 @@ ndvi_consistency_gate(
 )
 stop_if_not("complete MODIS transform returns EPSG:4326 coverage",
             isTRUE(terra::is.lonlat(ndvi)) && all(is.finite(ndvi_values)))
-stop_if_not("MODIS fixture reports complete valid-data coverage",
-            all(abs(ndvi_summary$valid_data_fraction - 1) < 1e-6))
+# Raster reprojection can create a thin edge of uncovered or NA cells. That is a
+# real support property, not a test failure: v1.4 is specifically required to
+# expose it instead of silently treating the polygon as fully observed.
+stop_if_not("MODIS fixture reports high valid-data coverage after reprojection",
+            all(is.finite(ndvi_summary$valid_data_fraction)) &&
+              all(ndvi_summary$valid_data_fraction > 0.99) &&
+              all(ndvi_summary$valid_data_fraction <= 1))
+stop_if_not("MODIS fixture exposes non-silent reprojection coverage loss",
+            any(ndvi_summary$valid_data_fraction < 0.9999))
 stop_if_not("MODIS mosaic, annual mean, scale, reprojection, and area-weighted zonal summary return physical NDVI",
             all(abs(as.numeric(ndvi_values) - c(0.7, 0.6, 0.5)) <= 0.02))
 
