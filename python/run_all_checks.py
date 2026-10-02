@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Run all account-free SuRT-GeoHarmonizer checks from any working directory."""
+"""Run account-free SuRT-GeoHarmonizer checks from any working directory."""
 
 from __future__ import annotations
 
+import argparse
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -16,6 +17,26 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Run the account-free scientific, interface, failure-mode, metadata, and "
+            "release-contract checks. Manifest verification is optional because the "
+            "development branch refreshes CHECKSUMS.sha256 in a dedicated workflow."
+        )
+    )
+    parser.add_argument(
+        "--verify-manifest",
+        action="store_true",
+        help=(
+            "Also require CHECKSUMS.sha256 to match the complete tracked tree and verify "
+            "every listed digest. Use this on a frozen release candidate or after the "
+            "manifest-refresh workflow has committed the current manifest."
+        ),
+    )
+    return parser.parse_args()
 
 
 def run(label: str, command: list[str]) -> dict[str, Any]:
@@ -84,7 +105,11 @@ def verify_listed_checksums() -> dict[str, Any]:
     }
 
 
-def write_summary(steps: list[dict[str, Any]], total_seconds: float) -> Path:
+def write_summary(
+    steps: list[dict[str, Any]],
+    total_seconds: float,
+    verify_manifest: bool,
+) -> Path:
     generated = ROOT / "generated"
     generated.mkdir(parents=True, exist_ok=True)
     output = generated / "verification_summary.json"
@@ -113,9 +138,16 @@ def write_summary(steps: list[dict[str, Any]], total_seconds: float) -> Path:
         "integrity": {
             "scope": "complete tracked-file development scope",
             "manifest": "CHECKSUMS.sha256",
+            "manifest_verified_in_this_run": verify_manifest,
+            "development_manifest_policy": (
+                "Ordinary development verification does not require the manifest to match "
+                "the pre-refresh human commit. The dedicated manifest workflow rebuilds and "
+                "checks CHECKSUMS.sha256, then commits the refreshed manifest."
+            ),
             "release_rule": (
-                "Do not create v1.4.0 tag or Zenodo version DOI until reviewer remediation, "
-                "independent validation, manuscript audit, and exact-commit release gates pass."
+                "A frozen release candidate must pass this runner with --verify-manifest, "
+                "plus independent validation, manuscript audit, and exact-commit release gates, "
+                "before v1.4.0 is tagged or archived."
             ),
         },
         "status": "passed",
@@ -138,6 +170,7 @@ def write_summary(steps: list[dict[str, Any]], total_seconds: float) -> Path:
 
 
 def main() -> None:
+    args = parse_args()
     rscript = shutil.which("Rscript")
     if not rscript:
         raise SystemExit("Rscript is required but was not found on PATH")
@@ -185,24 +218,35 @@ def main() -> None:
             [sys.executable, str(ROOT / "python" / "validate_release_contract.py")],
         ),
         run(
-            "complete tracked-file manifest consistency",
-            [
-                sys.executable,
-                str(ROOT / "python" / "build_checksum_manifest.py"),
-                "--all-tracked",
-                "--check",
-            ],
-        ),
-        run(
             "v1.4 peer-review remediation metadata consistency",
             [sys.executable, str(ROOT / "python" / "validate_resubmission_metadata.py")],
         ),
     ]
-    print("\n=== listed-file integrity ===")
-    steps.append(verify_listed_checksums())
+
+    if args.verify_manifest:
+        steps.append(
+            run(
+                "complete tracked-file manifest consistency",
+                [
+                    sys.executable,
+                    str(ROOT / "python" / "build_checksum_manifest.py"),
+                    "--all-tracked",
+                    "--check",
+                ],
+            )
+        )
+        print("\n=== listed-file integrity ===")
+        steps.append(verify_listed_checksums())
+    else:
+        print(
+            "\n[INFO] Manifest verification deferred to the dedicated development "
+            "manifest-refresh workflow. Use --verify-manifest on a frozen release candidate."
+        )
+
     total_seconds = time.perf_counter() - started
-    write_summary(steps, total_seconds)
-    print(f"\nAll account-free checks passed in {total_seconds:.3f} seconds.")
+    write_summary(steps, total_seconds, args.verify_manifest)
+    scope = "including manifest integrity" if args.verify_manifest else "development scope"
+    print(f"\nAll account-free checks passed for {scope} in {total_seconds:.3f} seconds.")
 
 
 if __name__ == "__main__":
