@@ -62,12 +62,14 @@ summary <- ndvi_annual_summary_4326(
   accepted_quality = 0L,
   min_valid_month_fraction = 0.5
 )
+mean_values <- values(summary$mean)[, 1]
+valid_fraction_values <- values(summary$valid_month_fraction)[, 1]
 check("QA-aware annual mean averages only accepted monthly observations",
-      abs(values(summary$mean)[1, 1] - 0.6) < 1e-3 &&
-        abs(values(summary$mean)[1, 2] - 0.6) < 1e-3)
+      abs(mean_values[[1]] - 0.6) < 1e-3 &&
+        abs(mean_values[[2]] - 0.6) < 1e-3)
 check("annual summary reports monthly QA completeness",
-      abs(values(summary$valid_month_fraction)[1, 1] - 1) < 1e-6 &&
-        abs(values(summary$valid_month_fraction)[1, 2] - 0.5) < 1e-6)
+      abs(valid_fraction_values[[1]] - 1) < 1e-6 &&
+        abs(valid_fraction_values[[2]] - 0.5) < 1e-6)
 
 strict <- ndvi_annual_summary_4326(
   list(
@@ -77,7 +79,8 @@ strict <- ndvi_annual_summary_4326(
   accepted_quality = 0L,
   min_valid_month_fraction = 0.75
 )
+strict_values <- values(strict$mean)[, 1]
 check("minimum monthly completeness masks cells below the configured threshold",
-      is.finite(values(strict$mean)[1, 1]) && is.na(values(strict$mean)[1, 2]))
+      is.finite(strict_values[[1]]) && is.na(strict_values[[2]]))
 
 cat(sprintf("\n=== MOD13A3 QA policy: %d passed, 0 failed ===\n", passed))
