@@ -169,6 +169,10 @@ def main() -> None:
             [rscript, str(ROOT / "R" / "test_temperature_annual_mean.R")],
         ),
         run(
+            "MOD13A3 QA policy and temporal completeness",
+            [rscript, str(ROOT / "R" / "test_ndvi_qa.R")],
+        ),
+        run(
             "HAND valid-area denominator and coverage",
             [rscript, str(ROOT / "R" / "test_hand_summary.R")],
         ),
