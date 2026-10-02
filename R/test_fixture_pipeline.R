@@ -24,6 +24,18 @@ stop_if_not <- function(label, condition) {
   cat(sprintf("[PASS] %s\n", label))
 }
 
+coverage_diagnostic <- function(label, summary) {
+  cat(sprintf(
+    paste0(
+      "[INFO] %s coverage | raster=%s | within=%s | overall=%s\n"
+    ),
+    label,
+    paste(format(summary$raster_coverage_fraction, digits = 12), collapse = ","),
+    paste(format(summary$valid_within_raster_fraction, digits = 12), collapse = ","),
+    paste(format(summary$valid_data_fraction, digits = 12), collapse = ",")
+  ))
+}
+
 square <- function(xmin, xmax, ymin = -2, ymax = -1) {
   st_polygon(list(matrix(
     c(xmin, ymin, xmax, ymin, xmax, ymax, xmin, ymax, xmin, ymin),
@@ -48,11 +60,16 @@ x <- crds(template, df = TRUE)$x
 rainfall <- setValues(template, ifelse(x < 30, 1500, ifelse(x < 31, 1100, 800)))
 rain_summary <- rainfall_district_summary(rainfall, districts)
 rain_values <- rain_summary$value
+coverage_diagnostic("rainfall", rain_summary)
 rain_gate <- rainfall_consistency_gate(
   districts$district, rain_values, rainfall_district_lon(districts)
 )
 stop_if_not("rainfall area-weighted zonal means match fixture",
             identical(as.numeric(rain_values), c(1500, 1100, 800)))
+stop_if_not("rainfall fixture reports complete raster-footprint coverage",
+            all(abs(rain_summary$raster_coverage_fraction - 1) < 1e-9))
+stop_if_not("rainfall fixture reports complete finite coverage within raster",
+            all(abs(rain_summary$valid_within_raster_fraction - 1) < 1e-9))
 stop_if_not("rainfall fixture reports complete valid-data coverage",
             all(abs(rain_summary$valid_data_fraction - 1) < 1e-9))
 stop_if_not("rainfall west-to-east consistency gate passes",
@@ -61,6 +78,7 @@ stop_if_not("rainfall west-to-east consistency gate passes",
 temperature <- setValues(template, ifelse(x < 30, 17, ifelse(x < 31, 19.5, 22)))
 temp_summary <- temp_district_summary(temperature, districts)
 temp_values <- temp_summary$value
+coverage_diagnostic("temperature", temp_summary)
 temp_gate <- temp_consistency_gate(
   districts$district, temp_values, temp_district_lon(districts)
 )
@@ -74,6 +92,7 @@ stop_if_not("temperature west-to-east consistency gate passes",
 hand <- setValues(template, ifelse(x < 30, 12, ifelse(x < 31, rep(c(3, 8), 2), 2)))
 hand_summary <- low_lying_summary(hand, districts, threshold_m = 5)
 low_values <- round(hand_summary$low_lying_share_pct, 1)
+coverage_diagnostic("HAND", hand_summary)
 low_gate <- low_lying_consistency_gate(
   districts$district, low_values, low_lying_district_lon(districts)
 )
@@ -123,6 +142,7 @@ ndvi <- ndvi_annual_mean_4326(list(
 ndvi_assert_raster_scale(ndvi)
 ndvi_summary <- surt_area_weighted_summary(ndvi, districts)
 ndvi_values <- round(ndvi_summary$value, 2)
+coverage_diagnostic("MODIS", ndvi_summary)
 ndvi_consistency_gate(
   districts$district, ndvi_values,
   west_forest = "Nyamasheke", east_savanna = "Nyagatare"
