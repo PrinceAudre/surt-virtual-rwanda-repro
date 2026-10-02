@@ -27,7 +27,7 @@ SuRT-GeoHarmonizer currently provides four connected layers:
 1. **Generic administrative harmonization.** `R/harmonize_admin_raster.R` accepts a raster and polygon boundary file and writes WGS84 GeoJSON containing `unit_id`, a user-defined measurement field, three explicit coverage fields, provenance, and geometry.
 2. **Provider-specific reference builders.** The Rwanda implementation prepares CHIRPS rainfall, ERA5-Land temperature, MODIS NDVI, and HAND terrain descriptors using explicit transformation rules.
 3. **Fail-closed evidence and release controls.** The provenance module defaults unknown, incomplete, synthetic, or placeholder outputs to illustrative status. Independent validators reject malformed transformations and corrupted release files.
-4. **Executable evidence.** A one-command account-free suite exercises controlled transformations, spatial weighting, partial coverage, arbitrary projected geometry, the generic input contract, deliberate failure modes, GeoJSON contracts, and checksum integrity.
+4. **Executable evidence.** A one-command account-free development suite exercises controlled transformations, spatial weighting, partial coverage, arbitrary projected geometry, the generic input contract, deliberate failure modes, GeoJSON contracts, and metadata consistency. Manifest integrity can be added explicitly for a frozen release candidate.
 
 The v1.4 remediation roadmap additionally requires a stable provider-adapter/configuration contract, workflow orchestration, a real second-country portability case, additional real-data numerical cross-checks, and broader operating-system CI. Those items remain development work until the tracked remediation ledger records executable evidence for them.
 
@@ -50,13 +50,23 @@ Rscript -e "renv::restore(prompt = FALSE)"
 
 The account-free test pathway uses only bundled data and generated fixtures. Provider downloads are optional and have separate access requirements.
 
-### 2. Run all account-free checks
+### 2. Run the account-free development checks
 
 ```text
 python python/run_all_checks.py
 ```
 
-The suite reports test outcomes dynamically rather than relying on a manually maintained total. It runs the provenance checks, hermetic environmental fixture pipeline, geometry-portability fixture, generic harmonizer contract suite, zonal area/coverage regressions, ERA5 annual-statistic tests, MODIS quality-policy tests, HAND denominator/coverage tests, deliberate transformation failures, release-contract checks, metadata/manuscript checks, and tracked-file checksum validation.
+The suite reports test outcomes dynamically rather than relying on a manually maintained total. It runs the provenance checks, hermetic environmental fixture pipeline, geometry-portability fixture, generic harmonizer contract suite, zonal area/coverage regressions, ERA5 annual-statistic tests, MODIS quality-policy tests, HAND denominator/coverage tests, deliberate transformation failures, release-contract checks, and remediation metadata checks.
+
+During active development, `CHECKSUMS.sha256` is rebuilt and validated by the dedicated manifest-refresh workflow after each human source commit. This separation prevents the scientific CI job from failing merely because it started before the automated manifest-refresh commit landed.
+
+For a frozen release candidate, or after the manifest-refresh workflow has made the manifest current, require the exact tracked-file manifest as part of the same run:
+
+```text
+python python/run_all_checks.py --verify-manifest
+```
+
+The GitHub Actions reproducibility workflow also exposes this strict mode through its manual `verify_manifest` input.
 
 ### 3. Run the generic example directly
 
@@ -220,10 +230,11 @@ The current release records lightweight human-readable provenance. It does not c
 ## Reproducibility and integrity
 
 - `renv.lock` records the R dependency graph.
-- `python/run_all_checks.py` runs the account-free evidence suite and reports outcome counts dynamically.
+- `python/run_all_checks.py` runs the account-free scientific, interface, failure-mode, release-contract, and metadata suite and reports outcome counts dynamically.
+- `python/run_all_checks.py --verify-manifest` additionally requires the exact tracked-file manifest and verifies every listed digest.
 - `python/validate_release_contract.py` independently checks committed GeoJSON files and rejects controlled corruptions.
-- `CHECKSUMS.sha256` covers the complete tracked development scope and is refreshed by the dedicated v1.4 manifest workflow.
-- GitHub Actions reruns the evidence suite on a clean hosted runner.
+- `CHECKSUMS.sha256` covers the complete tracked development scope and is rebuilt and checked by the dedicated v1.4 manifest workflow after human source commits.
+- GitHub Actions reruns the account-free evidence suite on a clean hosted runner; manual dispatch can enable strict manifest verification.
 - The eventual v1.4 tag and Zenodo version DOI must identify the exact same approved release content.
 
 Checksums establish byte integrity, not scientific validity.
