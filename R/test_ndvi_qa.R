@@ -47,17 +47,20 @@ bad_policy_rejected <- tryCatch({
 }, error = function(error) grepl("integers from 0 to 3", conditionMessage(error), fixed = TRUE))
 check("invalid MOD13A3 reliability rank fails closed", bad_policy_rejected)
 
-# Two monthly granules: cell 1 is good both months; cell 2 is good only month 1;
-# cells 3-4 are never good. With a 0.5 minimum valid-month fraction, cells 1-2
-# remain and their temporal completeness is 1.0 and 0.5 respectively.
+# Separate annual-QA fixtures preserve the earlier rank-policy test above while
+# exercising temporal completeness explicitly. Cell 1 is good both months;
+# cell 2 is good only in month 1; cells 3-4 are never accepted. With a 0.5
+# minimum valid-month fraction, cells 1-2 remain with completeness 1.0 and 0.5.
+qa_month1 <- qa
+values(qa_month1) <- c(0, 0, 2, 3)
 r2 <- r
 values(r2) <- c(7000, 9000, 7000, 8000)
-qa2 <- qa
-values(qa2) <- c(0, 3, 2, 3)
+qa_month2 <- qa
+values(qa_month2) <- c(0, 3, 2, 3)
 summary <- ndvi_annual_summary_4326(
   list(
-    list(month = "M01", r = r, qa = qa),
-    list(month = "M02", r = r2, qa = qa2)
+    list(month = "M01", r = r, qa = qa_month1),
+    list(month = "M02", r = r2, qa = qa_month2)
   ),
   accepted_quality = 0L,
   min_valid_month_fraction = 0.5
@@ -73,8 +76,8 @@ check("annual summary reports monthly QA completeness",
 
 strict <- ndvi_annual_summary_4326(
   list(
-    list(month = "M01", r = r, qa = qa),
-    list(month = "M02", r = r2, qa = qa2)
+    list(month = "M01", r = r, qa = qa_month1),
+    list(month = "M02", r = r2, qa = qa_month2)
   ),
   accepted_quality = 0L,
   min_valid_month_fraction = 0.75
