@@ -1,9 +1,9 @@
-name: Refresh SoftwareX candidate manifest
+name: Refresh v1.4 resubmission manifest
 
 on:
   push:
     branches:
-      - codex/softwarex-submission-v1.3.0
+      - review/softwarex-resubmission-v1.4.0
     paths-ignore:
       - CHECKSUMS.sha256
   workflow_dispatch:
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: softwarex-candidate-manifest
+  group: v1.4-resubmission-manifest
   cancel-in-progress: true
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: codex/softwarex-submission-v1.3.0
+          ref: review/softwarex-resubmission-v1.4.0
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -40,5 +40,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add CHECKSUMS.sha256
-          git commit -m 'ci: refresh SoftwareX candidate checksum manifest'
-          git push origin HEAD:codex/softwarex-submission-v1.3.0
+          git commit -m 'ci: refresh v1.4 resubmission checksum manifest'
+          git push origin HEAD:review/softwarex-resubmission-v1.4.0
