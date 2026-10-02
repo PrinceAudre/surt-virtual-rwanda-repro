@@ -38,6 +38,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install pinned workflow engine
+        run: python -m pip install -r requirements-workflow.txt
       - name: Run account-free scientific and contract checks
         shell: bash
         run: |
@@ -46,6 +48,8 @@ jobs:
           else
             python python/run_all_checks.py
           fi
+      - name: Run explicit account-free Snakemake DAG
+        run: snakemake --cores 1 --printshellcmds --rerun-incomplete
       - name: Generate manuscript figures from archived GeoJSON files
         run: Rscript R/make_manuscript_figures.R
       - name: Upload SoftwareX evidence bundle
@@ -57,4 +61,6 @@ jobs:
             generated/verification_summary.json
             generated/generic_admin_example.geojson
             generated/release_contract_summary.json
+            generated/workflow_demo/evidence.json
+            generated/workflow_demo/validation.json
           if-no-files-found: error
