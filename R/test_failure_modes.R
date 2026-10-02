@@ -63,17 +63,18 @@ expect_error_contains(
 )
 
 # 3. An inverted rainfall gradient must not pass the broad-direction tripwire.
+# Match the semantic contract rather than historical exact wording.
 expect_error_contains(
   "inverted rainfall direction is rejected",
   rainfall_consistency_gate(districts$district, c(700, 1000, 1500), c(0.5, 1.5, 2.5)),
-  "consistency check violated"
+  "not clearly wetter than eastern districts"
 )
 
 # 4. Raw MODIS digital numbers must fail the physical-scale assertion.
 expect_error_contains(
   "unscaled MODIS digital numbers are rejected",
   ndvi_assert_raster_scale(setValues(template, 6000)),
-  "scale was likely never applied"
+  "is implausible"
 )
 
 # 5. A partial MODIS cache must not be mislabeled as an annual product.
@@ -90,7 +91,7 @@ expect_error_contains(
 expect_error_contains(
   "HAND all-no-data coverage fails closed",
   low_lying_share(setValues(template, -9999), districts, threshold_m = 5),
-  "got no HAND value"
+  "got no valid HAND value"
 )
 
 # 7. An impossible low-lying percentage must fail the valid-range gate.
