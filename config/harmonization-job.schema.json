@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PrinceAudre/surt-virtual-rwanda-repro/config/harmonization-job.schema.json",
+  "title": "SuRT-GeoHarmonizer declarative harmonization job",
+  "description": "Machine-readable v1.4 development contract for provider preparation plus generic administrative-unit harmonization.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "job_id",
+    "provider",
+    "boundaries",
+    "variable",
+    "transform",
+    "aggregation",
+    "qa",
+    "output",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "job_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["adapter", "options"],
+      "properties": {
+        "adapter": {"type": "string", "minLength": 1},
+        "options": {"type": "object"}
+      }
+    },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "id_field"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "id_field": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+        }
+      }
+    },
+    "variable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "layer"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+        },
+        "layer": {
+          "oneOf": [
+            {"type": "integer", "minimum": 1},
+            {"type": "string", "minLength": 1}
+          ]
+        }
+      }
+    },
+    "transform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scale", "offset", "na_below", "na_above"],
+      "properties": {
+        "scale": {"type": "number"},
+        "offset": {"type": "number"},
+        "na_below": {"type": ["number", "null"]},
+        "na_above": {"type": ["number", "null"]}
+      }
+    },
+    "aggregation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "min_valid_fraction"],
+      "properties": {
+        "method": {"const": "surface_area_weighted_mean"},
+        "min_valid_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "qa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "options"],
+      "properties": {
+        "mode": {"type": "string", "minLength": 1},
+        "options": {"type": "object"}
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "crs", "round_digits", "min_value", "max_value"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "crs": {"const": "EPSG:4326"},
+        "round_digits": {"type": ["integer", "null"]},
+        "min_value": {"type": ["number", "null"]},
+        "max_value": {"type": ["number", "null"]}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text"],
+      "properties": {
+        "text": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

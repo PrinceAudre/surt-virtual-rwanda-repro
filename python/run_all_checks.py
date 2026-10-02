@@ -194,6 +194,10 @@ def main() -> None:
             [rscript, str(ROOT / "R" / "test_generic_harmonizer.R")],
         ),
         run(
+            "declarative configuration and adapter contract",
+            [sys.executable, str(ROOT / "python" / "test_config_contract.py")],
+        ),
+        run(
             "spatial area weighting and valid-data coverage",
             [rscript, str(ROOT / "R" / "test_zonal_area_summary.R")],
         ),

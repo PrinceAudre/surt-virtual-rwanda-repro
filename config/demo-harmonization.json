@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "job_id": "account-free-workflow-demo",
+  "provider": {
+    "adapter": "local_raster",
+    "options": {
+      "path": "generated/workflow_demo/prepared.tif"
+    }
+  },
+  "boundaries": {
+    "path": "generated/workflow_demo/units.geojson",
+    "id_field": "unit_code"
+  },
+  "variable": {
+    "name": "demo_environment_mean",
+    "layer": 1
+  },
+  "transform": {
+    "scale": 0.1,
+    "offset": 1,
+    "na_below": -1000,
+    "na_above": null
+  },
+  "aggregation": {
+    "method": "surface_area_weighted_mean",
+    "min_valid_fraction": 0.5
+  },
+  "qa": {
+    "mode": "none",
+    "options": {}
+  },
+  "output": {
+    "path": "generated/workflow_demo/harmonized.geojson",
+    "crs": "EPSG:4326",
+    "round_digits": 2,
+    "min_value": 0,
+    "max_value": 100
+  },
+  "provenance": {
+    "text": "Controlled synthetic account-free workflow fixture; raw masking then scale/offset; surface-area-weighted administrative mean"
+  }
+}
