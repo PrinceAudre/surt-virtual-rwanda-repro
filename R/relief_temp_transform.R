@@ -4,6 +4,22 @@
 
 suppressWarnings(suppressMessages({ library(terra); library(sf); library(exactextractr) }))
 
+if (!exists("surt_area_weighted_summary", mode = "function")) {
+  .temp_file <- tryCatch(
+    normalizePath(sys.frame(1)$ofile, winslash = "/", mustWork = TRUE),
+    error = function(error) ""
+  )
+  if (!nzchar(.temp_file)) {
+    .file_arg <- grep("^--file=", commandArgs(), value = TRUE)
+    .temp_file <- if (length(.file_arg))
+      normalizePath(sub("^--file=", "", .file_arg[[1]]), winslash = "/", mustWork = FALSE) else
+      normalizePath(file.path("R", "relief_temp_transform.R"), winslash = "/", mustWork = FALSE)
+  }
+  source(file.path(dirname(.temp_file), "zonal_area_summary.R"))
+  rm(.temp_file)
+  if (exists(".file_arg")) rm(.file_arg)
+}
+
 temp_is_leap_year <- function(year) {
   year <- as.integer(year)
   if (length(year) != 1L || is.na(year)) stop("FAIL-CLOSED: year must be one integer.")
@@ -15,11 +31,9 @@ temp_month_days <- function(year) {
   c(31L, feb, 31L, 30L, 31L, 30L, 31L, 31L, 30L, 31L, 30L, 31L)
 }
 
-# ERA5-Land `monthly averaged` instantaneous variables are monthly means created
-# from the hourly values in each calendar month. Therefore an annual mean over
-# all days is the 12 monthly means weighted by calendar days in each month.
-# Missing monthly values are not silently re-normalized: NA in any month remains
-# NA at that cell so incomplete temporal coverage cannot masquerade as annual.
+# ERA5-Land monthly averaged instantaneous variables are monthly means derived
+# from the hourly values represented by each calendar month. For the annual
+# statistic used here, monthly means are weighted by calendar days.
 temp_calendar_day_weighted_mean <- function(monthly, year) {
   if (terra::nlyr(monthly) != 12L) {
     stop(sprintf(
@@ -39,15 +53,24 @@ temp_kelvin_to_celsius <- function(r) {
   r - 273.15
 }
 
-# Per-district spatial mean after temporal aggregation and Kelvin conversion.
-# This helper currently preserves the reference-layer extraction behavior; the
-# v1.4 spatial-area audit separately verifies the generic public interface.
-temp_district_means <- function(r, d) {
-  v <- exactextractr::exact_extract(r, d, "mean", progress = FALSE)
-  if (any(is.na(v))) {
-    stop("FAIL-CLOSED: a district got no temperature value (CRS / coverage / variable-name problem).")
+# Surface-area-weighted district summary after temporal aggregation and Kelvin
+# conversion. Coverage is retained so a plausible mean cannot conceal partial
+# spatial support.
+temp_district_summary <- function(r, d) {
+  summary <- surt_area_weighted_summary(r, d)
+  if (any(!is.finite(summary$value))) {
+    stop("FAIL-CLOSED: a district got no temperature value (CRS / coverage / no-data problem).")
   }
-  round(v, 1)
+  if (any(!is.finite(summary$valid_data_fraction))) {
+    stop("FAIL-CLOSED: a district got an undefined temperature valid-data fraction.")
+  }
+  summary$value <- round(summary$value, 1)
+  summary
+}
+
+# Compatibility wrapper for callers that only require the value vector.
+temp_district_means <- function(r, d) {
+  temp_district_summary(r, d)$value
 }
 
 temp_district_lon <- function(d) {
