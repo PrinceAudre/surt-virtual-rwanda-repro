@@ -3,7 +3,7 @@
 # Verify release: python python/build_checksum_manifest.py --all-tracked --check
 # Rebuild release: python python/build_checksum_manifest.py --all-tracked --write
 fbf815468cd887b5898ba8b2fc367f78f5ea8f30f83ec75dac923b12479e7a7d  .gitattributes
-9517fd9b9287f48d7ab38df516affde0b9128a6955713740924e6a5ac8dbed18  .github/workflows/metadata-validation.yml
+5157494aa5604e62ff29d02bf2f325fb00ad6002b8cf1c763d58d0841641ef8c  .github/workflows/metadata-validation.yml
 836503537851c418e040d5ca98c6ae20f6e1c23518fce6b86555e40d098807a3  .github/workflows/public-data-validation.yml
 ed7cd4988025e6e390233440aff57d3b318f3e43358b2fd2bae67508d7f57dc1  .github/workflows/reproducibility.yml
 8acbb65ee1816db1f5badf8afe7a2aa8557d012be8c2f08853aa1125ff59de8c  .github/workflows/softwarex-manifest-refresh.yml
