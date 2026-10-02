@@ -23,11 +23,21 @@ surt_clamp_fraction <- function(x) {
 surt_raster_footprint <- function(raster) {
   raster_crs <- sf::st_crs(terra::crs(raster, proj = TRUE))
   if (is.na(raster_crs)) stop("Raster CRS is required for footprint coverage.")
-  e <- terra::ext(raster)
-  sf::st_as_sfc(sf::st_bbox(
-    c(xmin = e$xmin, ymin = e$ymin, xmax = e$xmax, ymax = e$ymax),
-    crs = raster_crs
-  ))
+
+  # Use terra's public coordinate accessors rather than `$` fields on SpatExtent.
+  # `$xmin`-style access is not a stable SpatExtent API and produced missing bbox
+  # coordinates on the Linux/R CI stack during the SoftwareX remediation cycle.
+  bbox_values <- c(
+    xmin = terra::xmin(raster),
+    ymin = terra::ymin(raster),
+    xmax = terra::xmax(raster),
+    ymax = terra::ymax(raster)
+  )
+  if (length(bbox_values) != 4L || any(!is.finite(bbox_values))) {
+    stop("Raster extent contains non-finite coordinates.")
+  }
+
+  sf::st_as_sfc(sf::st_bbox(bbox_values, crs = raster_crs))
 }
 
 surt_geodesic_area <- function(geometry) {
