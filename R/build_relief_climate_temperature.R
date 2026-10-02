@@ -3,13 +3,12 @@
 # offline preparation step. Descriptive layer only: not a forecast, surveillance
 # output, or operational recommendation.
 #
-# DATA: ERA5-Land monthly averaged 2 m air temperature (Copernicus C3S/ECMWF),
-# approximately 0.1 degree. The official cdsapi client reads the user's external
-# CDS credentials; no credentials are stored in this repository.
+# DATA: ERA5-Land monthly averaged 2 m air temperature (Copernicus C3S/ECMWF).
+# Annual statistic: calendar-day-weighted mean of the 12 monthly means, followed
+# by a true surface-area-weighted district mean over finite annual raster cells.
+# Output retains raster-footprint, within-raster finite-data, and overall
+# valid-data coverage fractions.
 #
-# Annual statistic: calendar-day-weighted mean of the 12 monthly means. This
-# corresponds to averaging monthly means in proportion to the number of days
-# represented by each month, including 29 February in leap years.
 # USAGE: Rscript R/build_relief_climate_temperature.R [year] [out] [district_geojson] [cache_dir]
 
 suppressWarnings(suppressMessages({ library(terra); library(sf); library(exactextractr) }))
@@ -56,26 +55,36 @@ r <- temp_kelvin_to_celsius(annual_k)
 d <- sf::st_read(GEOM, quiet = TRUE)
 if (!("district" %in% names(d))) stop("FAIL-CLOSED: district geometry lacks a 'district' property.")
 d$district <- as.character(d$district)
-d$mean_temp_c <- temp_district_means(r, d)
+
+temp_summary <- temp_district_summary(r, d)
+d$mean_temp_c <- temp_summary$value
+d$raster_coverage_fraction <- round(temp_summary$raster_coverage_fraction, 6)
+d$valid_within_raster_fraction <- round(temp_summary$valid_within_raster_fraction, 6)
+d$valid_data_fraction <- round(temp_summary$valid_data_fraction, 6)
 .gt <- temp_consistency_gate(d$district, d$mean_temp_c, temp_district_lon(d))
 
 d$provenance <- sprintf(
   paste0(
     "ERA5-Land 2m_temperature (Copernicus CDS; Copernicus Products licence), ",
-    "calendar-day-weighted annual mean of 12 monthly means, %d"
+    "calendar-day-weighted annual mean of 12 monthly means, %d; ",
+    "surface-area-weighted district mean over finite raster cells; coverage fractions reported"
   ),
   YEAR
 )
-keep <- d[, c("district", "mean_temp_c", "provenance")]
+keep <- d[, c(
+  "district", "mean_temp_c", "raster_coverage_fraction",
+  "valid_within_raster_fraction", "valid_data_fraction", "provenance"
+)]
 v <- terra::vect(keep)
 dir.create(dirname(OUT), recursive = TRUE, showWarnings = FALSE)
 if (file.exists(OUT)) file.remove(OUT)
 terra::writeVector(v, OUT, filetype = "GeoJSON")
 cat(sprintf(
   paste0(
-    "REAL climate-temp choropleth: %d districts | %.1f-%.1f C | ",
+    "REAL climate-temp: %d districts | %.1f-%.1f C | valid-data fraction %.4f-%.4f | ",
     "calendar-day-weighted %d annual mean | highlands %.1f < lowlands %.1f -> %s\n"
   ),
-  nrow(keep), min(keep$mean_temp_c), max(keep$mean_temp_c), YEAR,
+  nrow(keep), min(keep$mean_temp_c), max(keep$mean_temp_c),
+  min(keep$valid_data_fraction), max(keep$valid_data_fraction), YEAR,
   .gt[["west"]], .gt[["east"]], OUT
 ))
