@@ -165,6 +165,10 @@ def main() -> None:
             [rscript, str(ROOT / "R" / "test_zonal_area_summary.R")],
         ),
         run(
+            "HAND valid-area denominator and coverage",
+            [rscript, str(ROOT / "R" / "test_hand_summary.R")],
+        ),
+        run(
             "transformation failure injection",
             [rscript, str(ROOT / "R" / "test_failure_modes.R")],
         ),
