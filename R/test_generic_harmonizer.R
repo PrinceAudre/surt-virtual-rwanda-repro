@@ -89,7 +89,7 @@ check("generic interface writes one feature per arbitrary unit", nrow(written) =
 check("generic interface preserves arbitrary identifiers",
       identical(as.character(written$unit_id), c("ALPHA-01", "BETA-02", "GAMMA-03")))
 check("surface-area-weighted means match controlled raster values",
-      identical(as.numeric(written$environment_mean), c(10, 20, 30)))
+      max(abs(as.numeric(written$environment_mean) - c(10, 20, 30))) < 1e-9)
 check("output contract reports all three coverage quantities",
       all(c("raster_coverage_fraction", "valid_within_raster_fraction", "valid_data_fraction") %in%
             names(written)))
@@ -108,20 +108,23 @@ writeRaster(r_multi, multi_path, overwrite = TRUE)
 by_index <- run_harmonizer(multi_path, boundary_path, file.path(work, "layer-index.geojson"), layer = 2L)
 by_name <- run_harmonizer(multi_path, boundary_path, file.path(work, "layer-name.geojson"), layer = "shifted_layer")
 check("layer selection by integer index uses the requested raster layer",
-      identical(as.numeric(by_index$environment_mean), c(110, 120, 130)))
+      max(abs(as.numeric(by_index$environment_mean) - c(110, 120, 130))) < 1e-9)
 check("layer selection by layer name matches index selection",
       max(abs(by_name$environment_mean - by_index$environment_mean)) < 1e-9)
 expect_failure("non-integer numeric layer indices are rejected",
                run_harmonizer(multi_path, boundary_path, file.path(work, "bad-layer.geojson"), layer = 1.5),
                "layer index must be an integer")
 
-# Scale and offset are applied after source-value masking.
+# Scale and offset are applied after source-value masking. GeoTIFF I/O and
+# geospatial weighted summaries are floating-point operations, so assert the
+# mathematically expected values with a tight numeric tolerance rather than
+# bitwise identity.
 scaled <- run_harmonizer(
   raster_path, boundary_path, file.path(work, "scaled.geojson"),
   scale = 2, offset = 1
 )
 check("scale and offset are applied to the selected source layer",
-      identical(as.numeric(scaled$environment_mean), c(21, 41, 61)))
+      max(abs(as.numeric(scaled$environment_mean) - c(21, 41, 61))) < 1e-9)
 
 threshold_raster <- r
 values(threshold_raster) <- ifelse(x < 1000, -9999, ifelse(x < 2000, 10, 20))
