@@ -82,9 +82,14 @@ vals[low_cell] <- 0
 vals[high_cell] <- 100
 terra::values(r_lat) <- vals
 
-low_poly <- rect_polygon(0, 1, 0, 1, 4326)[[1]]
-high_poly <- rect_polygon(0, 1, 60, 61, 4326)[[1]]
-mp <- sf::st_sfc(sf::st_multipolygon(list(low_poly, high_poly)), crs = 4326)
+# Build the disjoint latitude fixture through sf's geometry engine rather than
+# manually nesting sfg POLYGON objects into a MULTIPOLYGON. The latter produced
+# a degenerate loop on the Linux/s2 stack despite representing the intended
+# two rectangles. st_union() yields a canonical valid multipart geometry and
+# keeps the regression focused on area weighting, not fixture serialization.
+low_geom <- rect_polygon(0, 1, 0, 1, 4326)
+high_geom <- rect_polygon(0, 1, 60, 61, 4326)
+mp <- suppressWarnings(sf::st_union(c(low_geom, high_geom)))
 p_lat <- sf::st_sf(unit_id = "LATITUDE", geometry = mp)
 s_lat <- surt_area_weighted_summary(r_lat, p_lat)
 
