@@ -79,6 +79,7 @@ def write_summary(steps: list[dict[str, Any]], total_seconds: float) -> Path:
         "environmental_fixture": 9,
         "geometry_agnostic_portability_fixture": 6,
         "generic_administrative_harmonizer": 7,
+        "spatial_area_and_coverage": 10,
         "transformation_failure_injection": 7,
         "release_layer_contracts": 5,
         "release_contract_corruptions_rejected": 5,
@@ -150,6 +151,10 @@ def main() -> None:
         run(
             "generic administrative-unit harmonizer",
             [rscript, str(ROOT / "R" / "test_generic_harmonizer.R")],
+        ),
+        run(
+            "spatial area weighting and valid-data coverage",
+            [rscript, str(ROOT / "R" / "test_zonal_area_summary.R")],
         ),
         run(
             "transformation failure injection",
