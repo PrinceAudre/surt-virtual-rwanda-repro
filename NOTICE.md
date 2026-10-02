@@ -20,6 +20,12 @@ The earlier WorldPop-derived prototype population attribute was removed in versi
 
 The colourblind-safe palette reference used by figure code is Wong B, Color blindness, Nature Methods 8:441 (2011), doi:10.1038/nmeth.1618.
 
+## Second-country portability fixture
+
+`fixtures/uganda_natural_earth_110m.geojson` is a source-derived Uganda national-boundary fixture from **Natural Earth 1:110m Admin 0 - Countries**. Natural Earth states that its raster and vector map data are in the **public domain**; see https://www.naturalearthdata.com/about/terms-of-use/. The fixture retains only the Uganda geometry and minimal source metadata needed for the portability test.
+
+`R/test_second_country_portability.R` combines that real non-Rwanda boundary with a deterministic **synthetic** raster generated at runtime. The resulting `generated/uganda_portability_example.geojson` is executable evidence that the generic geometry and identifier contract can run against a real second-country boundary. It is not source-derived environmental evidence, does not validate any Uganda environmental product, and must not be represented as a scientific result for Uganda.
+
 ## Synthetic and generated examples
 
 Files created by `R/test_generic_harmonizer.R`, `R/test_portability_fixture.R`, and other controlled fixtures are synthetic. They must not be represented as source-derived environmental evidence. Generated files under `generated/` are excluded from version control unless a release process explicitly archives them as evidence.
