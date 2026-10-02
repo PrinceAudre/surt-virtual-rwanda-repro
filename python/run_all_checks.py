@@ -190,6 +190,10 @@ def main() -> None:
             [rscript, str(ROOT / "R" / "test_portability_fixture.R")],
         ),
         run(
+            "real second-country boundary portability",
+            [rscript, str(ROOT / "R" / "test_second_country_portability.R")],
+        ),
+        run(
             "generic administrative-unit harmonizer",
             [rscript, str(ROOT / "R" / "test_generic_harmonizer.R")],
         ),
