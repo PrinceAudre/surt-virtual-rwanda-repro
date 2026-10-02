@@ -1,5 +1,38 @@
 # Changelog
 
+## 1.4.0 - unreleased
+
+### Reviewer-driven scientific corrections
+
+- Replaced coverage-fraction-only raster aggregation with polygon-overlap and cell-surface-area weighting through the shared `R/zonal_area_summary.R` contract.
+- Split spatial support into `raster_coverage_fraction`, `valid_within_raster_fraction`, and `valid_data_fraction`, with explicit partial-coverage regression fixtures.
+- Corrected the ERA5-Land annual temperature statistic to a calendar-day-weighted mean of the 12 monthly means, including leap-year handling, before Celsius conversion and spatial aggregation.
+- Added explicit MOD13A3 v061 pixel-reliability filtering, a production default of rank 0, configurable accepted ranks, and a minimum valid-month fraction for annual NDVI cells.
+- Corrected the HAND low-lying denominator to valid HAND-covered area, excluding negative no-data sentinels and reporting spatial support separately.
+- Added latitude-sensitive weighting, primary-raster no-data, partial raster-footprint, ERA5 annual-statistic, MODIS QA, HAND denominator, and transformation-failure regressions.
+
+### Generic interface and evidence contract
+
+- Extended the generic harmonizer to validate raster and boundary CRS, polygon geometry, unique non-empty identifiers, layer selection, raw-unit no-data masking, scaling, bounds, and minimum valid-data coverage.
+- Normalized the v1.4 generic output contract around explicit coverage fields while retaining provenance-labelled EPSG:4326 GeoJSON output.
+- Expanded hermetic fixtures to exercise the revised scientific contracts and to expose real reprojection support loss rather than silently asserting complete coverage.
+- Made account-free result counting dynamic so reviewer-driven tests do not require a manually maintained assertion total.
+- Separated ordinary development verification from the tracked-file manifest release gate. The dedicated manifest workflow rebuilds and checks `CHECKSUMS.sha256`, while `python/run_all_checks.py --verify-manifest` remains the strict frozen-candidate gate.
+
+### Documentation and reproducibility
+
+- Updated `README.md`, `DATA_DICTIONARY.md`, and `REPRODUCIBILITY.md` to describe the v1.4 spatial weighting, coverage, ERA5, MODIS, HAND, and development-versus-release contracts.
+- Preserved the committed `data/` files as immutable published v1.3 reference artifacts while directing revised v1.4 builder outputs to `generated/` until independent validation and release approval are complete.
+- Added CMake and the required geospatial system libraries to hosted Ubuntu CI for clean-cache restoration of the locked R environment.
+
+### Still required before v1.4.0 release
+
+- A stable provider-adapter and configuration contract plus workflow orchestration.
+- A real second-country end-to-end portability case.
+- Independent v1.4 numerical validation for ERA5-Land, MODIS, and HAND, plus refreshed CHIRPS evidence where required.
+- Broader operating-system CI or a documented, evidence-based support boundary.
+- Final v1.4 release-contract validation, reviewer-response ledger, manuscript rewrite, exact manifest freeze, DOI insertion, tag, and archive.
+
 ## 1.3.0 - SoftwareX release candidate, 2026-08-07
 
 ### Productization and reuse
