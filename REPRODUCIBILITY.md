@@ -26,7 +26,7 @@ python -m pip install -r requirements-providers.txt
 
 The account-free verification pathway does not require provider accounts, credentials, or those optional provider packages.
 
-## Complete account-free verification
+## Account-free development verification
 
 Run:
 
@@ -36,7 +36,7 @@ python python/run_all_checks.py
 
 The runner reports test outcomes dynamically. It deliberately does not depend on a manually maintained total that can become stale when reviewer-driven tests are added.
 
-The current account-free suite includes:
+The default account-free development suite includes:
 
 1. provenance classification checks;
 2. the hermetic environmental fixture pipeline;
@@ -47,12 +47,26 @@ The current account-free suite includes:
 7. MOD13A3 quality-policy and temporal-completeness tests;
 8. HAND denominator and valid-area-coverage tests;
 9. deliberate transformation failure injection;
-10. valid and deliberately corrupted release-contract checks;
-11. SoftwareX remediation metadata validation;
-12. manuscript audit; and
-13. verification of the complete tracked-file checksum manifest.
+10. valid and deliberately corrupted release-contract checks; and
+11. SoftwareX remediation metadata validation.
 
 The runner writes `generated/verification_summary.json`, the generic example, and controlled fixture outputs. Controlled fixtures require no private repository, provider account, network request, or unpublished data.
+
+During active development, `CHECKSUMS.sha256` is rebuilt and checked by `.github/workflows/softwarex-manifest-refresh.yml` after each human source commit. The development runner intentionally does not require the pre-refresh human commit to contain its own future manifest update. This avoids a deterministic CI race between scientific verification and the automated manifest commit.
+
+For a frozen release candidate, or after the dedicated manifest-refresh workflow has made the manifest current, run the strict mode:
+
+```text
+python python/run_all_checks.py --verify-manifest
+```
+
+Strict mode adds complete tracked-file manifest consistency and verification of every listed SHA-256 digest. The GitHub Actions reproducibility workflow exposes the same strict mode through its manual `verify_manifest` input.
+
+The manuscript audit remains a separate explicit gate while the v1.4 manuscript is under reviewer-driven revision:
+
+```text
+python python/audit_manuscript.py
+```
 
 ## Generic administrative-unit interface
 
@@ -203,13 +217,21 @@ A v1.4 manuscript figure should not be treated as final until the architecture, 
 
 ## Integrity during development
 
-`CHECKSUMS.sha256` must match the complete tracked development tree. Validate it with:
+`CHECKSUMS.sha256` covers the complete tracked development tree. Human source commits and the checksum refresh are deliberately separate commits on the active remediation branch. The dedicated manifest workflow rebuilds the manifest, verifies the generated file, and commits it when changed.
+
+To verify a current manifest explicitly:
 
 ```text
 python python/build_checksum_manifest.py --all-tracked --check
 ```
 
-The dedicated v1.4 manifest workflow refreshes the tracked-file manifest on the remediation branch after source changes. A passing checksum establishes byte-level integrity only. It does not establish scientific validity.
+Or run the complete strict account-free gate on a frozen candidate:
+
+```text
+python python/run_all_checks.py --verify-manifest
+```
+
+A passing checksum establishes byte-level integrity only. It does not establish scientific validity.
 
 ## v1.4 release sequence
 
@@ -219,7 +241,7 @@ After every reviewer concern and release gate has executable or documentary evid
 2. reserve a new version-specific Zenodo DOI for v1.4.0 without publishing it;
 3. insert the reserved v1.4.0 DOI into release-facing metadata and manuscript files;
 4. regenerate the complete tracked-file checksum manifest;
-5. run the complete account-free suite on that exact DOI-bearing commit;
+5. run `python python/run_all_checks.py --verify-manifest` on that exact DOI-bearing commit;
 6. run and review all required real-data numerical validations and the independent second-context workflow;
 7. confirm supported operating-system CI is green and document any unsupported platform blocker;
 8. complete independent code and manuscript review;
@@ -232,7 +254,7 @@ After every reviewer concern and release gate has executable or documentary evid
 
 ## Reproducibility limits
 
-- The account-free pathway verifies specified transformations, interfaces, failure handling, schemas, and integrity. Controlled fixtures are not independent real-data validation.
+- The account-free pathway verifies specified transformations, interfaces, failure handling, schemas, and integrity controls. Controlled fixtures are not independent real-data validation.
 - The current arbitrary-region generic example is synthetic and does not substitute for the required real second-country portability case.
 - ERA5-Land and MODIS rebuilds require provider accounts.
 - Independent v1.4 numerical validation is still required for ERA5-Land, MODIS, and HAND.
