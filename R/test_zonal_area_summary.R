@@ -69,6 +69,9 @@ stop_if_not("extent-limited polygon overall valid coverage matches footprint cov
             abs(s_extent$valid_data_fraction - s_extent$raster_coverage_fraction) < 1e-9)
 
 # Latitude-sensitive fixture: equal-degree cells at high latitude have less surface area.
+# Use one simple valid polygon spanning all rows. Intermediate rows are NA, so only the
+# two finite endpoint cells enter the weighted mean. This avoids making the regression
+# depend on multipart-geometry serialization or s2's handling of disjoint polygon rings.
 r_lat <- terra::rast(
   xmin = 0, xmax = 1, ymin = 0, ymax = 61,
   ncols = 1, nrows = 61, crs = "EPSG:4326"
@@ -82,15 +85,10 @@ vals[low_cell] <- 0
 vals[high_cell] <- 100
 terra::values(r_lat) <- vals
 
-# Build the disjoint latitude fixture through sf's geometry engine rather than
-# manually nesting sfg POLYGON objects into a MULTIPOLYGON. The latter produced
-# a degenerate loop on the Linux/s2 stack despite representing the intended
-# two rectangles. st_union() yields a canonical valid multipart geometry and
-# keeps the regression focused on area weighting, not fixture serialization.
-low_geom <- rect_polygon(0, 1, 0, 1, 4326)
-high_geom <- rect_polygon(0, 1, 60, 61, 4326)
-mp <- suppressWarnings(sf::st_union(c(low_geom, high_geom)))
-p_lat <- sf::st_sf(unit_id = "LATITUDE", geometry = mp)
+p_lat <- sf::st_sf(
+  unit_id = "LATITUDE",
+  geometry = rect_polygon(0, 1, 0, 61, 4326)
+)
 s_lat <- surt_area_weighted_summary(r_lat, p_lat)
 
 areas <- terra::values(terra::cellSize(r_lat, unit = "m"), mat = FALSE)
