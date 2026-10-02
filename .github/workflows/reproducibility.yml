@@ -4,6 +4,12 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      verify_manifest:
+        description: 'Also enforce the frozen tracked-file checksum manifest'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -32,8 +38,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run complete account-free SoftwareX candidate checks
-        run: python python/run_all_checks.py
+      - name: Run account-free scientific and contract checks
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.verify_manifest }}" == "true" ]]; then
+            python python/run_all_checks.py --verify-manifest
+          else
+            python python/run_all_checks.py
+          fi
       - name: Generate manuscript figures from archived GeoJSON files
         run: Rscript R/make_manuscript_figures.R
       - name: Upload SoftwareX evidence bundle
