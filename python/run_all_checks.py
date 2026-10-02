@@ -19,18 +19,31 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def run(label: str, command: list[str]) -> dict[str, Any]:
+    """Run one gate, echo its complete output, and count explicit PASS records."""
     print(f"\n=== {label} ===", flush=True)
     started = time.perf_counter()
-    completed = subprocess.run(command, cwd=ROOT, check=False)
+    completed = subprocess.run(
+        command,
+        cwd=ROOT,
+        check=False,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
     elapsed = time.perf_counter() - started
+    output = completed.stdout or ""
+    if output:
+        print(output, end="" if output.endswith("\n") else "\n")
     if completed.returncode:
         raise SystemExit(f"{label} failed with exit code {completed.returncode}")
+    pass_records = sum(line.lstrip().startswith("[PASS]") for line in output.splitlines())
     print(f"[TIME] {label}: {elapsed:.3f} seconds")
     return {
         "label": label,
         "command": command,
         "elapsed_seconds": round(elapsed, 6),
         "return_code": completed.returncode,
+        "pass_records": pass_records,
     }
 
 
@@ -67,6 +80,7 @@ def verify_listed_checksums() -> dict[str, Any]:
         "checked_files": checked,
         "elapsed_seconds": round(elapsed, 6),
         "return_code": 0,
+        "pass_records": 1,
     }
 
 
@@ -74,47 +88,41 @@ def write_summary(steps: list[dict[str, Any]], total_seconds: float) -> Path:
     generated = ROOT / "generated"
     generated.mkdir(parents=True, exist_ok=True)
     output = generated / "verification_summary.json"
-    assertion_counts = {
-        "provenance": 9,
-        "environmental_fixture": 9,
-        "geometry_agnostic_portability_fixture": 6,
-        "generic_administrative_harmonizer": 7,
-        "spatial_area_and_coverage": 10,
-        "transformation_failure_injection": 7,
-        "release_layer_contracts": 5,
-        "release_contract_corruptions_rejected": 5,
+    pass_counts = {
+        step["label"]: int(step.get("pass_records", 0))
+        for step in steps
     }
     summary = {
-        "schema_version": "1.3",
+        "schema_version": "1.4-dev",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "software": "SuRT-GeoHarmonizer",
         "repository": "PrinceAudre/surt-virtual-rwanda-repro",
-        "historical_release": {
-            "version": "1.2.0",
-            "git_tag": "v1.2.0",
-            "zenodo_version_doi": "10.5281/zenodo.21744708",
-        },
-        "working_package": {
+        "published_baseline": {
             "version": "1.3.0",
-            "status": "SoftwareX release candidate",
-            "branch": "codex/softwarex-submission-v1.3.0",
-            "zenodo_concept_doi": "10.5281/zenodo.21671788",
+            "git_tag": "v1.3.0",
             "zenodo_version_doi": "10.5281/zenodo.21840177",
-            "version_archive_status": "DOI reserved; publish exact validated v1.3.0 tag",
+            "zenodo_concept_doi": "10.5281/zenodo.21671788",
+            "status": "immutable historical release",
+        },
+        "development": {
+            "target_version": "1.4.0",
+            "branch": "review/softwarex-resubmission-v1.4.0",
+            "status": "SoftwareX peer-review remediation; not a release",
+            "version_doi": None,
         },
         "integrity": {
-            "scope": "complete tracked-file candidate scope",
+            "scope": "complete tracked-file development scope",
             "manifest": "CHECKSUMS.sha256",
-            "final_release_requirement": (
-                "freeze the exact candidate commit, regenerate the all-tracked manifest, "
-                "create tag v1.3.0, and publish that exact tag under reserved Zenodo DOI "
-                "10.5281/zenodo.21840177"
+            "release_rule": (
+                "Do not create v1.4.0 tag or Zenodo version DOI until reviewer remediation, "
+                "independent validation, manuscript audit, and exact-commit release gates pass."
             ),
         },
         "status": "passed",
-        "assertions": {
-            **assertion_counts,
-            "total": sum(assertion_counts.values()),
+        "explicit_pass_records": {
+            "by_step": pass_counts,
+            "total": sum(pass_counts.values()),
+            "definition": "Lines explicitly emitted as [PASS] by executable gates; derived at runtime.",
         },
         "environment": {
             "python": sys.version.split()[0],
@@ -174,8 +182,8 @@ def main() -> None:
             ],
         ),
         run(
-            "SoftwareX candidate metadata and manuscript consistency",
-            [sys.executable, str(ROOT / "python" / "validate_candidate_metadata.py")],
+            "v1.4 peer-review remediation metadata consistency",
+            [sys.executable, str(ROOT / "python" / "validate_resubmission_metadata.py")],
         ),
     ]
     print("\n=== listed-file integrity ===")
