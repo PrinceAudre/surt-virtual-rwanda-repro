@@ -70,16 +70,20 @@ stop_if_not("extent-limited polygon overall valid coverage matches footprint cov
 
 # Latitude-sensitive fixture: equal-degree cells at high latitude have less surface area.
 # Use one simple valid polygon spanning all rows. Intermediate rows are NA, so only the
-# two finite endpoint cells enter the weighted mean. This avoids making the regression
-# depend on multipart-geometry serialization or s2's handling of disjoint polygon rings.
+# two finite endpoint cells enter the weighted mean. Cell indices are obtained from
+# coordinates directly: terra::crds() can omit NA cells and therefore cannot be used
+# to discover cells before the finite fixture values have been assigned.
 r_lat <- terra::rast(
   xmin = 0, xmax = 1, ymin = 0, ymax = 61,
   ncols = 1, nrows = 61, crs = "EPSG:4326"
 )
 terra::values(r_lat) <- NA_real_
-xy <- terra::crds(r_lat, df = TRUE)
-low_cell <- which(abs(xy$y - 0.5) < 1e-9)
-high_cell <- which(abs(xy$y - 60.5) < 1e-9)
+low_cell <- terra::cellFromXY(r_lat, matrix(c(0.5, 0.5), ncol = 2))
+high_cell <- terra::cellFromXY(r_lat, matrix(c(0.5, 60.5), ncol = 2))
+if (length(low_cell) != 1L || length(high_cell) != 1L ||
+    any(!is.finite(c(low_cell, high_cell)))) {
+  stop("Latitude-weighting fixture could not identify endpoint raster cells.")
+}
 vals <- rep(NA_real_, terra::ncell(r_lat))
 vals[low_cell] <- 0
 vals[high_cell] <- 100
@@ -91,7 +95,10 @@ p_lat <- sf::st_sf(
 )
 s_lat <- surt_area_weighted_summary(r_lat, p_lat)
 
-areas <- terra::values(terra::cellSize(r_lat, unit = "m"), mat = FALSE)
+areas <- terra::values(
+  terra::cellSize(r_lat, mask = FALSE, unit = "m", transform = TRUE),
+  mat = FALSE
+)
 expected <- (0 * areas[low_cell] + 100 * areas[high_cell]) /
   (areas[low_cell] + areas[high_cell])
 
