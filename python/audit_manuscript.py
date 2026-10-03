@@ -40,6 +40,10 @@ FORBIDDEN_ACTIVE_TERMS = [
     "pending reservation",
     "validated flood hazard",
     "validated flood susceptibility",
+    "48 explicit",
+    "coverage-fraction-weighted administrative aggregation",
+    "MODIS quality flags are not applied",
+    "Future development will add provider adapters",
 ]
 EXPECTED_DOIS = {
     "10.1038/sdata.2015.66",
@@ -139,7 +143,8 @@ def main() -> None:
         require(f"## {number}." in text, f"numbered main section {number} is present")
     require("### 2.1. Architecture" in text, "architecture subsection is present")
     require("### 2.2. Generic interface" in text, "generic-interface subsection is present")
-    require("### 2.3. Rwanda reference builders" in text, "reference-builder subsection is present")
+    require("### 2.3. Declarative workflow contract" in text, "declarative-workflow subsection is present")
+    require("### 2.4. Rwanda reference builders" in text, "reference-builder subsection is present")
 
     narrative_citations = cited_reference_numbers(text[:references_start])
     require(narrative_citations == set(range(1, 11)),
@@ -160,7 +165,9 @@ def main() -> None:
                 f"SoftwareX code metadata row C{code} is present")
     require("MIT License" in metadata, "approved MIT licence is declared")
     require(RELEASE_TAG_URL in metadata, "v1.3.0 tag URL is recorded in code metadata")
-    require(f"https://doi.org/{VERSION_DOI}" in metadata, "version-specific Zenodo DOI is recorded in code metadata")
+    require(f"https://doi.org/{VERSION_DOI}" in metadata, "published v1.3.0 Zenodo DOI is recorded in code metadata")
+    require("v1.4.0 is the unreleased reviewer-remediation target" in metadata,
+            "code metadata distinguishes the published baseline from the v1.4 development target")
 
     captions = re.findall(r"^\*\*Fig\. (\d+)\.\*\*", text[captions_start:], re.MULTILINE)
     require(captions == ["1", "2"], "two non-duplicated figure captions are supplied")
@@ -170,9 +177,29 @@ def main() -> None:
         require(term.casefold() not in text.casefold(), f"stale or overclaiming phrase is absent: {term}")
     require("TODO" not in text and "TBD" not in text and "[insert" not in text.casefold(),
             "manuscript contains no unresolved editorial placeholder")
-    require("48 explicit" in text, "manuscript reports the current 48-outcome suite")
+
+    required_v14_evidence = [
+        "raster_coverage_fraction",
+        "valid_within_raster_fraction",
+        "valid_data_fraction",
+        "calendar-day-weighted annual mean",
+        "pixel-reliability filtering",
+        "valid HAND-covered polygon area",
+        "config/harmonization-job.schema.json",
+        "Snakemake",
+        "R/test_second_country_portability.R",
+        "source-derived Uganda national boundary",
+        "deterministic synthetic raster",
+    ]
+    for phrase in required_v14_evidence:
+        require(phrase in text, f"v1.4 evidence is represented accurately: {phrase}")
+
+    require("dynamically" in text and "manually maintained assertion total" in text,
+            "manuscript describes dynamic verification counting without a stale fixed total")
+    require("scientific validation in a second country is not claimed" in text.casefold(),
+            "second-country scientific portability is not overclaimed")
     require("R/harmonize_admin_raster.R" in text, "manuscript identifies the public generic interface")
-    require(VERSION_DOI in text, "manuscript records the reserved v1.3.0 Zenodo DOI")
+    require(VERSION_DOI in text, "manuscript records the published v1.3.0 Zenodo DOI")
     require("10.5281/zenodo.21744708" in text and "10.5281/zenodo.21671788" in text,
             "historical version DOI and concept DOI are recorded")
 
