@@ -1,4 +1,4 @@
-name: Public CHIRPS validation
+name: Public numerical validation
 
 on:
   workflow_dispatch:
@@ -6,6 +6,8 @@ on:
     paths:
       - "R/validate_chirps_rainfall.R"
       - "R/validate_uganda_chirps_case.R"
+      - "R/validate_hand_rubavu_real.R"
+      - "R/relief_low_lying_transform.R"
       - "R/zonal_area_summary.R"
       - "config/uganda-chirps-2023.json"
       - "fixtures/uganda_natural_earth_110m.geojson"
@@ -20,6 +22,8 @@ on:
     paths:
       - "R/validate_chirps_rainfall.R"
       - "R/validate_uganda_chirps_case.R"
+      - "R/validate_hand_rubavu_real.R"
+      - "R/relief_low_lying_transform.R"
       - "R/zonal_area_summary.R"
       - "config/uganda-chirps-2023.json"
       - "fixtures/uganda_natural_earth_110m.geojson"
@@ -35,9 +39,9 @@ permissions:
   contents: read
 
 jobs:
-  chirps-2023-validation:
+  public-numerical-validation:
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: r-lib/actions/setup-r@v2
@@ -63,6 +67,11 @@ jobs:
         with:
           path: cache/chirps
           key: chirps-v2.0-annual-2023
+      - name: Cache public HAND validation tile
+        uses: actions/cache@v4
+        with:
+          path: cache/hand_validation
+          key: hand-glo30-s02-e029-2021-v1
       - name: Reproduce and cross-check archived Rwanda rainfall
         run: Rscript R/validate_chirps_rainfall.R 2023
       - name: Validate Uganda configured portability job
@@ -71,10 +80,12 @@ jobs:
         run: python python/run_configured_harmonization.py --config config/uganda-chirps-2023.json
       - name: Independently cross-check Uganda CHIRPS result
         run: Rscript R/validate_uganda_chirps_case.R 2023
+      - name: Independently cross-check public HAND result
+        run: Rscript R/validate_hand_rubavu_real.R
       - name: Record public source and case digests
         shell: bash
         run: |
-          mkdir -p generated/uganda_chirps_validation
+          mkdir -p generated/uganda_chirps_validation generated/hand_validation
           sha256sum \
             cache/chirps/chirps-v2.0.2023.tif \
             fixtures/uganda_natural_earth_110m.geojson \
@@ -82,15 +93,20 @@ jobs:
             generated/uganda_chirps_2023.geojson \
             generated/uganda_chirps_validation/uganda_chirps_2023_validation_summary.json \
             > generated/uganda_chirps_validation/SHA256SUMS.txt
+          sha256sum \
+            cache/hand_validation/Copernicus_DSM_COG_10_S02_00_E029_00_HAND.tif \
+            generated/hand_validation/rubavu_hand_real_validation_summary.json \
+            > generated/hand_validation/SHA256SUMS.txt
       - name: Record Rwanda public source-file digest
         run: sha256sum cache/chirps/chirps-v2.0.2023.tif > generated/chirps_validation/chirps-v2.0.2023.tif.sha256
       - name: Upload numerical validation evidence
         uses: actions/upload-artifact@v4
         with:
-          name: chirps-2023-numerical-validation
+          name: public-numerical-validation
           path: |
             generated/chirps_validation/
             generated/uganda_chirps_2023.geojson
             generated/uganda_chirps_validation/
+            generated/hand_validation/
           if-no-files-found: error
           retention-days: 90
