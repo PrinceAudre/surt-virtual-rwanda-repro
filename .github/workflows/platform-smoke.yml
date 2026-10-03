@@ -1,0 +1,65 @@
+name: Core platform smoke
+
+on:
+  push:
+    paths:
+      - "R/**"
+      - "python/**"
+      - "config/**"
+      - "fixtures/**"
+      - "DESCRIPTION"
+      - ".github/workflows/platform-smoke.yml"
+  pull_request:
+    paths:
+      - "R/**"
+      - "python/**"
+      - "config/**"
+      - "fixtures/**"
+      - "DESCRIPTION"
+      - ".github/workflows/platform-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  core-platform-smoke:
+    name: core-${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04
+          - windows-2025
+          - macos-14
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.6.0"
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::remotes
+          needs: check
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Python syntax and configuration contract
+        run: |
+          python -m compileall -q python
+          python python/test_config_contract.py
+      - name: R spatial and transformation core contracts
+        run: |
+          Rscript R/test_zonal_area_summary.R
+          Rscript R/test_hand_summary.R
+          Rscript R/test_temperature_annual_mean.R
+          Rscript R/test_ndvi_qa.R
+          Rscript R/test_generic_harmonizer.R
+          Rscript R/test_second_country_portability.R
+      - name: Manuscript and remediation metadata audits
+        run: |
+          python python/audit_manuscript.py
+          python python/validate_v14_remediation.py
