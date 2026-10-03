@@ -1,260 +1,163 @@
-# Claude Fable 5 handoff: final SoftwareX implementation and rejection-risk review
+# Claude independent final-review request for SoftwareX v1.4.0
 
-Use Claude Fable 5 for this task because it requires sustained repository inspection, implementation, validation, and editorial judgment.
-
-## Repository and immutable boundary
+**Date:** 3 October 2026
 
 Repository: `PrinceAudre/surt-virtual-rwanda-repro`
 
-Review base branch: `codex/softwarex-submission-v1.3.0`
+Review branch: `review/softwarex-resubmission-v1.4.0`
 
-Create and work only on a new branch:
+Manuscript: SoftwareX `SOFTX-D-26-01014`
 
-```text
-claude/softwarex-fable5-final
-```
+## Purpose
 
-Do not modify `main`, rewrite Git history, move or recreate tag `v1.2.0`, or alter the published Zenodo version DOI `10.5281/zenodo.21744708`. Version `1.2.0` is immutable historical evidence.
+Perform an independent final technical and editorial review of the reviewer-remediated v1.4.0 candidate. Do not assume earlier Claude, Codex, or ChatGPT conclusions are correct. Re-read the current branch and test the evidence against the actual code and reviewer concerns.
 
-The active product is **SuRT-GeoHarmonizer version 1.3.0**, an R and Python command-line workflow for administrative-scale environmental raster harmonization and provenance labelling. Rwanda is the reference implementation, not the product boundary.
+The published v1.3.0 release is immutable historical evidence. Do not alter it. Do not create a v1.4.0 tag, GitHub release, Zenodo record, or DOI. Those actions require explicit owner authorization after this review and the final release freeze.
 
-## Current target
+## Current evidence that must be independently checked
 
-Journal: **SoftwareX**, Elsevier
+The current branch claims the following scoped results:
 
-Article type: **Original Software Publication**
+- Uganda CHIRPS 2023: configured `1238.073160 mm`, independent `terra` `1238.073144 mm`, absolute difference `0.000016 mm`, complete reported coverage.
+- Nyarugenge ERA5-Land 2023: production `20.597411 °C`, independent `20.597414 °C`.
+- Nyarugenge MOD13A3 v061 2023: production output `0.56` NDVI, independent pre-rounding estimate `0.55775352`; all 24 source HDF granules are SHA-256 pinned.
+- Rubavu HAND at or below 5 m: production `26.133870170321%`, independent `26.133870170236%`.
+- Core smoke CI passes on Ubuntu 24.04, Windows 2025, and macOS 14, while the full geospatial reproducibility workflow remains explicitly Ubuntu-based.
 
-The manuscript must use the current official SoftwareX requirements, including the mandatory structure, maximum 3,000 countable words, open-source distribution, code metadata table, support information, and software-reuse framing.
+Treat all of these as claims to verify, not facts to repeat automatically.
 
-## Your authority
+## Required review scope
 
-You are authorized to inspect, edit, test, commit, and open a pull request from your branch. Do not merely provide suggestions where a safe, evidence-supported correction can be implemented.
-
-Do not create a Git tag, GitHub release, or Zenodo version. Do not invent or reserve a DOI. Those actions occur only after the author approves the exact validated commit.
-
-## Files that require complete inspection
-
-At minimum inspect:
+Inspect at minimum:
 
 - `README.md`
 - `REPRODUCIBILITY.md`
-- `CONTRIBUTING.md`
+- `CHANGELOG.md`
 - `DATA_DICTIONARY.md`
 - `NOTICE.md`
-- `LICENSE`
 - `DESCRIPTION`
 - `CITATION.cff`
 - `codemeta.json`
-- `requirements-providers.txt`
-- `R/harmonize_admin_raster.R`
-- `R/test_generic_harmonizer.R`
-- every provider-specific R builder and transform
-- every Python provider client and validator
-- `python/run_all_checks.py`
-- `python/validate_candidate_metadata.py`
-- `python/audit_manuscript.py`
-- all GitHub Actions workflows
-- `paper/manuscript.md`
-- all active `paper/submission/` files
 - `CHECKSUMS.sha256`
-- `CHANGELOG.md`
-- the complete diff from `main` to `codex/softwarex-submission-v1.3.0`
+- `R/harmonize_admin_raster.R`
+- `R/zonal_area_summary.R`
+- `R/relief_temp_transform.R`
+- `R/relief_ndvi_transform.R`
+- `R/relief_low_lying_transform.R`
+- `R/validate_uganda_chirps_case.R`
+- `R/validate_era5land_nyarugenge_real.R`
+- `R/validate_modis_ndvi_nyarugenge_real.R`
+- `R/validate_hand_rubavu_real.R`
+- relevant test files in `R/`
+- `python/config_contract.py`
+- `python/provider_adapters.py`
+- `python/run_configured_harmonization.py`
+- `python/validate_release_contract.py`
+- `python/validate_resubmission_metadata.py`
+- `python/audit_manuscript.py`
+- `.github/workflows/`
+- `docs/CONFIGURATION_AND_ADAPTERS.md`
+- `docs/WORKFLOW.md`
+- `evidence/`
+- `paper/manuscript.md`
+- `paper/reviewer-response-draft.md`
+- `paper/tool-comparison-evidence.md`
+- every active file under `paper/submission/`
+- GitHub issue #10 as the implementation ledger
 
-Read the earlier Claude SoftwareX audit supplied to the author only as historical context. Re-evaluate every conclusion independently against the current branch.
+Historical Earth Science Informatics/F1000 files may remain for provenance only when explicitly marked superseded or stored under `paper/archive/`.
 
-## Primary objectives
+## Review questions
 
-### 1. Verify that this is a real reusable software product
+### 1. Scientific and spatial correctness
 
-Determine whether the current branch now presents a coherent research-software product rather than a manuscript companion artifact.
+Verify that surface-area-weighted means, raster-footprint coverage, within-raster valid coverage, and overall valid-data coverage are correctly defined and implemented. Check the near-global geographic-footprint normalization and all fail-closed edge cases.
 
-Confirm that:
+Confirm that HAND uses valid HAND-covered area as the denominator and that no text turns the terrain descriptor into a flood-hazard claim.
 
-- `SuRT-GeoHarmonizer` is used consistently as the product identity;
-- the public generic interface is understandable and executable;
-- the Rwanda implementation is correctly described as a reference deployment;
-- a clean reviewer can reproduce the account-free pathway;
-- the generic example uses the actual public interface rather than duplicated test-only logic;
-- input and output contracts are explicit;
-- limitations and unsupported scientific interpretations remain visible;
-- the private parent application is neither required nor implied to be included.
+Confirm that ERA5-Land uses a calendar-day-weighted mean of 12 monthly means before Kelvin-to-Celsius conversion.
 
-### 2. Pressure-test the generic interface
+Confirm that MOD13A3 QA filtering uses the intended pixel-reliability policy, scaling, temporal completeness rule, and source granules.
 
-Review `R/harmonize_admin_raster.R` for:
+### 2. Independent numerical evidence
 
-- argument parsing defects;
-- scalar and type assumptions;
-- CRS handling;
-- invalid, empty, mixed, or non-polygon geometry;
-- duplicate or missing identifiers;
-- multi-layer raster selection;
-- no-data masking;
-- scale and offset ordering;
-- finite-value enforcement;
-- exact extraction behaviour;
-- output allow-listing;
-- GeoJSON writing;
-- path handling across operating systems;
-- error messages and fail-closed behaviour;
-- accidental scientific overclaim.
+Recompute or inspect the cross-check logic closely enough to determine whether the claimed agreement is genuinely independent of the production path. Confirm source identity, rounding semantics, acceptance thresholds, and any shared-code assumptions that could weaken independence.
 
-Add or improve tests where necessary. Every correction must have executable evidence.
+Flag any evidence file that is stale, internally inconsistent, insufficiently pinned, or broader in wording than the computation supports.
 
-### 3. Validate the complete account-free evidence suite
+### 3. Generic interface, configuration, and adapters
 
-Restore the declared environment and run:
+Pressure-test the public harmonizer and declarative contract for malformed inputs, CRS issues, duplicate/empty identifiers, invalid geometry, no-data handling, masking order, layer selection, rounding, value bounds, reserved names, coverage thresholds, and plugin loading.
+
+Confirm that provider-specific scientific QA remains outside the generic zonal engine and that extension claims do not imply unimplemented provider adapters.
+
+### 4. Reproducibility and operating-system claims
+
+Run the account-free checks if your environment permits. Review the Snakemake DAG and CI configuration. Confirm that the manuscript and documentation distinguish:
+
+- full Ubuntu reproducibility;
+- three-platform core smoke evidence;
+- geographic/input portability;
+- credentialed provider acquisition.
+
+Reject any wording that collapses those four into a single portability claim.
+
+### 5. Reviewer response
+
+Read the actual reviewer-response draft point by point. For every reviewer concern, decide one of:
+
+- `CLOSED WITH SUFFICIENT EVIDENCE`
+- `CLOSED BUT WORDING SHOULD BE NARROWER`
+- `PARTIALLY CLOSED`
+- `OPEN`
+
+Do not mark an item closed merely because the manuscript says it is addressed.
+
+### 6. SoftwareX manuscript and submission package
+
+Audit the manuscript for technical consistency, SoftwareX structure, word count, references, comparison claims, limitations, AI-use disclosure, software/data availability, and code-version metadata.
+
+Audit `paper/submission/` specifically for stale pre-review or v1.3 submission language. The current cover-letter source must explicitly disclose prior external review under `SOFTX-D-26-01014` and must remain fail-closed while v1.4.0 is unreleased.
+
+### 7. Release integrity
+
+Confirm that the development manifest mechanism is sound, but do not treat the current development manifest as the final DOI-bearing release freeze. Identify exactly what must still happen after owner approval:
+
+1. reserve v1.4.0 DOI;
+2. insert it into release-facing metadata;
+3. freeze the exact tree;
+4. rebuild and strictly verify the complete manifest;
+5. render and inspect the final package;
+6. tag/release/archive the exact approved commit.
+
+## Required execution
+
+Run as much of the following as your environment allows, without weakening gates merely to get green output:
 
 ```text
 python python/run_all_checks.py
-```
-
-Also run the direct component commands documented in `REPRODUCIBILITY.md` where useful.
-
-Do not report a passing result unless it was actually run on the exact reviewed commit. Record:
-
-- operating system;
-- R version;
-- Python version;
-- package restoration result;
-- each command;
-- each return code;
-- total explicit outcome count;
-- any warnings or environmental limitations.
-
-If the full environment cannot be restored, state precisely what could and could not be executed. Do not substitute source inspection for execution.
-
-### 4. Audit release and machine-readable metadata
-
-Verify consistency across:
-
-- software name;
-- version `1.3.0`;
-- author legal name and ORCID;
-- independent Rwanda affiliation;
-- support email;
-- repository URL;
-- MIT licence;
-- historical `v1.2.0` DOI;
-- concept DOI;
-- candidate branch;
-- release status;
-- stated assertion count;
-- operating-system claims;
-- dependencies;
-- final tag and Zenodo gates.
-
-Reject any stale Earth Science Informatics, F1000Research, pre-DOI-freeze, null-DOI, or superseded release language in active product and submission files.
-
-Validate `CITATION.cff` with an official CFF validator and validate `codemeta.json` as JSON and CodeMeta-compatible metadata.
-
-### 5. Audit the SoftwareX manuscript
-
-Use the current official SoftwareX Guide for Authors and Original Software Publication template.
-
-Confirm or correct:
-
-- journal and article type;
-- title and software identity;
-- truthful author information;
-- abstract length;
-- four to six keywords;
-- required SoftwareX section structure;
-- countable word total at or below 3,000;
-- maximum figure count;
-- code metadata rows;
-- software impact and reuse argument;
-- relationship to adjacent tools;
-- references and DOI accuracy;
-- declarations;
-- AI-use disclosure;
-- software and data availability;
-- no unsupported second-country validation claim;
-- no hazard, forecast, epidemiological, or operational overclaim;
-- no claim that checksums prove scientific validity.
-
-Use primary sources for factual verification. Do not add citations that were not verified.
-
-### 6. Review SoftwareX submission materials
-
-Inspect and improve:
-
-- cover letter;
-- highlights;
-- submission checklist;
-- manuscript source;
-- figure captions and accessibility text;
-- suggested article classification and keywords.
-
-The cover letter must directly explain why the paper fits SoftwareX after the prior journal rejected it for scope, without disparaging the previous editor or presenting the rejection as evidence of quality.
-
-Highlights must meet Elsevier limits and be technically precise.
-
-### 7. Integrity manifest and final release gate
-
-Ensure `CHECKSUMS.sha256` matches the complete tracked candidate tree after all other edits. Use the repository builder rather than hand-editing hashes:
-
-```text
-python python/build_checksum_manifest.py --all-tracked --write
+python python/validate_resubmission_metadata.py
+python python/audit_manuscript.py
+python python/validate_release_contract.py
 python python/build_checksum_manifest.py --all-tracked --check
+snakemake --cores 1
 ```
 
-Rerun all account-free checks after regenerating the manifest.
+Run relevant direct R tests and validators when source data and dependencies are available. Record exact commands and exit codes. If a provider credential or cached source is unavailable, state that limitation rather than substituting source inspection for execution.
 
-Do not insert a version-specific v1.3.0 DOI before Zenodo actually issues it. The candidate may identify the concept DOI and the controlled post-validation archive step.
+## Deliverable
 
-### 8. Security, licence, and redistribution review
+Create `paper/CLAUDE_V14_FINAL_REVIEW.md` containing:
 
-Confirm that:
+1. exact reviewed branch and commit;
+2. verdict: `GO FOR RELEASE FREEZE`, `GO AFTER CORRECTIONS`, or `HOLD`;
+3. reviewer-comment closure table;
+4. technical findings by severity;
+5. manuscript/submission findings;
+6. commands actually run and results;
+7. evidence files independently checked;
+8. remaining owner-only actions;
+9. exact release sequence;
+10. explicit confirmation that no tag, release, DOI, empirical value, or CI result was invented.
 
-- credentials cannot enter the repository through documented workflows;
-- provider clients fail closed without credentials;
-- no private or operational source is required;
-- every bundled data source can be redistributed in an ElsevierSoftwareX repository copy under its stated terms;
-- attribution and the Copernicus notice remain present;
-- generated synthetic examples are unambiguously labelled;
-- no dependency or copied code creates an undisclosed licence conflict.
-
-## Required implementation discipline
-
-- Preserve honest limitations even when they weaken the sales pitch.
-- Do not transform the project into a superficial R package unless a package architecture is genuinely necessary.
-- Prefer the existing cross-language command-line architecture when technically sound.
-- Do not introduce broad refactoring unrelated to acceptance or reuse.
-- Do not alter archived historical records merely to remove old journal names.
-- Do not silently change scientific values or thresholds.
-- Do not use AI-generated text as evidence.
-- Keep commits small, descriptive, and reversible.
-
-## Required output
-
-Create or update:
-
-```text
-paper/FABLE5_SOFTWAREX_FINAL_REVIEW.md
-```
-
-The report must contain:
-
-1. exact branch and reviewed commit;
-2. final verdict: `READY`, `READY AFTER AUTHOR ACTION`, or `NOT READY`;
-3. all changes implemented, grouped by commit;
-4. complete commands run and results;
-5. SoftwareX requirement checklist;
-6. repository product-readiness checklist;
-7. manuscript word count and figure count;
-8. licence and redistribution conclusion;
-9. unresolved risks by severity;
-10. author-only actions;
-11. exact recommended release and submission sequence;
-12. explicit confirmation that no DOI, tag, release, or empirical result was invented.
-
-Open a pull request into `codex/softwarex-submission-v1.3.0` with:
-
-- a concise title;
-- a structured summary;
-- test evidence;
-- remaining author-only actions;
-- no claim that the work is published or accepted.
-
-Stop only when all safe repository changes are implemented, checks are run to the extent the environment permits, and the report and pull request accurately describe the remaining state.
+If corrections are safe and evidence-supported, implement them on a separate review branch and provide small commits. Do not modify the active remediation branch directly and do not publish any release artifact.
