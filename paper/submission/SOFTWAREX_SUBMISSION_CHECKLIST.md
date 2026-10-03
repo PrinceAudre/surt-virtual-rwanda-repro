@@ -1,97 +1,80 @@
-# SoftwareX submission checklist
+# SoftwareX v1.4.0 submission checklist
 
-## Journal and article
+## Status boundary
 
 - [x] Target journal: SoftwareX.
 - [x] Article type: Original Software Publication.
-- [x] Software product identity: SuRT-GeoHarmonizer.
-- [x] Manuscript follows the SoftwareX software-publication structure.
-- [x] Countable manuscript text remains below 3,000 words.
-- [x] Two figures are embedded with captions.
-- [x] Current code version table contains rows C1 to C9.
-- [x] Four to six keywords are supplied.
-- [x] Five highlights are supplied, each no more than 85 characters.
+- [x] Prior manuscript identifier: `SOFTX-D-26-01014`.
+- [x] External peer review on 2 October 2026 is explicitly disclosed in the cover-letter draft.
+- [x] Published v1.3.0 remains immutable.
+- [ ] v1.4.0 release identity is intentionally not yet minted.
 
-## Author information
+## Author and manuscript
 
 - [x] Legal author name: TUYISHIME AUDRE PRINCE.
 - [x] Affiliation: Independent Researcher, Kigali, Rwanda.
 - [x] Corresponding email: priplee@gmail.com.
 - [x] ORCID: 0009-0002-0799-3140.
-- [x] Sole-author responsibility and contribution are clear.
 - [x] Competing-interest declaration is present.
 - [x] Funding declaration is present.
-- [x] Generative-AI use declaration is present.
+- [x] Generative-AI declaration is present.
+- [x] Manuscript follows the SoftwareX Original Software Publication structure.
+- [x] Countable manuscript text remains below 3,000 words.
+- [x] Four to six keywords are supplied.
+- [x] Two figure captions are supplied.
+- [x] Current code-version metadata rows C1 to C9 are present.
 
-## Software product
+## Reviewer-remediation evidence
 
-- [x] Public GitHub repository.
-- [x] MIT code licence.
-- [x] Generic raster and polygon command-line interface.
-- [x] Account-free arbitrary-geometry example.
-- [x] Installation and quick-start instructions.
-- [x] Input and output contracts.
-- [x] CodeMeta and Citation File Format metadata.
-- [x] Contribution policy.
-- [x] Locked R dependency graph.
-- [x] Optional Python provider clients are pinned.
-- [x] GitHub Issues support pathway and support email.
-- [x] Provider credentials remain outside the repository.
+- [x] Explicit raster-footprint, within-raster valid-data, and overall valid-data coverage semantics.
+- [x] Polygon-cell overlap multiplied by raster-cell surface area for zonal weighting.
+- [x] Correct HAND valid-area denominator semantics and negative-sentinel handling.
+- [x] Calendar-day-weighted ERA5-Land annual temperature statistic.
+- [x] MOD13A3 v061 pixel-reliability filtering with production default rank 0.
+- [x] Generic fail-closed JSON configuration and provider-adapter contract.
+- [x] Snakemake account-free evidence DAG.
+- [x] Real Uganda CHIRPS second-country case through the same config-driven workflow.
+- [x] Authoritative Uganda CHIRPS result: 1,238.073160 mm configured versus 1,238.073144 mm independent.
+- [x] Scoped source-pinned ERA5-Land real-data numerical cross-check.
+- [x] Scoped source-pinned MOD13A3 real-data numerical cross-check with all 24 source HDF SHA-256 values.
+- [x] Scoped source-pinned HAND real-data numerical cross-check.
+- [x] Three-platform core smoke matrix on Ubuntu 24.04, Windows 2025, and macOS 14.
+- [x] Full reproducibility CI remains explicitly bounded to Ubuntu.
+- [x] Controlled verification, computational cross-validation, observational validity, and byte integrity are kept distinct.
 
-## Evidence and claims
+## Reproducibility and release controls
 
-- [x] Account-free suite reports 48 explicit behavioural and contract outcomes.
-- [x] Positive transformations are separated from deliberate failure tests.
-- [x] GeoJSON validation uses an independent Python implementation.
-- [x] Public CHIRPS numerical validation is separately documented and green.
-- [x] Only CHIRPS is claimed to have equivalent independent numerical validation.
-- [x] Generic synthetic example is not presented as second-country scientific validation.
-- [x] HAND is described as a terrain descriptor, not a flood hazard.
-- [x] No forecast, epidemiological, exposure, causal, or operational claim is made.
-- [x] Checksums are described as integrity evidence, not scientific validation.
+- [x] Account-free test suite is green on the current development checkpoint.
+- [x] Metadata/manuscript audit is green on the current development checkpoint.
+- [x] Release-contract corruption tests are green.
+- [x] Complete tracked-file manifest is refreshed automatically after human source commits.
+- [x] Historical non-SoftwareX targeting records are explicitly marked superseded.
+- [x] Submission-source regression gate rejects stale pre-review submission claims.
+- [ ] Final independent code and manuscript review on the intended release tree.
+- [ ] Reserve a new version-specific Zenodo DOI for v1.4.0 without publishing it.
+- [ ] Insert the reserved v1.4.0 DOI into release-facing metadata, manuscript, cover letter, and checklist.
+- [ ] Freeze the exact DOI-bearing source tree.
+- [ ] Regenerate the complete tracked-file checksum manifest on that exact tree.
+- [ ] Run `python python/run_all_checks.py --verify-manifest` on that exact DOI-bearing commit.
+- [ ] Confirm metadata/manuscript validation and three-platform core smoke remain green on that exact commit.
+- [ ] Render and visually inspect the final manuscript and response package.
+- [ ] Remove the `DO NOT SUBMIT YET` banner from the cover letter only after every preceding gate is green.
+- [ ] Tag the exact approved commit `v1.4.0`.
+- [ ] Create the matching GitHub release without altering tagged files.
+- [ ] Archive that exact release content in Zenodo and publish the reserved version DOI.
+- [ ] Confirm the version DOI resolves to the exact tagged v1.4.0 release.
 
-## Licences and redistribution
+## Submission package
 
-- [x] District geometry attribution and CC BY 4.0 terms are recorded.
-- [x] CHIRPS public-domain or CC0 terms are recorded.
-- [x] ERA5-Land Copernicus Products licence and attribution are recorded.
-- [x] MODIS and HAND source terms are recorded.
-- [x] No ODbL share-alike data remain in the distributed product.
-- [x] Synthetic examples are labelled as synthetic.
-- [x] Private application, patient, surveillance, and operational data are excluded.
+- [x] Revised manuscript source: `paper/manuscript.md`.
+- [x] Point-by-point response source: `paper/reviewer-response-draft.md`.
+- [x] Cover-letter source updated for prior SoftwareX external review and v1.4.0 release gating.
+- [x] Highlights source updated to the v1.4 evidence.
+- [x] Repository documentation and machine-readable metadata are present.
+- [ ] Final manuscript DOCX/PDF generated from the frozen DOI-bearing source.
+- [ ] Final response-to-reviewers document generated and visually inspected.
+- [ ] Final cover letter generated after v1.4.0 DOI insertion.
+- [ ] Confirm with the submission system/editor whether the rebuilt work is entered as a formal resubmission or a new submission referencing `SOFTX-D-26-01014`.
+- [ ] Verify no simultaneous journal submission remains active.
 
-## Files prepared
-
-- [x] SoftwareX manuscript source.
-- [x] Manuscript DOCX with figures embedded.
-- [x] Cover letter.
-- [x] Highlights file.
-- [x] Repository documentation and machine-readable metadata.
-- [x] Claude Fable 5 final-review prompt.
-
-## Final exact-release actions
-
-The version-specific Zenodo DOI `10.5281/zenodo.21840177` has been reserved in a new-version draft. Complete the remaining release actions in this order:
-
-1. [x] Run the complete account-free reproducibility workflow on the pre-DOI candidate and confirm green.
-2. [x] Run the public CHIRPS 2023 validation and confirm green.
-3. [x] Reserve the genuine v1.3.0 Zenodo DOI without publishing the draft.
-4. [x] Insert DOI `10.5281/zenodo.21840177` into `CITATION.cff`, CodeMeta, README, manuscript, cover letter, and release validation metadata.
-5. [ ] Regenerate `CHECKSUMS.sha256` with `--all-tracked --write` after all DOI-bearing edits are frozen.
-6. [ ] Run the complete account-free checks again on the exact DOI-bearing commit.
-7. [ ] Confirm metadata/manuscript validation and checksum verification are green on that exact commit.
-8. [ ] Create immutable tag `v1.3.0` on that exact commit.
-9. [ ] Publish the corresponding GitHub release without changing tagged files.
-10. [ ] Upload/archive the exact `v1.3.0` release content in the existing Zenodo new-version draft.
-11. [ ] Confirm Zenodo title, version, creator, licence, and DOI metadata match the software release, then publish the Zenodo record so DOI `10.5281/zenodo.21840177` is registered.
-12. [ ] Confirm the DOI resolves to the published v1.3.0 record.
-13. [ ] Regenerate the final manuscript DOCX from the DOI-bearing manuscript source and visually inspect it.
-14. [ ] Regenerate the final cover letter, Highlights file, submission ZIP, and package SHA-256 record.
-15. [ ] Upload the manuscript as an Original Software Publication.
-16. [ ] Upload highlights as a separate editable Highlights file.
-17. [ ] Upload the cover letter.
-18. [ ] Enter the author affiliation as `Independent Researcher, Kigali, Rwanda`.
-19. [ ] Confirm that Elsevier's Rights and Access workflow applies the Rwanda waiver before authorizing any payment.
-20. [ ] Verify that no simultaneous journal submission remains active.
-
-Do not publish the Zenodo draft until the DOI-bearing exact release commit has passed all required checks and has been tagged `v1.3.0`.
+Do not create or publish the v1.4.0 tag, GitHub release, or Zenodo version without explicit owner authorization.

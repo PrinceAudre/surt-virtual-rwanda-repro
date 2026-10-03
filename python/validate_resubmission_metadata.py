@@ -20,6 +20,7 @@ PREVIOUS_VERSION = "1.3.0"
 PREVIOUS_TAG = "v1.3.0"
 PREVIOUS_DOI = "10.5281/zenodo.21840177"
 CONCEPT_DOI = "10.5281/zenodo.21671788"
+MANUSCRIPT_ID = "SOFTX-D-26-01014"
 
 
 class MetadataError(ValueError):
@@ -73,7 +74,7 @@ def main() -> None:
             "development branch retains complete tracked-file checksum refresh")
     require("--all-tracked" in runner,
             "account-free runner checks the complete tracked-file manifest")
-    require("review/softwarex-resubmission-v1.4.0" in runner,
+    require(DEVELOPMENT_BRANCH in runner,
             "verification summary identifies the v1.4 remediation branch")
     require(TARGET_VERSION in runner,
             "verification summary identifies v1.4.0 as the development target")
@@ -82,7 +83,8 @@ def main() -> None:
 
     # During remediation the DESCRIPTION/CFF/CodeMeta files may still identify the
     # last published release. They are moved to v1.4.0 only at the release freeze.
-    require(f"Version: {PREVIOUS_VERSION}" in description or f"Version: {TARGET_VERSION}" in description,
+    release_is_frozen = f"Version: {TARGET_VERSION}" in description
+    require(f"Version: {PREVIOUS_VERSION}" in description or release_is_frozen,
             "DESCRIPTION identifies either the published baseline or the frozen v1.4.0 release")
 
     codemeta = json.loads(read("codemeta.json"))
@@ -115,12 +117,47 @@ def main() -> None:
         + (f" ({', '.join(stale_unbannered)})" if stale_unbannered else ""),
     )
 
+    # Submission-facing sources previously survived a journal cycle with stale
+    # release identity and an incorrect statement that external peer review had not
+    # occurred. Lock those regressions out of the active branch.
+    cover = read("paper/submission/cover_letter.md")
+    submission_readme = read("paper/submission/README.md")
+    submission_checklist = read("paper/submission/SOFTWAREX_SUBMISSION_CHECKLIST.md")
+    highlights = [line.strip() for line in read("paper/submission/highlights.txt").splitlines() if line.strip()]
+    submission_material = "\n".join([cover, submission_readme, submission_checklist])
+
+    require(MANUSCRIPT_ID in cover,
+            "cover letter identifies the externally reviewed SoftwareX manuscript")
+    require("external peer review" in cover.casefold(),
+            "cover letter discloses prior external peer review")
+    require("has not undergone external peer review" not in cover.casefold(),
+            "false pre-review cover-letter claim is absent")
+    require(TARGET_VERSION in cover and TARGET_VERSION in submission_readme and TARGET_VERSION in submission_checklist,
+            "submission sources identify v1.4.0 as the reviewer-remediated target")
+    require("exact validated version `1.3.0` release" not in submission_material,
+            "submission sources do not present v1.3.0 as the rebuilt submission release")
+    require("48 explicit behavioural" not in submission_material,
+            "stale hard-coded verification total is absent from submission sources")
+    require("Only CHIRPS is claimed" not in submission_material,
+            "submission sources do not retain the superseded CHIRPS-only validation claim")
+    if not release_is_frozen:
+        require("DO NOT SUBMIT" in cover,
+                "unreleased v1.4.0 cover letter is fail-closed with a do-not-submit banner")
+
+    require(len(highlights) == 5, "exactly five SoftwareX highlights are supplied")
+    require(all(len(line) <= 85 for line in highlights),
+            "every SoftwareX highlight is at most 85 characters")
+    require(any("Uganda CHIRPS" in line for line in highlights),
+            "highlights include demonstrated second-country reuse")
+    require(any("ERA5-Land" in line and "MODIS" in line and "HAND" in line for line in highlights),
+            "highlights represent the scoped multi-product cross-check evidence")
+
     forbidden = [
         "TODO_REVIEWER",
         "TBD_REVIEWER",
         "PLACEHOLDER_REVIEWER",
     ]
-    active = "\n".join([readme, manuscript, runner, read("R/harmonize_admin_raster.R")])
+    active = "\n".join([readme, manuscript, runner, read("R/harmonize_admin_raster.R"), submission_material])
     for token in forbidden:
         require(token not in active, f"reviewer placeholder token is absent: {token}")
 

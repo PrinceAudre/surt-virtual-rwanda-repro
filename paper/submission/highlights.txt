@@ -1,5 +1,5 @@
-A generic interface converts rasters and polygons into provenance-labelled GeoJSON
-Account-free tests verify transformations, failures, schemas and release integrity
-Rwanda builders demonstrate rainfall, temperature, vegetation and terrain workflows
-Independent validation exactly reproduces all 30 archived rainfall values
-Fail-closed provenance rules keep unknown or synthetic outputs illustrative
+A generic interface harmonizes rasters and administrative polygons
+Zonal means use polygon overlap and raster-cell surface-area weighting
+Uganda CHIRPS reuse exercises the same config-driven workflow beyond Rwanda
+ERA5-Land, MODIS, HAND and CHIRPS cross-checks are source-pinned
+Core smoke tests pass on Ubuntu, Windows and macOS with bounded claims
