@@ -190,14 +190,32 @@ def main() -> None:
         "R/test_second_country_portability.R",
         "source-derived Uganda national boundary",
         "deterministic synthetic raster",
+        "config/uganda-chirps-2023.json",
+        "R/validate_uganda_chirps_case.R",
+        "1,211.186986",
+        "0.000174",
     ]
     for phrase in required_v14_evidence:
         require(phrase in text, f"v1.4 evidence is represented accurately: {phrase}")
 
     require("dynamically" in text and "manually maintained assertion total" in text,
             "manuscript describes dynamic verification counting without a stale fixed total")
-    require("scientific validation in a second country is not claimed" in text.casefold(),
-            "second-country scientific portability is not overclaimed")
+    require("does not validate CHIRPS observational accuracy" in text,
+            "second-country CHIRPS evidence retains an observational-validity boundary")
+    require("deterministic synthetic signal" in text and "source-derived 2023 CHIRPS raster" in text,
+            "synthetic portability and source-derived Uganda evidence are distinguished")
+    for phrase in [
+        "Table 1",
+        "Google Earth Engine",
+        "MODIStsp",
+        "exactextractr",
+        "SuRT-GeoHarmonizer",
+        "integrated administrative-data and release-evidence contract",
+    ]:
+        require(phrase in text, f"reviewer-requested tool comparison is represented: {phrase}")
+    require("user-defined" in text and "documented primary scope" in text,
+            "comparison matrix states its non-overclaiming comparison rule")
+
     require("R/harmonize_admin_raster.R" in text, "manuscript identifies the public generic interface")
     require(VERSION_DOI in text, "manuscript records the published v1.3.0 Zenodo DOI")
     require("10.5281/zenodo.21744708" in text and "10.5281/zenodo.21671788" in text,

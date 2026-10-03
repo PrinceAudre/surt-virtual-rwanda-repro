@@ -30,9 +30,9 @@ SuRT-GeoHarmonizer currently provides five connected layers:
 4. **Provider-specific Rwanda reference builders.** The reference implementation prepares CHIRPS rainfall, ERA5-Land temperature, MODIS NDVI, and HAND terrain descriptors using explicit transformation rules.
 5. **Executable evidence and release controls.** Account-free checks exercise controlled transformations, spatial weighting, partial coverage, arbitrary projected geometry, a real second-country boundary, declarative configuration, deliberate failure modes, GeoJSON contracts, metadata consistency, and a Snakemake evidence DAG. Manifest integrity can be added explicitly for a frozen release candidate.
 
-The current Uganda portability gate uses a source-derived Uganda national boundary with a deterministic synthetic raster. It demonstrates that the geometry and identifier contract runs against a real non-Rwanda geography. It is not source-derived environmental validation for Uganda and does not by itself satisfy a requirement for an independent second-country real-product scientific validation.
+Uganda now provides two complementary portability cases. `R/test_second_country_portability.R` uses a source-derived Uganda national boundary with a deterministic synthetic raster to isolate geometry and identifier portability. Separately, `config/uganda-chirps-2023.json` runs the public CHIRPS v2.0 annual 2023 raster and the same Uganda boundary through the generic configured workflow; `R/validate_uganda_chirps_case.R` independently cross-checks the result with `terra` exact fractions and cell-area weights.
 
-Remaining release work includes independent v1.4 numerical validation for ERA5-Land, MODIS, and HAND, refreshed CHIRPS evidence where required by the final release scope, broader operating-system evidence or an explicit supported-platform boundary, and the final reviewer-response and release-freeze sequence.
+Remaining release work includes independent v1.4 numerical validation for ERA5-Land, MODIS, and HAND, broader operating-system evidence or an explicit supported-platform boundary, and the final reviewer-response and release-freeze sequence.
 
 ## Five-minute quick start
 
@@ -97,6 +97,15 @@ Rscript R/test_second_country_portability.R
 ```
 
 This gate uses the source-derived Uganda polygon in `fixtures/uganda_natural_earth_110m.geojson` and a deterministic synthetic raster. The output is therefore evidence of geometry and identifier portability only. Source and interpretation terms are recorded in `NOTICE.md`.
+
+### 6. Run the source-derived Uganda CHIRPS case
+
+```text
+python python/run_configured_harmonization.py --config config/uganda-chirps-2023.json
+Rscript R/validate_uganda_chirps_case.R 2023
+```
+
+The configured case uses the public CHIRPS v2.0 annual 2023 raster and the source-derived Uganda boundary. In clean Ubuntu CI it produced 1,211.186986 mm with all three coverage fractions equal to 1.0; an independent `terra` area-weighted calculation produced 1,211.186812 mm, an absolute difference of 0.000174 mm. This is computational cross-validation of the specified workflow, not validation of CHIRPS observational accuracy.
 
 ## Generic command-line interface
 
@@ -235,13 +244,17 @@ Rscript R/validate_chirps_rainfall.R 2023
 
 The existing validation independently reacquires the public annual CHIRPS raster, reproduces the archived district values, compares `exactextractr` with `terra::extract`, and evaluates cell-area weighting sensitivity.
 
-The published v1.3 validation evidence for the tested source, year, and Rwanda geometry reports:
+The public-data validation evidence now reports:
 
-- 30 of 30 archived values reproduce exactly after rounding;
-- maximum cross-engine difference: 0.000136 mm;
-- maximum cell-area-weighting difference: 0.005127 mm.
+- Rwanda: 30 of 30 archived values reproduce exactly after rounding;
+- Rwanda maximum cross-engine difference: 0.000136 mm;
+- Rwanda maximum cell-area-weighting difference: 0.005127 mm;
+- Uganda configured national mean: 1,211.186986 mm;
+- Uganda independent `terra` area-weighted mean: 1,211.186812 mm;
+- Uganda absolute cross-engine difference: 0.000174 mm;
+- Uganda raster-footprint, within-raster finite-data, and overall valid-data fractions: 1.0.
 
-This is computational reproduction of the CHIRPS layer only. Equivalent independent numerical validation for the revised ERA5-Land, MODIS, and HAND v1.4 methods remains a release gate and should not be inferred from the controlled fixtures.
+These are computational reproduction and cross-validation results for the specified CHIRPS source, year, geometries, and aggregation contracts. They do not validate CHIRPS observational accuracy. Equivalent independent numerical validation for the revised ERA5-Land, MODIS, and HAND v1.4 methods remains a release gate.
 
 ## Repository map
 
@@ -249,7 +262,9 @@ This is computational reproduction of the CHIRPS layer only. Equivalent independ
 - `R/zonal_area_summary.R`: shared surface-area-weighted zonal and coverage contract.
 - `R/test_generic_harmonizer.R`: direct generic-interface contract tests.
 - `R/test_second_country_portability.R`: real Uganda-boundary portability gate using a synthetic signal.
-- `R/test_zonal_area_summary.R`: partial-coverage and latitude-sensitive spatial regressions.
+- `config/uganda-chirps-2023.json`: source-derived Uganda CHIRPS configured job.
+- `R/validate_uganda_chirps_case.R`: independent Uganda CHIRPS numerical cross-check.
+- `R/test_zonal_area_summary.R`: partial-coverage, latitude-sensitive, and near-global footprint regressions.
 - `R/test_temperature_annual_mean.R`: ERA5 annual-statistic tests.
 - `R/test_ndvi_qa.R`: MOD13A3 quality and temporal-completeness tests.
 - `R/test_hand_summary.R`: HAND denominator and coverage tests.

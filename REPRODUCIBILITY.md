@@ -171,9 +171,22 @@ Rscript R/test_second_country_portability.R
 
 The test reads `fixtures/uganda_natural_earth_110m.geojson`, a source-derived Uganda national polygon from Natural Earth 1:110m Admin 0 Countries, and combines it with a deterministic synthetic raster created at runtime. It runs that pair through `harmonize_admin_raster()` and checks identifier preservation, valid WGS84 geometry, complete synthetic-raster support, bounded output, source-geometry preservation, and provenance wording.
 
-This is stronger than a purely synthetic arbitrary-polygon fixture because the administrative geometry is a real non-Rwanda country boundary. It remains a software portability test, not scientific validation of an environmental product for Uganda. If reviewer acceptance requires a source-derived second-country raster product as well as a source-derived boundary, that separate end-to-end real-product case remains outstanding.
+This is stronger than a purely synthetic arbitrary-polygon fixture because the administrative geometry is a real non-Rwanda country boundary. It remains a software portability test, not scientific validation of an environmental product for Uganda.
 
 Natural Earth attribution and interpretation limits are documented in `NOTICE.md`.
+
+## Source-derived Uganda CHIRPS portability case
+
+Run:
+
+```text
+python python/run_configured_harmonization.py --config config/uganda-chirps-2023.json
+Rscript R/validate_uganda_chirps_case.R 2023
+```
+
+The configured job uses the public CHIRPS v2.0 annual 2023 raster, the Natural Earth Uganda boundary, the same `local_raster` adapter, and the generic administrative harmonizer. The validator independently recomputes the national surface-area-weighted mean with `terra` exact polygon-cell fractions and cell areas. Clean Ubuntu CI produced 1,211.186986 mm from the configured workflow and 1,211.186812 mm independently, an absolute difference of 0.000174 mm; all three reported coverage fractions were 1.0.
+
+This closes the source-derived second-country environmental-case gap for one account-free product and national geometry. It establishes reproducible use of the same generic configured workflow outside Rwanda; it does not validate CHIRPS observational accuracy or establish scientific validity for every provider, geography, or downstream interpretation.
 
 ## Direct account-free component commands
 
@@ -252,7 +265,7 @@ The published v1.3 evidence for the tested 2023 source and Rwanda geometry repor
 - maximum cell-area-weighting difference: 0.005127 mm;
 - root mean square weighting difference: 0.002385 mm.
 
-This is computational reproduction of the CHIRPS layer, not validation of CHIRPS observational accuracy. It also does not substitute for independent v1.4 numerical checks of the revised ERA5-Land, MODIS, and HAND methods. Those checks remain release gates.
+The Rwanda check is computational reproduction of the archived CHIRPS layer, not validation of CHIRPS observational accuracy. The source-derived Uganda case adds an independent configured-workflow check for the same public product outside Rwanda: 1,211.186986 mm configured versus 1,211.186812 mm from an independent `terra` area-weighted calculation, with an absolute difference of 0.000174 mm and complete reported coverage. Neither result substitutes for independent v1.4 numerical checks of the revised ERA5-Land, MODIS, and HAND methods. Those checks remain release gates.
 
 ## Published v1.3 reference files versus v1.4 development outputs
 
@@ -299,7 +312,7 @@ After every reviewer concern and release gate has executable or documentary evid
 3. insert the reserved v1.4.0 DOI into release-facing metadata and manuscript files;
 4. regenerate the complete tracked-file checksum manifest;
 5. run `python python/run_all_checks.py --verify-manifest` on that exact DOI-bearing commit;
-6. run and review all required real-data numerical validations and any reviewer-required source-derived second-country workflow;
+6. run and review all remaining required real-data numerical validations, including ERA5-Land, MODIS, and HAND;
 7. confirm supported operating-system CI is green and document any unsupported platform boundary;
 8. complete independent code and manuscript review;
 9. tag the exact approved commit `v1.4.0`;
@@ -312,7 +325,7 @@ After every reviewer concern and release gate has executable or documentary evid
 ## Reproducibility limits
 
 - The account-free pathway verifies specified transformations, interfaces, configuration, orchestration, failure handling, schemas, and integrity controls. Controlled fixtures are not independent real-data validation.
-- The Uganda gate uses a real source-derived second-country boundary but a synthetic environmental signal. It therefore supports cross-country geometry and identifier portability without establishing scientific validity for Uganda.
+- The Uganda synthetic-signal gate isolates geometry and identifier portability. A separate source-derived CHIRPS case demonstrates the configured workflow on a real second-country environmental raster and boundary, but does not validate CHIRPS observational accuracy or universal provider portability.
 - The built-in adapter currently covers an already prepared local raster. The plugin boundary is stable, but source-specific production acquisition and QA adapters are not implied by that interface.
 - ERA5-Land and MODIS rebuilds require provider accounts.
 - Independent v1.4 numerical validation is still required for ERA5-Land, MODIS, and HAND.
