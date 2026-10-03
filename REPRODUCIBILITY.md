@@ -16,7 +16,7 @@ No v1.4.0 tag or version DOI is valid until all reviewer-remediation release gat
 Rscript -e "renv::restore(prompt = FALSE)"
 ```
 
-The current hosted account-free workflow uses R 4.6.0 on Ubuntu Linux with GDAL, GEOS, PROJ, UDUNITS, CMake, and related geospatial system dependencies. Python 3.12 orchestrates validation and provider clients.
+The current hosted account-free workflow uses R 4.6.0 on Ubuntu Linux with GDAL, GEOS, PROJ, UDUNITS, CMake, and related geospatial system dependencies. Python 3.12 runs validation and orchestration. Snakemake executes the declarative workflow evidence DAG.
 
 Optional real-data provider clients are pinned in `requirements-providers.txt`:
 
@@ -40,17 +40,19 @@ The default account-free development suite includes:
 
 1. provenance classification checks;
 2. the hermetic environmental fixture pipeline;
-3. geometry and CRS portability fixtures;
-4. the full generic harmonizer interface contract;
-5. surface-area-weighted zonal and partial-coverage regressions;
-6. ERA5-Land annual-statistic tests, including leap-year handling;
-7. MOD13A3 quality-policy and temporal-completeness tests;
-8. HAND denominator and valid-area-coverage tests;
-9. deliberate transformation failure injection;
-10. valid and deliberately corrupted release-contract checks; and
-11. SoftwareX remediation metadata validation.
+3. projected geometry and CRS portability fixtures;
+4. a real Uganda-boundary portability gate using a deterministic synthetic raster;
+5. the full generic harmonizer interface contract;
+6. the declarative configuration and provider-adapter contract;
+7. surface-area-weighted zonal and partial-coverage regressions;
+8. ERA5-Land annual-statistic tests, including leap-year handling;
+9. MOD13A3 quality-policy and temporal-completeness tests;
+10. HAND denominator and valid-area-coverage tests;
+11. deliberate transformation failure injection;
+12. valid and deliberately corrupted release-contract checks; and
+13. SoftwareX remediation metadata validation.
 
-The runner writes `generated/verification_summary.json`, the generic example, and controlled fixture outputs. Controlled fixtures require no private repository, provider account, network request, or unpublished data.
+The runner writes `generated/verification_summary.json`, the generic example, the Uganda portability output, and controlled fixture outputs. Controlled fixtures require no private repository, provider account, network request, or unpublished data.
 
 During active development, `CHECKSUMS.sha256` is rebuilt and checked by `.github/workflows/softwarex-manifest-refresh.yml` after each human source commit. The development runner intentionally does not require the pre-refresh human commit to contain its own future manifest update. This avoids a deterministic CI race between scientific verification and the automated manifest commit.
 
@@ -67,6 +69,44 @@ The manuscript audit remains a separate explicit gate while the v1.4 manuscript 
 ```text
 python python/audit_manuscript.py
 ```
+
+## Declarative configuration and workflow orchestration
+
+The v1.4 development branch contains a machine-readable harmonization-job contract at `config/harmonization-job.schema.json`. Schema version `1.0` defines provider adapter selection, boundary path and identifier field, variable and layer selection, raw-value transformation controls, the `surface_area_weighted_mean` aggregation method, QA settings, output constraints, and provenance text. Unknown keys fail closed.
+
+Validate the bundled example without running the harmonizer:
+
+```text
+python python/run_configured_harmonization.py \
+  --config config/demo-harmonization.json \
+  --validate-only
+```
+
+Run the configured job once its prepared input exists:
+
+```text
+python python/run_configured_harmonization.py \
+  --config config/demo-harmonization.json
+```
+
+`python/provider_adapters.py` defines the provider boundary. The built-in `local_raster` adapter accepts an already prepared local raster and rejects undeclared provider-specific QA. External adapters can be loaded through a `module:factory` plugin interface. This extension boundary does not imply that production acquisition and QA adapters for every external provider are implemented or scientifically validated.
+
+The bundled account-free orchestration demo is:
+
+```text
+snakemake --cores 1
+```
+
+The `Snakefile` executes a deterministic DAG that:
+
+1. prepares a controlled multilayer raster and polygon fixture;
+2. validates the declarative config and adapter contract;
+3. transforms the provider-side fixture to a prepared raster;
+4. invokes the configured generic harmonizer;
+5. validates the resulting GeoJSON; and
+6. records machine-readable workflow evidence under `generated/workflow_demo/`.
+
+This DAG verifies orchestration and interfaces. Its controlled raster is synthetic and is not independent real-data validation.
 
 ## Generic administrative-unit interface
 
@@ -121,22 +161,39 @@ Rscript R/test_generic_harmonizer.R
 
 See `DATA_DICTIONARY.md` for exact output semantics.
 
+## Real second-country boundary portability gate
+
+Run:
+
+```text
+Rscript R/test_second_country_portability.R
+```
+
+The test reads `fixtures/uganda_naturalearth_110m.geojson`, a source-derived Uganda national polygon from Natural Earth 1:110m Admin 0 Countries, and combines it with a deterministic synthetic raster created at runtime. It runs that pair through `harmonize_admin_raster()` and checks identifier preservation, valid WGS84 geometry, complete synthetic-raster support, bounded output, source-geometry preservation, and provenance wording.
+
+This is stronger than a purely synthetic arbitrary-polygon fixture because the administrative geometry is a real non-Rwanda country boundary. It remains a software portability test, not scientific validation of an environmental product for Uganda. If reviewer acceptance requires a source-derived second-country raster product as well as a source-derived boundary, that separate end-to-end real-product case remains outstanding.
+
+Natural Earth attribution and interpretation limits are documented in `NOTICE.md`.
+
 ## Direct account-free component commands
 
 ```text
 Rscript R/demo_value_class.R
 Rscript R/test_fixture_pipeline.R
 Rscript R/test_portability_fixture.R
+Rscript R/test_second_country_portability.R
 Rscript R/test_generic_harmonizer.R
 Rscript R/test_zonal_area_summary.R
 Rscript R/test_temperature_annual_mean.R
 Rscript R/test_ndvi_qa.R
 Rscript R/test_hand_summary.R
 Rscript R/test_failure_modes.R
+python python/test_config_contract.py
 python python/validate_release_contract.py
 python python/validate_resubmission_metadata.py
 python python/audit_manuscript.py
 python python/build_checksum_manifest.py --all-tracked --check
+snakemake --cores 1
 ```
 
 `python/validate_release_contract.py --skip-failure-tests` validates committed reference layers without injecting corrupted copies.
@@ -149,7 +206,7 @@ python python/build_checksum_manifest.py --all-tracked --check
 
 ### ERA5-Land annual temperature
 
-`R/relief_temp_transform.R` computes the annual statistic as a calendar-day-weighted mean of the 12 monthly means, then converts Kelvin to Celsius. `R/test_temperature_annual_mean.R` verifies non-leap-year and leap-year weights, month count, and conversion behaviour.
+`R/relief_temp_transform.R` computes the annual statistic as a calendar-day-weighted mean of the 12 monthly means, then converts kelvin to degrees Celsius. `R/test_temperature_annual_mean.R` verifies non-leap-year and leap-year weights, month count, and conversion behaviour.
 
 ### MODIS MOD13A3 v061 NDVI
 
@@ -157,7 +214,7 @@ python python/build_checksum_manifest.py --all-tracked --check
 
 ### HAND terrain share
 
-`R/relief_low_lying_transform.R` defines the low-lying share as the percentage of **valid HAND-covered area** at or below the selected threshold. Negative sentinels are no-data. Numerator and denominator use polygon overlap multiplied by cell surface area, and coverage is reported separately. `R/test_hand_summary.R` verifies mixed valid/no-data cases and exact denominator behaviour.
+`R/relief_low_lying_transform.R` defines the low-lying share as the percentage of **valid HAND-covered area** at or below the selected threshold. Negative sentinels are no-data. Numerator and denominator use polygon overlap multiplied by cell surface area, and coverage is reported separately. `R/test_hand_summary.R` verifies mixed valid and no-data cases and exact denominator behaviour.
 
 ## Rwanda real-data builders
 
@@ -213,7 +270,7 @@ Rscript R/make_manuscript_figures.R
 
 Outputs are written to `paper/figures/generated/` and are excluded from version control. GitHub Actions can retain the generated evidence bundle. `paper/figures/ALT_TEXT.md` records accessibility text.
 
-A v1.4 manuscript figure should not be treated as final until the architecture, configuration/adapters, workflow management, and independent second-context case are complete and the figure source has been regenerated from the approved release state.
+The architecture figure source must remain synchronized with the configuration, adapter, aggregation, portability, and release contracts. The Rwanda map panels remain based on published v1.3 reference files until revised v1.4 source-derived layers are independently validated and approved.
 
 ## Integrity during development
 
@@ -242,8 +299,8 @@ After every reviewer concern and release gate has executable or documentary evid
 3. insert the reserved v1.4.0 DOI into release-facing metadata and manuscript files;
 4. regenerate the complete tracked-file checksum manifest;
 5. run `python python/run_all_checks.py --verify-manifest` on that exact DOI-bearing commit;
-6. run and review all required real-data numerical validations and the independent second-context workflow;
-7. confirm supported operating-system CI is green and document any unsupported platform blocker;
+6. run and review all required real-data numerical validations and any reviewer-required source-derived second-country workflow;
+7. confirm supported operating-system CI is green and document any unsupported platform boundary;
 8. complete independent code and manuscript review;
 9. tag the exact approved commit `v1.4.0`;
 10. create the matching GitHub release without altering tagged files;
@@ -254,11 +311,12 @@ After every reviewer concern and release gate has executable or documentary evid
 
 ## Reproducibility limits
 
-- The account-free pathway verifies specified transformations, interfaces, failure handling, schemas, and integrity controls. Controlled fixtures are not independent real-data validation.
-- The current arbitrary-region generic example is synthetic and does not substitute for the required real second-country portability case.
+- The account-free pathway verifies specified transformations, interfaces, configuration, orchestration, failure handling, schemas, and integrity controls. Controlled fixtures are not independent real-data validation.
+- The Uganda gate uses a real source-derived second-country boundary but a synthetic environmental signal. It therefore supports cross-country geometry and identifier portability without establishing scientific validity for Uganda.
+- The built-in adapter currently covers an already prepared local raster. The plugin boundary is stable, but source-specific production acquisition and QA adapters are not implied by that interface.
 - ERA5-Land and MODIS rebuilds require provider accounts.
 - Independent v1.4 numerical validation is still required for ERA5-Land, MODIS, and HAND.
 - Annual administrative summaries suppress seasonality, extremes, and within-unit heterogeneity.
 - MODIS QA filtering reduces spatial and temporal support; reported coverage is therefore part of the result, not an optional cosmetic field.
 - HAND at or below 5 m is a static terrain descriptor, not observed flooding, flood probability, a validated hazard model, a forecast, or operational advice.
-- Current hosted account-free verification is Ubuntu-based. Broader operating-system CI remains a v1.4 release gate.
+- Current hosted account-free verification is Ubuntu-based. Broader operating-system CI remains a v1.4 release gate unless the final release explicitly documents a narrower supported-platform boundary.
