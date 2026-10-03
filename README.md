@@ -4,7 +4,7 @@
 
 SuRT-GeoHarmonizer is an open command-line workflow for converting heterogeneous raster products into consistent, provenance-labelled administrative-unit GeoJSON layers. The public harmonizer separates raster-footprint coverage, finite-data coverage, and value aggregation; weights finite raster contributions by polygon-cell overlap multiplied by cell surface area; and retains fail-closed tests and release-integrity controls.
 
-Rwanda is the reference implementation, not a hard-coded product boundary. The generic interface accepts an arbitrary raster, polygon boundary file, unique identifier field, output measurement name, transformation controls, coverage threshold, and provenance statement.
+Rwanda is the reference implementation, not a hard-coded product boundary. The generic interface accepts an arbitrary raster, polygon boundary file, unique identifier field, output measurement name, transformation controls, coverage threshold, and provenance statement. A declarative JSON contract and Snakemake evidence workflow now exercise the same generic harmonization boundary without embedding Rwanda-specific identifiers in the core interface.
 
 The software is descriptive and research-oriented. It does not generate validated hazards, forecasts, epidemiological effects, exposure estimates, or operational recommendations.
 
@@ -22,14 +22,17 @@ Version `1.4.0` is not yet a release. No v1.4.0 tag or version DOI should be cre
 
 ## What the software does
 
-SuRT-GeoHarmonizer currently provides four connected layers:
+SuRT-GeoHarmonizer currently provides five connected layers:
 
 1. **Generic administrative harmonization.** `R/harmonize_admin_raster.R` accepts a raster and polygon boundary file and writes WGS84 GeoJSON containing `unit_id`, a user-defined measurement field, three explicit coverage fields, provenance, and geometry.
-2. **Provider-specific reference builders.** The Rwanda implementation prepares CHIRPS rainfall, ERA5-Land temperature, MODIS NDVI, and HAND terrain descriptors using explicit transformation rules.
-3. **Fail-closed evidence and release controls.** The provenance module defaults unknown, incomplete, synthetic, or placeholder outputs to illustrative status. Independent validators reject malformed transformations and corrupted release files.
-4. **Executable evidence.** A one-command account-free development suite exercises controlled transformations, spatial weighting, partial coverage, arbitrary projected geometry, the generic input contract, deliberate failure modes, GeoJSON contracts, and metadata consistency. Manifest integrity can be added explicitly for a frozen release candidate.
+2. **Declarative job configuration.** `config/harmonization-job.schema.json` defines a fail-closed JSON contract for provider preparation, boundaries, variables, transformations, aggregation, QA, output, and provenance. `python/run_configured_harmonization.py` validates that contract before invoking the generic R engine.
+3. **Provider-adapter boundary.** `python/provider_adapters.py` defines a stable adapter protocol, a built-in `local_raster` adapter for already prepared inputs, and an external `module:factory` plugin mechanism. This is an extension contract, not a claim that production adapters for every provider are already implemented.
+4. **Provider-specific Rwanda reference builders.** The reference implementation prepares CHIRPS rainfall, ERA5-Land temperature, MODIS NDVI, and HAND terrain descriptors using explicit transformation rules.
+5. **Executable evidence and release controls.** Account-free checks exercise controlled transformations, spatial weighting, partial coverage, arbitrary projected geometry, a real second-country boundary, declarative configuration, deliberate failure modes, GeoJSON contracts, metadata consistency, and a Snakemake evidence DAG. Manifest integrity can be added explicitly for a frozen release candidate.
 
-The v1.4 remediation roadmap additionally requires a stable provider-adapter/configuration contract, workflow orchestration, a real second-country portability case, additional real-data numerical cross-checks, and broader operating-system CI. Those items remain development work until the tracked remediation ledger records executable evidence for them.
+The current Uganda portability gate uses a source-derived Uganda national boundary with a deterministic synthetic raster. It demonstrates that the geometry and identifier contract runs against a real non-Rwanda geography. It is not source-derived environmental validation for Uganda and does not by itself satisfy a requirement for an independent second-country real-product scientific validation.
+
+Remaining release work includes independent v1.4 numerical validation for ERA5-Land, MODIS, and HAND, refreshed CHIRPS evidence where required by the final release scope, broader operating-system evidence or an explicit supported-platform boundary, and the final reviewer-response and release-freeze sequence.
 
 ## Five-minute quick start
 
@@ -39,7 +42,8 @@ The verified workflow uses:
 
 - R 4.6.0;
 - `terra`, `sf`, `exactextractr`, and `jsonlite` from `renv.lock`;
-- Python 3 for standard-library validation and orchestration;
+- Python 3 for validation and orchestration;
+- Snakemake for the declarative workflow evidence DAG;
 - GDAL, GEOS, PROJ, UDUNITS, and CMake-related system support on Linux for the locked geospatial stack.
 
 Restore the locked R environment from the repository root:
@@ -56,7 +60,7 @@ The account-free test pathway uses only bundled data and generated fixtures. Pro
 python python/run_all_checks.py
 ```
 
-The suite reports test outcomes dynamically rather than relying on a manually maintained total. It runs the provenance checks, hermetic environmental fixture pipeline, geometry-portability fixture, generic harmonizer contract suite, zonal area/coverage regressions, ERA5 annual-statistic tests, MODIS quality-policy tests, HAND denominator/coverage tests, deliberate transformation failures, release-contract checks, and remediation metadata checks.
+The suite reports test outcomes dynamically rather than relying on a manually maintained total. It runs provenance checks, the hermetic environmental fixture pipeline, the projected geometry-portability fixture, the real Uganda-boundary portability gate, the generic harmonizer contract suite, the declarative configuration and adapter contract tests, zonal area and coverage regressions, ERA5 annual-statistic tests, MODIS quality-policy tests, HAND denominator and coverage tests, deliberate transformation failures, release-contract checks, and remediation metadata checks.
 
 During active development, `CHECKSUMS.sha256` is rebuilt and validated by the dedicated manifest-refresh workflow after each human source commit. This separation prevents the scientific CI job from failing merely because it started before the automated manifest-refresh commit landed.
 
@@ -68,13 +72,31 @@ python python/run_all_checks.py --verify-manifest
 
 The GitHub Actions reproducibility workflow also exposes this strict mode through its manual `verify_manifest` input.
 
-### 3. Run the generic example directly
+### 3. Run the declarative workflow evidence DAG
+
+```text
+snakemake --cores 1
+```
+
+The bundled `Snakefile` validates `config/demo-harmonization.json`, prepares a controlled multilayer raster and boundary fixture, transforms the configured raster, invokes the generic harmonizer, validates the GeoJSON result, and writes machine-readable workflow evidence under `generated/workflow_demo/`.
+
+The demo is deliberately hermetic. It proves the orchestration and configuration contract, not real-provider scientific validity.
+
+### 4. Run the generic example directly
 
 ```text
 Rscript R/test_generic_harmonizer.R
 ```
 
 This test creates a projected synthetic raster and arbitrary polygon units, invokes the public generic interface, and writes `generated/generic_admin_example.geojson`.
+
+### 5. Run the real second-country boundary portability gate
+
+```text
+Rscript R/test_second_country_portability.R
+```
+
+This gate uses the source-derived Uganda polygon in `fixtures/uganda_naturalearth_110m.geojson` and a deterministic synthetic raster. The output is therefore evidence of geometry and identifier portability only. Source and interpretation terms are recorded in `NOTICE.md`.
 
 ## Generic command-line interface
 
@@ -140,17 +162,38 @@ The generic interface validates processing behaviour. It does not decide whether
 
 See `DATA_DICTIONARY.md` for exact field definitions.
 
+## Declarative configuration and provider adapters
+
+`config/harmonization-job.schema.json` fixes the machine-readable job shape at schema version `1.0`. Unknown top-level and nested keys fail closed. The schema covers provider adapter selection, boundary path and identifier field, variable and layer selection, raw-value transformation controls, the `surface_area_weighted_mean` aggregation method, QA settings, output constraints, and provenance text.
+
+Validate a job without producing output:
+
+```text
+python python/run_configured_harmonization.py \
+  --config config/demo-harmonization.json \
+  --validate-only
+```
+
+Run the configured job after its prepared raster exists:
+
+```text
+python python/run_configured_harmonization.py \
+  --config config/demo-harmonization.json
+```
+
+The built-in `local_raster` adapter accepts an already prepared raster and rejects undeclared provider-specific QA options. New providers can implement the documented adapter protocol through an external `module:factory` plugin without changing the generic R harmonizer. Provider-specific scientific QA and acquisition remain the adapter author's responsibility.
+
 ## Rwanda reference implementation
 
 The v1.4 builders operate on the common Rwanda district geometry and default to outputs under `generated/` so revised results can be independently checked before any published reference artifact is replaced.
 
 ### CHIRPS rainfall
 
-`R/build_relief_climate_rainfall.R` masks negative fill/no-data values and computes surface-area-weighted district means. The output reports raster-footprint, within-raster finite-data, and overall valid-data fractions.
+`R/build_relief_climate_rainfall.R` masks negative fill or no-data values and computes surface-area-weighted district means. The output reports raster-footprint, within-raster finite-data, and overall valid-data fractions.
 
 ### ERA5-Land temperature
 
-`R/build_relief_climate_temperature.R` calculates an annual raster as the calendar-day-weighted mean of the 12 monthly means, using the correct February length for leap years, converts Kelvin to Celsius, and then computes surface-area-weighted district means with explicit coverage fields.
+`R/build_relief_climate_temperature.R` calculates an annual raster as the calendar-day-weighted mean of the 12 monthly means, using the correct February length for leap years, converts kelvin to degrees Celsius, and then computes surface-area-weighted district means with explicit coverage fields.
 
 ### MODIS MOD13A3 v061 NDVI
 
@@ -205,13 +248,21 @@ This is computational reproduction of the CHIRPS layer only. Equivalent independ
 - `R/harmonize_admin_raster.R`: generic public command-line interface.
 - `R/zonal_area_summary.R`: shared surface-area-weighted zonal and coverage contract.
 - `R/test_generic_harmonizer.R`: direct generic-interface contract tests.
+- `R/test_second_country_portability.R`: real Uganda-boundary portability gate using a synthetic signal.
 - `R/test_zonal_area_summary.R`: partial-coverage and latitude-sensitive spatial regressions.
 - `R/test_temperature_annual_mean.R`: ERA5 annual-statistic tests.
 - `R/test_ndvi_qa.R`: MOD13A3 quality and temporal-completeness tests.
 - `R/test_hand_summary.R`: HAND denominator and coverage tests.
+- `config/harmonization-job.schema.json`: declarative job schema.
+- `config/demo-harmonization.json`: account-free workflow demo configuration.
+- `python/config_contract.py`: fail-closed config validation and command mapping.
+- `python/provider_adapters.py`: built-in and external provider-adapter protocol.
+- `python/run_configured_harmonization.py`: configured generic-harmonization runner.
+- `Snakefile`: account-free orchestration and workflow-evidence DAG.
 - `R/`: provider transformations, builders, fixtures, failure tests, and figure generation.
 - `python/`: provider clients, orchestration, release validation, checksum generation, and metadata checks.
 - `data/`: published Rwanda reference geometry and environmental GeoJSON layers.
+- `fixtures/`: controlled and source-attributed portability fixtures.
 - `generated/`: development outputs and account-free evidence generated by tests.
 - `paper/`: SoftwareX manuscript source, submission records, figures, and review material.
 - `.github/workflows/`: reproducibility, metadata, manifest, and public-data validation.
@@ -225,16 +276,17 @@ This is computational reproduction of the CHIRPS layer only. Equivalent independ
 
 `R/provenance_value_class.R` accepts `source-derived` status only when a register row declares a documented method applied to real or public data. Unknown, incomplete, synthetic, and placeholder entries default to `illustrative` and receive an explanatory note.
 
-The current release records lightweight human-readable provenance. It does not claim PROV-O, RO-Crate, Common Workflow Language, or workflow-engine conformance.
+The current release records lightweight human-readable provenance. It does not claim PROV-O, RO-Crate, Common Workflow Language, or workflow-engine standards conformance.
 
 ## Reproducibility and integrity
 
 - `renv.lock` records the R dependency graph.
-- `python/run_all_checks.py` runs the account-free scientific, interface, failure-mode, release-contract, and metadata suite and reports outcome counts dynamically.
+- `python/run_all_checks.py` runs the account-free scientific, interface, configuration, portability, failure-mode, release-contract, and metadata suite and reports outcome counts dynamically.
+- `snakemake --cores 1` executes the bundled declarative workflow evidence DAG.
 - `python/run_all_checks.py --verify-manifest` additionally requires the exact tracked-file manifest and verifies every listed digest.
 - `python/validate_release_contract.py` independently checks committed GeoJSON files and rejects controlled corruptions.
 - `CHECKSUMS.sha256` covers the complete tracked development scope and is rebuilt and checked by the dedicated v1.4 manifest workflow after human source commits.
-- GitHub Actions reruns the account-free evidence suite on a clean hosted runner; manual dispatch can enable strict manifest verification.
+- GitHub Actions reruns the account-free evidence suite and Snakemake workflow on a clean Ubuntu runner; manual dispatch can enable strict manifest verification.
 - The eventual v1.4 tag and Zenodo version DOI must identify the exact same approved release content.
 
 Checksums establish byte integrity, not scientific validity.
@@ -245,7 +297,8 @@ Checksums establish byte integrity, not scientific validity.
 - **District geometry:** World Bank CC BY 4.0.
 - **CHIRPS:** public domain or CC0 as documented in the repository attribution records.
 - **ERA5-Land:** Copernicus Products licence.
-- **MODIS and HAND outputs:** source/product terms are documented in `NOTICE.md`; do not infer a broader licence than the source permits.
+- **MODIS and HAND outputs:** source and product terms are documented in `NOTICE.md`; do not infer a broader licence than the source permits.
+- **Uganda portability boundary:** Natural Earth 1:110m Admin 0 Countries, public domain, as documented in `NOTICE.md`.
 
 See `NOTICE.md` for complete attribution and interpretation boundaries.
 
