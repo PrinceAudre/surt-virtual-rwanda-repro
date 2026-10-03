@@ -4,18 +4,19 @@ Use the concise alternatives below in the final Word manuscript. They describe t
 
 ## Figure 1
 
-**Alternative text:** Flow diagram linking four source products to provider-specific preprocessing, administrative polygon extraction, standardized GeoJSON output, and versioned release controls. Five separate evidence paths show positive transformation tests, projected non-Rwanda portability tests, failure injection, independent release-contract checks, and public CHIRPS numerical reproduction. All evidence paths feed clean continuous integration and integrity reporting.
+**Alternative text:** Flow diagram linking environmental source preparation to declarative configuration and provider adapters, surface-area-weighted administrative harmonization with explicit coverage fields, provenance-labelled GeoJSON, and versioned release controls. Independent evidence paths include controlled transformation tests, projected arbitrary-identifier portability, a real Uganda-boundary portability gate using a synthetic signal, configuration and adapter validation, deliberate failure injection, release-contract checks, workflow orchestration evidence, and public CHIRPS numerical reproduction. Continuous integration records executable outcomes while checksum controls establish byte integrity rather than scientific validity.
 
 **Accessibility checks:**
 
 - No article title or caption is embedded in the artwork.
 - Solid arrows denote the production path; dashed arrows denote evidence and validation paths.
 - All nodes are labelled with text and do not rely on colour.
+- The Uganda gate must be labelled as real boundary plus synthetic signal, not as scientific validation for Uganda.
 - EPS and SVG vector outputs are generated from the same code.
 
 ## Figure 2
 
-**Alternative text:** Four district maps of Rwanda labelled a through d. Panel a shows 2023 annual CHIRPS rainfall, panel b shows 2023 mean ERA5-Land temperature, panel c shows 2023 mean MODIS NDVI, and panel d shows the percentage of each district represented by HAND values at or below 5 metres. Each map contains six numeric intervals and district boundaries.
+**Alternative text:** Four district maps of the published v1.3 Rwanda reference data labelled a through d. Panel a shows 2023 annual CHIRPS rainfall, panel b shows 2023 mean ERA5-Land temperature, panel c shows 2023 mean MODIS NDVI, and panel d shows the percentage of each district represented by HAND values at or below 5 metres. Each map contains numeric intervals and district boundaries. These archived panels are descriptive reference artifacts and are not automatically recalculated v1.4 outputs.
 
 **Accessibility checks:**
 
@@ -28,7 +29,7 @@ Use the concise alternatives below in the final Word manuscript. They describe t
 
 ## Figure 3
 
-**Alternative text:** Three-column decision diagram showing independent provenance controls. Register validation checks required fields, legal class values, and rejects the combination of source-derived evidence with a placeholder method. Display classification treats an output as illustrative unless its identifier is present and its evidence class is exactly source-derived; this step does not test method class or independently verify real-data use. Illustrative-note selection returns no note for a source-derived display, a short “illustrative” label when requested, one full note for a documented method on synthetic data, and another full note for synthetic, placeholder, unknown, or incomplete material. A footer states that the three functions are independently callable.
+**Alternative text:** Three-column decision diagram showing independent provenance controls. Register validation checks required fields, legal class values, and rejects the combination of source-derived evidence with a placeholder method. Display classification treats an output as illustrative unless its identifier is present and its evidence class is exactly source-derived; this step does not test method class or independently verify real-data use. Illustrative-note selection returns no note for a source-derived display, a short illustrative label when requested, one full note for a documented method on synthetic data, and another full note for synthetic, placeholder, unknown, or incomplete material. A footer states that the three functions are independently callable.
 
 **Accessibility checks:**
 
@@ -58,3 +59,4 @@ Use the concise alternatives below in the final Word manuscript. They describe t
 4. Confirm that panel letters, legends, and district labels remain legible at final journal size.
 5. Check contrast in colour and greyscale PDF rendering.
 6. Ensure captions remain editable text outside the images.
+7. Recheck Figure 1 against the exact v1.4 architecture source after the release candidate is frozen.
