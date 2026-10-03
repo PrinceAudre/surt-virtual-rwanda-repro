@@ -11,27 +11,31 @@
 - Corrected the HAND low-lying denominator to valid HAND-covered area, excluding negative no-data sentinels and reporting spatial support separately.
 - Added latitude-sensitive weighting, primary-raster no-data, partial raster-footprint, ERA5 annual-statistic, MODIS QA, HAND denominator, and transformation-failure regressions.
 
-### Generic interface and evidence contract
+### Generic interface, configuration, and workflow evidence
 
 - Extended the generic harmonizer to validate raster and boundary CRS, polygon geometry, unique non-empty identifiers, layer selection, raw-unit no-data masking, scaling, bounds, and minimum valid-data coverage.
 - Normalized the v1.4 generic output contract around explicit coverage fields while retaining provenance-labelled EPSG:4326 GeoJSON output.
+- Added `config/harmonization-job.schema.json` and a fail-closed declarative configuration contract covering provider preparation, boundaries, variables, transformations, aggregation, QA, output, and provenance.
+- Added a stable provider-adapter protocol with a built-in `local_raster` adapter and an external `module:factory` extension mechanism. Production provider-specific adapters remain separate future work.
+- Added a Snakemake evidence DAG that validates configuration, prepares a controlled raster fixture, executes configured harmonization, validates the output, and records machine-readable workflow evidence.
+- Added a source-derived Uganda national-boundary fixture and an account-free second-country portability gate. The test uses a deterministic synthetic raster, so it demonstrates cross-country geometry and identifier portability rather than scientific validation of an environmental product for Uganda.
 - Expanded hermetic fixtures to exercise the revised scientific contracts and to expose real reprojection support loss rather than silently asserting complete coverage.
 - Made account-free result counting dynamic so reviewer-driven tests do not require a manually maintained assertion total.
 - Separated ordinary development verification from the tracked-file manifest release gate. The dedicated manifest workflow rebuilds and checks `CHECKSUMS.sha256`, while `python/run_all_checks.py --verify-manifest` remains the strict frozen-candidate gate.
 
 ### Documentation and reproducibility
 
-- Updated `README.md`, `DATA_DICTIONARY.md`, and `REPRODUCIBILITY.md` to describe the v1.4 spatial weighting, coverage, ERA5, MODIS, HAND, and development-versus-release contracts.
+- Updated `README.md`, `DATA_DICTIONARY.md`, and `REPRODUCIBILITY.md` to describe the v1.4 spatial weighting, coverage, ERA5, MODIS, HAND, configuration, adapter, workflow, and development-versus-release contracts.
 - Preserved the committed `data/` files as immutable published v1.3 reference artifacts while directing revised v1.4 builder outputs to `generated/` until independent validation and release approval are complete.
 - Added CMake and the required geospatial system libraries to hosted Ubuntu CI for clean-cache restoration of the locked R environment.
+- Added explicit Natural Earth attribution and interpretation limits for the Uganda portability fixture in `NOTICE.md`.
 
 ### Still required before v1.4.0 release
 
-- A stable provider-adapter and configuration contract plus workflow orchestration.
-- A real second-country end-to-end portability case.
-- Independent v1.4 numerical validation for ERA5-Land, MODIS, and HAND, plus refreshed CHIRPS evidence where required.
+- Independent v1.4 numerical validation for ERA5-Land, MODIS, and HAND, plus refreshed CHIRPS evidence where required by the final release scope.
+- If the reviewer requires source-derived cross-country environmental evidence rather than geometry/interface portability, a second-country real-product end-to-end case remains outstanding; the current Uganda gate deliberately uses a synthetic raster.
 - Broader operating-system CI or a documented, evidence-based support boundary.
-- Final v1.4 release-contract validation, reviewer-response ledger, manuscript rewrite, exact manifest freeze, DOI insertion, tag, and archive.
+- Final reviewer-response ledger, manuscript and figure audit, exact manifest freeze, version DOI insertion, exact-head release validation, tag, GitHub release, and Zenodo archive.
 
 ## 1.3.0 - SoftwareX release candidate, 2026-08-07
 
