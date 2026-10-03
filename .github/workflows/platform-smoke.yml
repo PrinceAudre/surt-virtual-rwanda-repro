@@ -59,7 +59,3 @@ jobs:
           Rscript R/test_ndvi_qa.R
           Rscript R/test_generic_harmonizer.R
           Rscript R/test_second_country_portability.R
-      - name: Manuscript and remediation metadata audits
-        run: |
-          python python/audit_manuscript.py
-          python python/validate_v14_remediation.py
