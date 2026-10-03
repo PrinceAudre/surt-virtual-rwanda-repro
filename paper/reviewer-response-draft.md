@@ -40,8 +40,10 @@ This document is a response draft for a rebuilt submission. The verbatim five-pa
 - `R/relief_low_lying_transform.R`
 - `R/build_relief_low_lying_hand.R`
 - `R/test_hand_summary.R`
+- `R/validate_hand_rubavu_real.R`
+- `evidence/hand/rubavu_hand_real_validation_summary.json`
 
-**Manuscript:** Sections 2.4 and 4.
+**Manuscript:** Sections 2.4, 3.3, and 4.
 
 ### R1.4 Controlled verification needed to remain distinct from independent real-data validation
 
@@ -72,6 +74,9 @@ This document is a response draft for a rebuilt submission. The verbatim five-pa
 ### R1.7 MODIS quality information was available but unused
 
 **Response:** Addressed. The v1.4 production builder uses the MOD13A3 pixel-reliability layer with an explicit policy; the production default accepts reliability rank 0, and a deliberate unfiltered mode remains available for controlled use. Temporal completeness and QA behavior have controlled tests. A credentialed real-data check independently reads all 24 source HDF granules for 2023, applies raw-DN scaling and rank-0 QA independently, and reproduces the Nyarugenge result under the declared two-decimal output contract. Per-granule SHA-256 values and the source-set fingerprint are retained in `evidence/modis/nyarugenge_mod13a3_2023_validation_summary.json`.
+
+**Code/evidence:** `R/relief_ndvi_transform.R`; `R/build_relief_climate_ndvi_real.R`; `R/test_ndvi_qa.R`; `R/validate_modis_ndvi_nyarugenge_real.R`.
+
 ### R1.8 ERA5-Land annual temperature statistic needed a precise definition
 
 **Response:** Addressed. The v1.4 transformation computes a calendar-day-weighted annual mean of the 12 monthly means, including leap-year handling, before kelvin-to-Celsius conversion. Controlled leap-year and non-leap-year tests are green. The source-derived Nyarugenge 2023 cross-check also passes: 20.597411 °C from the production path versus 20.597414 °C from an independent `terra` calculation, with complete reported coverage. The source SHA-256, CDS request identity, and acceptance gate are retained in `evidence/era5land/nyarugenge_era5land_2023_validation_summary.json`.
@@ -79,6 +84,8 @@ This document is a response draft for a rebuilt submission. The verbatim five-pa
 **Code/evidence:**
 - `R/relief_temp_transform.R`
 - `R/test_temperature_annual_mean.R`
+- `R/validate_era5land_nyarugenge_real.R`
+- `evidence/era5land/nyarugenge_era5land_2023_validation_summary.json`
 
 ### R1.9 Raw-unit no-data thresholds and `round_digits` parsing needed clarification
 
@@ -86,7 +93,7 @@ This document is a response draft for a rebuilt submission. The verbatim five-pa
 
 ### R1.10 Geographic/input portability should not be conflated with operating-system portability
 
-**Response:** Addressed with an explicit support boundary and executable evidence. Geographic/input portability remains distinct from operating-system portability. The full reproducibility workflow remains Ubuntu-based, while the core dependency-light contract now passes a GitHub Actions smoke matrix on Ubuntu 24.04, Windows 2025, and macOS 14. Credentialed provider acquisition is not claimed cross-platform. Core platform smoke run `37119045980` passed all three jobs at commit `7223172`.
+**Response:** Addressed with an explicit support boundary and executable evidence. Geographic/input portability remains distinct from operating-system portability. The full reproducibility workflow remains Ubuntu-based, while the core dependency-light contract now passes a GitHub Actions smoke matrix on Ubuntu 24.04, Windows 2025, and macOS 14. Credentialed provider acquisition is not claimed cross-platform. Core platform smoke run `37137478475` passed Ubuntu 24.04, Windows 2025, and macOS 14 on the current evidence commit `a902bdd`.
 
 ## Reviewer 2
 
@@ -148,6 +155,7 @@ Major reviewer-remediation commits on `review/softwarex-resubmission-v1.4.0` inc
 - `82889085`: source-derived Uganda CHIRPS configured case and independent validator.
 - `4d038864`: near-global geographic raster-footprint normalization regression fix.
 - `9b4efed5`: manuscript Uganda evidence, comparison matrix, and supporting documentation.
+- `a902bdd`: source-pinned CHIRPS/MODIS/HAND evidence consolidation, MODIS independent validator, reviewer-response synchronization, and stricter coverage-fraction release-contract corruption tests.
 
 Key CI evidence:
 
@@ -156,7 +164,9 @@ Key CI evidence:
 - Metadata/manuscript validation run `37115602062`: success on `9b4efed5`.
 - Reproducibility run `37115602063`: success on `9b4efed5`.
 - Primary public numerical run `37118685044`: success; Uganda CHIRPS 1,238.073160 versus 1,238.073144 mm and Rubavu HAND 26.133870% in both implementations; artifact `11272582312`.
-- Three-platform core smoke run `37119045980`: success on Ubuntu 24.04, Windows 2025, and macOS 14 at `7223172`.
+- Three-platform core smoke run `37137478475`: success on Ubuntu 24.04, Windows 2025, and macOS 14 at `a902bdd`.
+- Metadata/manuscript validation run `37137478460`: success at `a902bdd`.
+- Reproducibility run `37137478520`: success at `a902bdd`.
 - ERA5-Land source-pinned evidence: `evidence/era5land/nyarugenge_era5land_2023_validation_summary.json`.
 - MOD13A3 source-pinned evidence: `evidence/modis/nyarugenge_mod13a3_2023_validation_summary.json`.
 
