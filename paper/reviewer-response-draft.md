@@ -45,15 +45,19 @@ This document is a response draft for a rebuilt submission. The verbatim five-pa
 
 ### R1.4 Controlled verification needed to remain distinct from independent real-data validation
 
-**Response:** Addressed in terminology and strengthened with additional real-data evidence. Rwanda CHIRPS reproduction remains separate from controlled fixtures. A second source-derived CHIRPS case now runs the same generic configured workflow over Uganda and is independently cross-checked with `terra`. Equivalent independent real-data checks for ERA5-Land, MODIS, and HAND remain open release gates and are not claimed complete.
+**Response:** Addressed. Controlled fixtures remain explicitly separate from independent real-data numerical checks. Rwanda CHIRPS reproduction is retained as a public-source check; the source-derived Uganda CHIRPS case runs the generic configured workflow and is independently cross-checked with `terra`; scoped independent checks now also cover the revised ERA5-Land, MODIS, and HAND methods. None is presented as validation of observational accuracy.
 **Real-data evidence:**
 - Rwanda CHIRPS: 30/30 archived district values reproduced after rounding; maximum cross-engine difference 0.000136 mm.
-- Uganda CHIRPS: configured mean 1,211.186986 mm; independent `terra` mean 1,211.186812 mm; absolute difference 0.000174 mm; all reported coverage fractions 1.0.
-- Public-data CI artifact: `chirps-2023-numerical-validation`.
+- Uganda CHIRPS: configured mean 1,238.073160 mm; independent `terra` mean 1,238.073144 mm; absolute difference 0.000016 mm; all reported coverage fractions 1.0.
+- Nyarugenge ERA5-Land 2023: production 20.597411 °C; independent `terra` 20.597414 °C; absolute difference approximately 0.000003 °C; complete reported coverage.
+- Nyarugenge MOD13A3 2023: production reports 0.56 NDVI; independent estimate 0.55775352 before the declared two-decimal output rounding; valid-area and valid-month fraction differences remain within 0.000051.
+- Rubavu HAND <=5 m: production 26.133870170321%; independent `terra` 26.133870170236%; effectively zero percentage-point difference; complete reported coverage.
+- Tracked summaries: `evidence/chirps/`, `evidence/era5land/`, `evidence/modis/`, and `evidence/hand/`.
+- Primary public numerical CI run `37118685044`, artifact `11272582312`, verifies CHIRPS and HAND on the remediation branch.
 
 ### R1.5 The generic public interface did not directly test every documented branch
 
-**Response:** Addressed. Direct contract tests now cover layer selection by index and name, scale, offset, raw-unit masking order, `na_below`, `na_above`, strict integer parsing, duplicate and empty identifiers, missing raster and boundary CRS, invalid or unsupported geometry, value bounds, full no-data failure, partial coverage, reserved output-name collisions, output schema, and CRS.
+**Response:** Addressed. Direct contract tests now cover layer selection by index and name, scale, offset, raw-unit masking order, `na_below`, `na_above`, strict integer parsing, duplicate and empty identifiers, missing raster and boundary CRS, invalid or unsupported geometry, value bounds, full no-data failure, partial coverage, reserved output-name collisions, output schema, and CRS. The independent Python release validator also rejects incomplete coverage-field groups, out-of-range fractions, and algebraically inconsistent `valid_data_fraction` values while remaining backward-compatible with the immutable v1.3 files that predate those fields.
 
 **Code/evidence:** `R/test_generic_harmonizer.R`; account-free CI suite.
 
@@ -67,10 +71,10 @@ This document is a response draft for a rebuilt submission. The verbatim five-pa
 
 ### R1.7 MODIS quality information was available but unused
 
-**Response:** Addressed in the software. The v1.4 production builder now uses the MOD13A3 pixel-reliability layer with an explicit policy; the production default accepts reliability rank 0, and a deliberate unfiltered mode remains available for controlled use. Temporal completeness and QA behavior have controlled tests. Independent source-derived MODIS numerical validation remains open.
+**Response:** Addressed. The v1.4 production builder uses the MOD13A3 pixel-reliability layer with an explicit policy; the production default accepts reliability rank 0, and a deliberate unfiltered mode remains available for controlled use. Temporal completeness and QA behavior have controlled tests. A credentialed real-data check independently reads all 24 source HDF granules for 2023, applies raw-DN scaling and rank-0 QA independently, and reproduces the Nyarugenge result under the declared two-decimal output contract. Per-granule SHA-256 values and the source-set fingerprint are retained in `evidence/modis/nyarugenge_mod13a3_2023_validation_summary.json`.
 ### R1.8 ERA5-Land annual temperature statistic needed a precise definition
 
-**Response:** Addressed. The v1.4 transformation now computes a calendar-day-weighted annual mean of the 12 monthly means, including leap-year handling, before kelvin-to-Celsius conversion. Controlled leap-year and non-leap-year tests are green. Independent real-data cross-validation remains open.
+**Response:** Addressed. The v1.4 transformation computes a calendar-day-weighted annual mean of the 12 monthly means, including leap-year handling, before kelvin-to-Celsius conversion. Controlled leap-year and non-leap-year tests are green. The source-derived Nyarugenge 2023 cross-check also passes: 20.597411 °C from the production path versus 20.597414 °C from an independent `terra` calculation, with complete reported coverage. The source SHA-256, CDS request identity, and acceptance gate are retained in `evidence/era5land/nyarugenge_era5land_2023_validation_summary.json`.
 
 **Code/evidence:**
 - `R/relief_temp_transform.R`
@@ -82,7 +86,7 @@ This document is a response draft for a rebuilt submission. The verbatim five-pa
 
 ### R1.10 Geographic/input portability should not be conflated with operating-system portability
 
-**Response:** Addressed in claims, but platform expansion remains open. The manuscript now distinguishes geographic/input portability from platform portability and states that hosted continuous integration currently validates Ubuntu Linux only. Multi-platform CI or an explicit narrower supported-platform boundary remains a release gate.
+**Response:** Addressed with an explicit support boundary and executable evidence. Geographic/input portability remains distinct from operating-system portability. The full reproducibility workflow remains Ubuntu-based, while the core dependency-light contract now passes a GitHub Actions smoke matrix on Ubuntu 24.04, Windows 2025, and macOS 14. Credentialed provider acquisition is not claimed cross-platform. Core platform smoke run `37119045980` passed all three jobs at commit `7223172`.
 
 ## Reviewer 2
 
@@ -106,7 +110,7 @@ This document is a response draft for a rebuilt submission. The verbatim five-pa
 - `python/provider_adapters.py`
 - `python/run_configured_harmonization.py`
 
-**Remaining documentation gap:** a worked bring-your-own-raster/boundaries tutorial and fuller adapter-author guide remain to be completed before release.
+**Documentation:** `docs/CONFIGURATION_AND_ADAPTERS.md` now provides a worked bring-your-own-raster/boundaries sequence, the stable adapter contract, an external `module:factory` example, QA ownership rules, and adapter testing requirements.
 
 ### R2.3 The manuscript did not demonstrate enough value over a tailored reimplementation
 
@@ -123,11 +127,9 @@ This document is a response draft for a rebuilt submission. The verbatim five-pa
 ## Remaining items before a final response can be signed
 
 The following are intentionally unresolved rather than overstated:
-- independent real-data numerical checks for ERA5-Land, MODIS, and HAND;
-- multi-platform CI or a final explicit supported-platform boundary;
-- worked bring-your-own-data and adapter-author documentation;
 - final release metadata, v1.4.0 tag, and version-specific Zenodo DOI;
-- final rendered manuscript inspection and independent final review.
+- final exact-manifest verification on the DOI-bearing release commit;
+- final rendered manuscript inspection and independent final code/manuscript review.
 ## Evidence and commit index
 
 Major reviewer-remediation commits on `review/softwarex-resubmission-v1.4.0` include:
@@ -153,5 +155,9 @@ Key CI evidence:
 - Artifact digest: `sha256:404100e16130ca13dd8661a2e1069498c6bf3846c8e11a6c56273f6f416026ed`.
 - Metadata/manuscript validation run `37115602062`: success on `9b4efed5`.
 - Reproducibility run `37115602063`: success on `9b4efed5`.
+- Primary public numerical run `37118685044`: success; Uganda CHIRPS 1,238.073160 versus 1,238.073144 mm and Rubavu HAND 26.133870% in both implementations; artifact `11272582312`.
+- Three-platform core smoke run `37119045980`: success on Ubuntu 24.04, Windows 2025, and macOS 14 at `7223172`.
+- ERA5-Land source-pinned evidence: `evidence/era5land/nyarugenge_era5land_2023_validation_summary.json`.
+- MOD13A3 source-pinned evidence: `evidence/modis/nyarugenge_mod13a3_2023_validation_summary.json`.
 
 The final signed response must replace this development commit index with the exact frozen v1.4.0 release commit and version DOI once release gates are complete.

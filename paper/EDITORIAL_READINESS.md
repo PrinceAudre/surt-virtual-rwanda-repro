@@ -1,3 +1,7 @@
+# Historical Earth Science Informatics readiness record
+
+> **Superseded.** This file documents the earlier Earth Science Informatics release-preparation cycle and is retained only for audit history. It is **not** the active submission status for SoftwareX manuscript `SOFTX-D-26-01014`. Current reviewer-remediation status is maintained in `paper/manuscript.md` and `paper/reviewer-response-draft.md`.
+
 # Earth Science Informatics submission-readiness record
 
 ## Status

@@ -1,3 +1,7 @@
+# Historical dual-agent review ledger
+
+> **Superseded.** This ledger records the earlier Earth Science Informatics review cycle. It is retained for provenance and must not be read as the current journal target or release status. The active SoftwareX reviewer-remediation record is `paper/reviewer-response-draft.md`.
+
 # Dual-agent critical-review ledger
 
 **Manuscript target:** Earth Science Informatics, Software article  

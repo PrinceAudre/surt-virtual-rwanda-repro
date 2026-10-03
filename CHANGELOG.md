@@ -10,6 +10,8 @@
 - Added explicit MOD13A3 v061 pixel-reliability filtering, a production default of rank 0, configurable accepted ranks, and a minimum valid-month fraction for annual NDVI cells.
 - Corrected the HAND low-lying denominator to valid HAND-covered area, excluding negative no-data sentinels and reporting spatial support separately.
 - Added latitude-sensitive weighting, primary-raster no-data, partial raster-footprint, ERA5 annual-statistic, MODIS QA, HAND denominator, and transformation-failure regressions.
+- Added scoped source-derived numerical cross-checks for Nyarugenge ERA5-Land 2023, Nyarugenge MOD13A3 v061 2023, and Rubavu HAND <= 5 m, with tracked source-pinned evidence and explicit observational-validity limits.
+- Strengthened the independent release validator to reject incomplete, out-of-range, and algebraically inconsistent coverage-fraction groups while retaining compatibility with immutable v1.3 reference files that predate those fields.
 
 ### Generic interface, configuration, and workflow evidence
 
@@ -19,6 +21,8 @@
 - Added a stable provider-adapter protocol with a built-in `local_raster` adapter and an external `module:factory` extension mechanism. Production provider-specific adapters remain separate future work.
 - Added a Snakemake evidence DAG that validates configuration, prepares a controlled raster fixture, executes configured harmonization, validates the output, and records machine-readable workflow evidence.
 - Added a source-derived Uganda national-boundary fixture and an account-free second-country portability gate. The test uses a deterministic synthetic raster, so it demonstrates cross-country geometry and identifier portability rather than scientific validation of an environmental product for Uganda.
+- Added a separate source-derived Uganda CHIRPS 2023 configured case and independent `terra` cross-check, including regression coverage for near-global geographic raster-footprint normalization.
+- Added a three-platform core smoke matrix covering Ubuntu 24.04, Windows 2025, and macOS 14 while retaining the explicit boundary that the full geospatial reproducibility workflow and credentialed provider acquisition are not claimed on every platform.
 - Expanded hermetic fixtures to exercise the revised scientific contracts and to expose real reprojection support loss rather than silently asserting complete coverage.
 - Made account-free result counting dynamic so reviewer-driven tests do not require a manually maintained assertion total.
 - Separated ordinary development verification from the tracked-file manifest release gate. The dedicated manifest workflow rebuilds and checks `CHECKSUMS.sha256`, while `python/run_all_checks.py --verify-manifest` remains the strict frozen-candidate gate.
@@ -32,10 +36,10 @@
 
 ### Still required before v1.4.0 release
 
-- Independent v1.4 numerical validation for ERA5-Land, MODIS, and HAND, plus refreshed CHIRPS evidence where required by the final release scope.
-- If the reviewer requires source-derived cross-country environmental evidence rather than geometry/interface portability, a second-country real-product end-to-end case remains outstanding; the current Uganda gate deliberately uses a synthetic raster.
-- Broader operating-system CI or a documented, evidence-based support boundary.
-- Final reviewer-response ledger, manuscript and figure audit, exact manifest freeze, version DOI insertion, exact-head release validation, tag, GitHub release, and Zenodo archive.
+- Final independent code/manuscript review and reviewer-response sign-off.
+- Reserve and insert the v1.4.0 version DOI into the exact release-facing metadata and manuscript.
+- Freeze the exact source tree, regenerate and verify the complete tracked-file manifest, and confirm full Ubuntu reproducibility plus the three-platform core smoke matrix at that exact commit.
+- Render and inspect the final journal package, then tag `v1.4.0`, create the matching GitHub release, and publish the exact archive to Zenodo.
 
 ## 1.3.0 - SoftwareX release candidate, 2026-08-07
 

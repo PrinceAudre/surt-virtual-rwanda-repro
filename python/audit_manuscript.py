@@ -192,8 +192,14 @@ def main() -> None:
         "deterministic synthetic raster",
         "config/uganda-chirps-2023.json",
         "R/validate_uganda_chirps_case.R",
-        "1,211.186986",
-        "0.000174",
+        "1,238.073160",
+        "0.000016",
+        "20.597411",
+        "0.55775352",
+        "26.133870",
+        "Ubuntu 24.04",
+        "Windows 2025",
+        "macOS 14",
     ]
     for phrase in required_v14_evidence:
         require(phrase in text, f"v1.4 evidence is represented accurately: {phrase}")

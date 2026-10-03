@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "status": "passed",
+  "case": "Uganda CHIRPS 2023 source-derived second-country portability",
+  "source_url": "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_annual/tifs/chirps-v2.0.2023.tif",
+  "boundary_source": "Natural Earth 1:110m Admin 0 - Countries",
+  "boundary_terms": "Public domain",
+  "configuration": "config/uganda-chirps-2023.json",
+  "output": "generated/uganda_chirps_2023.geojson",
+  "unit_id": "UGA",
+  "configured_surface_area_weighted_mean_mm": 1238.07316,
+  "independent_terra_surface_area_weighted_mean_mm": 1238.073144000021,
+  "configured_minus_independent_mm": 1.59999792686e-05,
+  "raster_coverage_fraction": 1,
+  "valid_within_raster_fraction": 1,
+  "valid_data_fraction": 1,
+  "acceptance_gates": {
+    "min_valid_data_fraction": 0.99,
+    "max_cross_engine_abs_difference_mm": 0.1
+  },
+  "limitations": [
+    "This case demonstrates a source-derived environmental raster and source-derived second-country boundary through the generic configured workflow.",
+    "Agreement is computational cross-validation and does not validate CHIRPS observational accuracy.",
+    "The case is national-scale Uganda and does not establish every provider, geography, or downstream interpretation."
+  ],
+  "source_size_bytes": 57612546,
+  "source_sha256": "7e0943e382993e3a6cbb6e1e1caaa8757a989c5852f932e94f93d9445a58f6b0",
+  "workflow_run_id": 37118685044,
+  "workflow_artifact_id": 11272582312,
+  "validation_branch": "review/softwarex-resubmission-v1.4.0",
+  "validation_commit": "4618535231e1160076d5370f6c7f78c73f921beb"
+}

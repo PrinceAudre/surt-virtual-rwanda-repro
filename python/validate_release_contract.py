@@ -36,12 +36,17 @@ class LayerSpec:
     minimum: float | None = None
     maximum: float | None = None
     provenance_tokens: tuple[str, ...] = ()
+    fraction_fields: tuple[str, ...] = ()
 
     @property
-    def allowed_properties(self) -> set[str]:
+    def required_properties(self) -> set[str]:
         if self.value_field is None:
             return {"district"}
         return {"district", self.value_field, "provenance"}
+
+    @property
+    def allowed_properties(self) -> set[str]:
+        return self.required_properties | set(self.fraction_fields)
 
 
 SPECS = (
@@ -52,6 +57,7 @@ SPECS = (
         300,
         3000,
         ("chirps", "2023"),
+        fraction_fields=("raster_coverage_fraction", "valid_within_raster_fraction", "valid_data_fraction"),
     ),
     LayerSpec(
         "relief_climate_temp.geojson",
@@ -59,6 +65,7 @@ SPECS = (
         10,
         30,
         ("era5-land", "2023"),
+        fraction_fields=("raster_coverage_fraction", "valid_within_raster_fraction", "valid_data_fraction"),
     ),
     LayerSpec(
         "relief_climate_ndvi.geojson",
@@ -66,6 +73,7 @@ SPECS = (
         0.15,
         0.95,
         ("modis", "mod13a3", "2023"),
+        fraction_fields=("valid_ndvi_area_fraction", "mean_valid_month_fraction"),
     ),
     LayerSpec(
         "relief_low_lying_hand.geojson",
@@ -73,6 +81,7 @@ SPECS = (
         0,
         100,
         ("hand", "5 m"),
+        fraction_fields=("raster_coverage_fraction", "valid_within_raster_fraction", "valid_data_fraction", "valid_hand_area_fraction"),
     ),
 )
 
@@ -135,6 +144,7 @@ def validate_payload(
     order: list[str] = []
     geometries: dict[str, str] = {}
     values: list[float] = []
+    fraction_values: dict[str, list[float]] = {field: [] for field in spec.fraction_fields}
 
     for index, feature in enumerate(features, start=1):
         if not isinstance(feature, dict) or feature.get("type") != "Feature":
@@ -143,12 +153,18 @@ def validate_payload(
         if not isinstance(properties, dict):
             raise ContractError(f"{label}: feature {index} properties must be an object")
         keys = set(properties)
-        if keys != spec.allowed_properties:
-            missing = sorted(spec.allowed_properties - keys)
-            extra = sorted(keys - spec.allowed_properties)
+        missing = sorted(spec.required_properties - keys)
+        extra = sorted(keys - spec.allowed_properties)
+        if missing or extra:
             raise ContractError(
                 f"{label}: feature {index} property contract violated; "
                 f"missing={missing}, extra={extra}"
+            )
+        present_fractions = [field for field in spec.fraction_fields if field in properties]
+        if present_fractions and len(present_fractions) != len(spec.fraction_fields):
+            absent = sorted(set(spec.fraction_fields) - set(present_fractions))
+            raise ContractError(
+                f"{label}: feature {index} fraction contract incomplete; missing={absent}"
             )
 
         district = properties.get("district")
@@ -203,6 +219,40 @@ def validate_payload(
                     f"{label}: {district} provenance lacks tokens {missing_tokens}"
                 )
 
+            if spec.fraction_fields and all(field in properties for field in spec.fraction_fields):
+                fractions: dict[str, float] = {}
+                for field in spec.fraction_fields:
+                    raw_fraction = properties.get(field)
+                    if not isinstance(raw_fraction, (int, float)) or isinstance(raw_fraction, bool):
+                        raise ContractError(f"{label}: {district} {field} is not numeric")
+                    fraction = float(raw_fraction)
+                    if not math.isfinite(fraction) or not 0 <= fraction <= 1:
+                        raise ContractError(
+                            f"{label}: {district} {field} {fraction} outside [0, 1]"
+                        )
+                    fractions[field] = fraction
+                    fraction_values[field].append(fraction)
+
+                coverage_fields = {
+                    "raster_coverage_fraction",
+                    "valid_within_raster_fraction",
+                    "valid_data_fraction",
+                }
+                if coverage_fields.issubset(fractions):
+                    expected_valid = (
+                        fractions["raster_coverage_fraction"]
+                        * fractions["valid_within_raster_fraction"]
+                    )
+                    if abs(fractions["valid_data_fraction"] - expected_valid) > 2e-6:
+                        raise ContractError(
+                            f"{label}: {district} coverage fractions are internally inconsistent"
+                        )
+                if "valid_hand_area_fraction" in fractions:
+                    if abs(fractions["valid_hand_area_fraction"] - fractions["valid_data_fraction"]) > 1e-6:
+                        raise ContractError(
+                            f"{label}: {district} HAND coverage alias differs from valid_data_fraction"
+                        )
+
     if len(set(order)) != EXPECTED_DISTRICTS:
         raise ContractError(f"{label}: district identifiers are not unique")
     if reference_order is not None and order != reference_order:
@@ -239,6 +289,13 @@ def validate_payload(
                 "provenance_tokens_present": True,
             }
         )
+    populated_fraction_values = {field: items for field, items in fraction_values.items() if items}
+    if populated_fraction_values:
+        result["fraction_fields"] = {
+            field: {"minimum": min(items), "maximum": max(items)}
+            for field, items in populated_fraction_values.items()
+        }
+        result["fraction_contract_valid"] = True
     return {"order": order, "geometries": geometries, "summary": result}
 
 
@@ -296,6 +353,33 @@ def run_failure_injection_tests() -> list[str]:
     out_of_range["features"][0]["properties"][spec.value_field] = 99999
     expect_contract_failure("out-of-range value", out_of_range, spec, "outside")
     labels.append("out-of-range value")
+
+    coverage_base = deepcopy(original)
+    for feature in coverage_base["features"]:
+        feature["properties"].update({
+            "raster_coverage_fraction": 1.0,
+            "valid_within_raster_fraction": 1.0,
+            "valid_data_fraction": 1.0,
+        })
+
+    incomplete_coverage = deepcopy(coverage_base)
+    del incomplete_coverage["features"][0]["properties"]["valid_data_fraction"]
+    expect_contract_failure("incomplete coverage fraction group", incomplete_coverage, spec, "fraction contract incomplete")
+    labels.append("incomplete coverage fraction group")
+
+    fraction_out_of_range = deepcopy(coverage_base)
+    fraction_out_of_range["features"][0]["properties"]["valid_data_fraction"] = 1.1
+    expect_contract_failure(
+        "out-of-range coverage fraction", fraction_out_of_range, spec, "outside [0, 1]"
+    )
+    labels.append("out-of-range coverage fraction")
+
+    inconsistent_coverage = deepcopy(coverage_base)
+    inconsistent_coverage["features"][0]["properties"]["valid_data_fraction"] = 0.5
+    expect_contract_failure(
+        "inconsistent coverage fractions", inconsistent_coverage, spec, "internally inconsistent"
+    )
+    labels.append("inconsistent coverage fractions")
 
     geometry_mismatch = deepcopy(original)
     geometry_mismatch["features"][0]["geometry"] = deepcopy(

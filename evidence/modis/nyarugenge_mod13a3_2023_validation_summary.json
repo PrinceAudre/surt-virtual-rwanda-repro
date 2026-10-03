@@ -1,0 +1,224 @@
+{
+  "schema_version": "1.0",
+  "status": "passed",
+  "case": "Nyarugenge MOD13A3 v061 2023 real-data numerical cross-check",
+  "district": "Nyarugenge",
+  "year": 2023,
+  "product": "MODIS/Terra MOD13A3 v061",
+  "product_doi": "10.5067/MODIS/MOD13A3.061",
+  "granule_count": 24,
+  "months": 12,
+  "tiles": [
+    "h20v09",
+    "h21v09"
+  ],
+  "source_granules": [
+    {
+      "file": "MOD13A3.A2023001.h20v09.061.2023034180342.hdf",
+      "bytes": 21289922,
+      "sha256": "a77bdf0bb149f31ac79c395e739c9996d8c9daf3b3787ba74a8bacf6a455c76e",
+      "month": "A2023001",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023001.h21v09.061.2023034180341.hdf",
+      "bytes": 21170866,
+      "sha256": "3784df19a0ffd288bb8f8c74a06f6dd2e0fb00807a1f0996257dab28ccbcba68",
+      "month": "A2023001",
+      "tile": "h21v09"
+    },
+    {
+      "file": "MOD13A3.A2023032.h20v09.061.2023070134539.hdf",
+      "bytes": 21372842,
+      "sha256": "b92c3e525b07c5b12820654cb783e24ce6f6604d1a1d1f1123c945183d604c70",
+      "month": "A2023032",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023032.h21v09.061.2023070140229.hdf",
+      "bytes": 21283411,
+      "sha256": "e0776826f109a7f2c13d9f5a57c95c82e6a5c2486523d4892c4e174774937e6c",
+      "month": "A2023032",
+      "tile": "h21v09"
+    },
+    {
+      "file": "MOD13A3.A2023060.h20v09.061.2023100012830.hdf",
+      "bytes": 21690765,
+      "sha256": "3e4775faca03a5b29e632f858bc4881fc1565e934dd246a83f0bd47079497a09",
+      "month": "A2023060",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023060.h21v09.061.2023100022746.hdf",
+      "bytes": 21514223,
+      "sha256": "689967e169e63080256a8964f734cc5199ec22f812f9247a782a8d680f6e3708",
+      "month": "A2023060",
+      "tile": "h21v09"
+    },
+    {
+      "file": "MOD13A3.A2023091.h20v09.061.2023130001518.hdf",
+      "bytes": 21328973,
+      "sha256": "62580c3ba7c50d99499779ee1e1050ea0f7ac9497aa69c62c40376bac708c308",
+      "month": "A2023091",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023091.h21v09.061.2023130001719.hdf",
+      "bytes": 21883335,
+      "sha256": "8794956fe640086dc26674473e36bd09057043981a9981370b47e27c98bb8843",
+      "month": "A2023091",
+      "tile": "h21v09"
+    },
+    {
+      "file": "MOD13A3.A2023121.h20v09.061.2023164011203.hdf",
+      "bytes": 20945841,
+      "sha256": "8f765e839c803860aa5fdd951f57e484f9b289dfec7346736e75f9346680cc86",
+      "month": "A2023121",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023121.h21v09.061.2023164010552.hdf",
+      "bytes": 21092820,
+      "sha256": "31b9e2e848fdc4bad6e6d0dcac77293b66fa2b76e7de60bb9e0c5251caaf5cec",
+      "month": "A2023121",
+      "tile": "h21v09"
+    },
+    {
+      "file": "MOD13A3.A2023152.h20v09.061.2023201094842.hdf",
+      "bytes": 21104232,
+      "sha256": "084afddfc4b26bd041946fbb0683f79ec45c8a1951da4ff9c7fdbd7ad992c943",
+      "month": "A2023152",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023152.h21v09.061.2023201093743.hdf",
+      "bytes": 20807227,
+      "sha256": "20079504dc274d487b4ca26ea8f9030908ce0c0cb361f0f87653c549efb252f5",
+      "month": "A2023152",
+      "tile": "h21v09"
+    },
+    {
+      "file": "MOD13A3.A2023182.h20v09.061.2023226000226.hdf",
+      "bytes": 20848156,
+      "sha256": "9961fe845429fc62a06102411edef65e1caedd17ad3c12d7bdbc3cd1e90ff616",
+      "month": "A2023182",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023182.h21v09.061.2023226000455.hdf",
+      "bytes": 20755190,
+      "sha256": "e5115a4517e8d81417610cdffcac12021c7299c1808e0e6f6efd42210fb0a40b",
+      "month": "A2023182",
+      "tile": "h21v09"
+    },
+    {
+      "file": "MOD13A3.A2023213.h20v09.061.2023258002319.hdf",
+      "bytes": 21527768,
+      "sha256": "e6e24aeb48cd4ff48b2d94b68fd9fcb3a55c1b286553f02f44de56337be2ba6e",
+      "month": "A2023213",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023213.h21v09.061.2023258001027.hdf",
+      "bytes": 20971192,
+      "sha256": "e0b391c5d303c7fbf0aed96ad51aaad49980f6f4609a5fd79dd918529d2e95a1",
+      "month": "A2023213",
+      "tile": "h21v09"
+    },
+    {
+      "file": "MOD13A3.A2023244.h20v09.061.2023290142200.hdf",
+      "bytes": 21672878,
+      "sha256": "43da7e8bceb5ab5d40f9fbc7a5b5a022fc5d1852128f098a250003a866916135",
+      "month": "A2023244",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023244.h21v09.061.2023290142350.hdf",
+      "bytes": 21315799,
+      "sha256": "b82fc604f2e9ca3073605cabd00d5ab9d315e5b5a10eac46d32fa81a8fdea291",
+      "month": "A2023244",
+      "tile": "h21v09"
+    },
+    {
+      "file": "MOD13A3.A2023274.h20v09.061.2023306001124.hdf",
+      "bytes": 21578145,
+      "sha256": "0ff13ac1f887dee0942b3fa3961527cf387fb5eb52f7d02849b304e0943c5d56",
+      "month": "A2023274",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023274.h21v09.061.2023305234538.hdf",
+      "bytes": 21387728,
+      "sha256": "6c63723d2f271403128e19a0f0fb4f073c093bc6041f7305e97db16bf3c4d3ff",
+      "month": "A2023274",
+      "tile": "h21v09"
+    },
+    {
+      "file": "MOD13A3.A2023305.h20v09.061.2023340010654.hdf",
+      "bytes": 21927959,
+      "sha256": "32c6209b3fd9668e16f289db2aed1371c76c4792e5b9ac226b2ea220e72b9e11",
+      "month": "A2023305",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023305.h21v09.061.2023340012050.hdf",
+      "bytes": 21936735,
+      "sha256": "caae757f4f1580345cf2f46c9ead8a57af04690970a26856bd7da391d859419c",
+      "month": "A2023305",
+      "tile": "h21v09"
+    },
+    {
+      "file": "MOD13A3.A2023335.h20v09.061.2024006113808.hdf",
+      "bytes": 22135034,
+      "sha256": "b4937dd4be1dca4ab6fe067d13c72cf5dcc06aa472cb2253eecf146361713810",
+      "month": "A2023335",
+      "tile": "h20v09"
+    },
+    {
+      "file": "MOD13A3.A2023335.h21v09.061.2024006113831.hdf",
+      "bytes": 21767961,
+      "sha256": "3139d0d620a9bf03082e69120b797011a99f8cb2ed6cd3bff2d589e2509d7d91",
+      "month": "A2023335",
+      "tile": "h21v09"
+    }
+  ],
+  "source_set_sha256": "ca039777923e708c2cc8b5df6b7ce61f32c4d133140bcf5c7e4a87ea1c4810c9",
+  "source_acquisition": "python/fetch_modis_ndvi.py via NASA earthaccess; credentials remain external to the repository",
+  "ndvi_subdataset": "1 km monthly NDVI",
+  "qa_subdataset": "1 km monthly pixel reliability",
+  "raw_valid_dn_range": [
+    -2000,
+    10000
+  ],
+  "scale_factor": 0.0001,
+  "accepted_pixel_reliability": 0,
+  "min_valid_month_fraction": 0.5,
+  "sample": {
+    "source_granule": "MOD13A3.A2023001.h20v09.061.2023034180342.hdf",
+    "cell": 2,
+    "raw_ndvi_dn": 7878,
+    "pixel_reliability": 0,
+    "scaled_ndvi": 0.7878
+  },
+  "production_reported_mean_ndvi": 0.56,
+  "independent_terra_area_weighted_mean_ndvi": 0.5577535207869,
+  "production_minus_independent_mean": 0.002246479213063,
+  "production_valid_ndvi_area_fraction": 0.4353,
+  "independent_valid_ndvi_area_fraction": 0.4353432939086,
+  "production_minus_independent_valid_area_fraction": -4.3293908568e-05,
+  "production_mean_valid_month_fraction": 0.4488,
+  "independent_mean_valid_month_fraction": 0.4487940997114,
+  "production_minus_independent_month_fraction": 5.900288567562e-06,
+  "acceptance_gates": {
+    "mean_must_match_after_rounding_to_2_decimals": true,
+    "max_coverage_difference": 5.1e-05
+  },
+  "validator": "R/validate_modis_ndvi_nyarugenge_real.R",
+  "production_builder": "R/build_relief_climate_ndvi_real.R",
+  "limitation": "Computational cross-validation of one district and one year using source HDF granules; not validation of MOD13A3 observational accuracy or ecological interpretation.",
+  "validation_date": "2026-10-03",
+  "validation_host": "authorized Windows 11 workstation",
+  "r_version": "4.6.0",
+  "earthaccess_authenticated_search_result_count": 24,
+  "credential_boundary": "NASA Earthdata credentials were read from provider-standard local configuration and are not stored in this repository."
+}

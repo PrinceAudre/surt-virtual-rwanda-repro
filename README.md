@@ -16,7 +16,8 @@ The software is descriptive and research-oriented. It does not generate validate
 - **Zenodo concept DOI:** `10.5281/zenodo.21671788`
 - **Earlier immutable release:** `v1.2.0`, DOI `10.5281/zenodo.21744708`
 - **Code licence:** MIT
-- **Current clean-run CI environment:** Ubuntu Linux
+- **Full reproducibility CI:** Ubuntu Linux
+- **Core platform smoke CI:** Ubuntu 24.04, Windows 2025, and macOS 14
 
 Version `1.4.0` is not yet a release. No v1.4.0 tag or version DOI should be created until the reviewer-remediation ledger and release gates are complete. The published v1.3.0 release remains immutable.
 
@@ -32,7 +33,7 @@ SuRT-GeoHarmonizer currently provides five connected layers:
 
 Uganda now provides two complementary portability cases. `R/test_second_country_portability.R` uses a source-derived Uganda national boundary with a deterministic synthetic raster to isolate geometry and identifier portability. Separately, `config/uganda-chirps-2023.json` runs the public CHIRPS v2.0 annual 2023 raster and the same Uganda boundary through the generic configured workflow; `R/validate_uganda_chirps_case.R` independently cross-checks the result with `terra` exact fractions and cell-area weights.
 
-Remaining release work includes independent v1.4 numerical validation for ERA5-Land, MODIS, and HAND, broader operating-system evidence or an explicit supported-platform boundary, and the final reviewer-response and release-freeze sequence.
+Scoped v1.4 real-data numerical cross-checks are now recorded for CHIRPS, ERA5-Land, MODIS, and HAND. Core contract smoke tests also pass on Ubuntu 24.04, Windows 2025, and macOS 14. Remaining release work is the final reviewer-response, independent review, exact release freeze, version metadata, and archival sequence.
 
 ## Five-minute quick start
 
@@ -105,7 +106,7 @@ python python/run_configured_harmonization.py --config config/uganda-chirps-2023
 Rscript R/validate_uganda_chirps_case.R 2023
 ```
 
-The configured case uses the public CHIRPS v2.0 annual 2023 raster and the source-derived Uganda boundary. In clean Ubuntu CI it produced 1,211.186986 mm with all three coverage fractions equal to 1.0; an independent `terra` area-weighted calculation produced 1,211.186812 mm, an absolute difference of 0.000174 mm. This is computational cross-validation of the specified workflow, not validation of CHIRPS observational accuracy.
+The configured case uses the public CHIRPS v2.0 annual 2023 raster and the source-derived Uganda boundary. In clean Ubuntu CI it produced 1,238.073160 mm with all three coverage fractions equal to 1.0; an independent `terra` area-weighted calculation produced 1,238.073144 mm, an absolute difference of 0.000016 mm. This is computational cross-validation of the specified workflow, not validation of CHIRPS observational accuracy.
 
 ## Generic command-line interface
 
@@ -249,12 +250,12 @@ The public-data validation evidence now reports:
 - Rwanda: 30 of 30 archived values reproduce exactly after rounding;
 - Rwanda maximum cross-engine difference: 0.000136 mm;
 - Rwanda maximum cell-area-weighting difference: 0.005127 mm;
-- Uganda configured national mean: 1,211.186986 mm;
-- Uganda independent `terra` area-weighted mean: 1,211.186812 mm;
-- Uganda absolute cross-engine difference: 0.000174 mm;
+- Uganda configured national mean: 1,238.073160 mm;
+- Uganda independent `terra` area-weighted mean: 1,238.073144 mm;
+- Uganda absolute cross-engine difference: 0.000016 mm;
 - Uganda raster-footprint, within-raster finite-data, and overall valid-data fractions: 1.0.
 
-These are computational reproduction and cross-validation results for the specified CHIRPS source, year, geometries, and aggregation contracts. They do not validate CHIRPS observational accuracy. Equivalent independent numerical validation for the revised ERA5-Land, MODIS, and HAND v1.4 methods remains a release gate.
+These are computational reproduction and cross-validation results for the specified CHIRPS source, year, geometries, and aggregation contracts. They do not validate CHIRPS observational accuracy. Scoped independent v1.4 numerical checks are also retained under `evidence/` for ERA5-Land, MODIS, and HAND; each check is bounded to its stated district, year, product, source bytes, and acceptance gates rather than being a claim of observational accuracy.
 
 ## Repository map
 
@@ -264,6 +265,10 @@ These are computational reproduction and cross-validation results for the specif
 - `R/test_second_country_portability.R`: real Uganda-boundary portability gate using a synthetic signal.
 - `config/uganda-chirps-2023.json`: source-derived Uganda CHIRPS configured job.
 - `R/validate_uganda_chirps_case.R`: independent Uganda CHIRPS numerical cross-check.
+- `R/validate_era5land_nyarugenge_real.R`: scoped ERA5-Land real-data numerical cross-check.
+- `R/validate_modis_ndvi_nyarugenge_real.R`: credentialed MOD13A3 real-data cross-check with per-granule SHA-256 evidence.
+- `R/validate_hand_rubavu_real.R`: scoped public HAND real-data numerical cross-check.
+- `evidence/`: tracked source-pinned summaries for the scoped real-data validation cases.
 - `R/test_zonal_area_summary.R`: partial-coverage, latitude-sensitive, and near-global footprint regressions.
 - `R/test_temperature_annual_mean.R`: ERA5 annual-statistic tests.
 - `R/test_ndvi_qa.R`: MOD13A3 quality and temporal-completeness tests.
@@ -303,7 +308,7 @@ The current release records lightweight human-readable provenance. It does not c
 - `python/run_all_checks.py --verify-manifest` additionally requires the exact tracked-file manifest and verifies every listed digest.
 - `python/validate_release_contract.py` independently checks committed GeoJSON files and rejects controlled corruptions.
 - `CHECKSUMS.sha256` covers the complete tracked development scope and is rebuilt and checked by the dedicated v1.4 manifest workflow after human source commits.
-- GitHub Actions reruns the account-free evidence suite and Snakemake workflow on a clean Ubuntu runner; manual dispatch can enable strict manifest verification.
+- GitHub Actions reruns the full account-free evidence suite and Snakemake workflow on a clean Ubuntu runner; manual dispatch can enable strict manifest verification. A separate core smoke matrix verifies the dependency-light contract on Ubuntu 24.04, Windows 2025, and macOS 14.
 - The eventual v1.4 tag and Zenodo version DOI must identify the exact same approved release content.
 
 Checksums establish byte integrity, not scientific validity.

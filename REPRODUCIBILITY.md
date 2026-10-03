@@ -16,7 +16,7 @@ No v1.4.0 tag or version DOI is valid until all reviewer-remediation release gat
 Rscript -e "renv::restore(prompt = FALSE)"
 ```
 
-The current hosted account-free workflow uses R 4.6.0 on Ubuntu Linux with GDAL, GEOS, PROJ, UDUNITS, CMake, and related geospatial system dependencies. Python 3.12 runs validation and orchestration. Snakemake executes the declarative workflow evidence DAG.
+The full hosted account-free workflow uses R 4.6.0 on Ubuntu Linux with GDAL, GEOS, PROJ, UDUNITS, CMake, and related geospatial system dependencies. Python 3.12 runs validation and orchestration. Snakemake executes the declarative workflow evidence DAG. A separate core smoke matrix also passes on Ubuntu 24.04, Windows 2025, and macOS 14; this matrix verifies the core dependency-light contract and does not imply that every credentialed provider acquisition path has been exercised on every operating system.
 
 Optional real-data provider clients are pinned in `requirements-providers.txt`:
 
@@ -184,7 +184,7 @@ python python/run_configured_harmonization.py --config config/uganda-chirps-2023
 Rscript R/validate_uganda_chirps_case.R 2023
 ```
 
-The configured job uses the public CHIRPS v2.0 annual 2023 raster, the Natural Earth Uganda boundary, the same `local_raster` adapter, and the generic administrative harmonizer. The validator independently recomputes the national surface-area-weighted mean with `terra` exact polygon-cell fractions and cell areas. Clean Ubuntu CI produced 1,211.186986 mm from the configured workflow and 1,211.186812 mm independently, an absolute difference of 0.000174 mm; all three reported coverage fractions were 1.0.
+The configured job uses the public CHIRPS v2.0 annual 2023 raster, the Natural Earth Uganda boundary, the same `local_raster` adapter, and the generic administrative harmonizer. The validator independently recomputes the national surface-area-weighted mean with `terra` exact polygon-cell fractions and cell areas. Clean Ubuntu CI produced 1,238.073160 mm from the configured workflow and 1,238.073144 mm independently, an absolute difference of 0.000016 mm; all three reported coverage fractions were 1.0.
 
 This closes the source-derived second-country environmental-case gap for one account-free product and national geometry. It establishes reproducible use of the same generic configured workflow outside Rwanda; it does not validate CHIRPS observational accuracy or establish scientific validity for every provider, geography, or downstream interpretation.
 
@@ -249,6 +249,26 @@ Access requirements:
 
 No credential is stored in the repository. Provider services and products can change independently of this software.
 
+## Scoped v1.4 real-data numerical cross-checks
+
+The reviewer-remediation branch retains case-specific real-data validation summaries under `evidence/`. These checks compare the production transformation and zonal path with an independently implemented calculation for the same source bytes and case. They establish computational agreement for the stated case only; they do not validate observational accuracy or universal provider behaviour.
+
+Run the validators after the required source caches are present:
+
+```text
+Rscript R/validate_era5land_nyarugenge_real.R
+Rscript R/validate_modis_ndvi_nyarugenge_real.R
+Rscript R/validate_hand_rubavu_real.R
+```
+
+Current scoped evidence:
+
+- **ERA5-Land, Nyarugenge, 2023:** production 20.597411 ?C versus independent `terra` 20.597414 ?C; absolute difference approximately 0.000003 ?C; complete reported coverage. The tracked evidence records the source SHA-256 and CDS request identity.
+- **MOD13A3 v061, Nyarugenge, 2023:** production output 0.56 NDVI versus independent pre-rounding estimate 0.55775352, agreeing under the declared two-decimal output contract. Valid-area and mean-valid-month fractions differ by less than 0.000051. The tracked evidence records all 24 source granule names, byte sizes, SHA-256 digests, and a source-set fingerprint.
+- **HAND 30 m, Rubavu, threshold <= 5 m:** production 26.133870170321% versus independent `terra` 26.133870170236%; effectively zero percentage-point difference, with complete reported coverage in the CI case. The tracked evidence records the exact source-tile SHA-256 and CI run/artifact identity.
+
+ERA5-Land and MODIS source acquisition requires provider credentials configured outside the repository. HAND is public and account-free. No credential material is retained in `evidence/`.
+
 ## Published CHIRPS validation baseline
 
 Run the existing public-data validator with:
@@ -265,7 +285,7 @@ The published v1.3 evidence for the tested 2023 source and Rwanda geometry repor
 - maximum cell-area-weighting difference: 0.005127 mm;
 - root mean square weighting difference: 0.002385 mm.
 
-The Rwanda check is computational reproduction of the archived CHIRPS layer, not validation of CHIRPS observational accuracy. The source-derived Uganda case adds an independent configured-workflow check for the same public product outside Rwanda: 1,211.186986 mm configured versus 1,211.186812 mm from an independent `terra` area-weighted calculation, with an absolute difference of 0.000174 mm and complete reported coverage. Neither result substitutes for independent v1.4 numerical checks of the revised ERA5-Land, MODIS, and HAND methods. Those checks remain release gates.
+The Rwanda check is computational reproduction of the archived CHIRPS layer, not validation of CHIRPS observational accuracy. The source-derived Uganda case adds an independent configured-workflow check for the same public product outside Rwanda: 1,238.073160 mm configured versus 1,238.073144 mm from an independent `terra` area-weighted calculation, with an absolute difference of 0.000016 mm and complete reported coverage. Scoped independent v1.4 checks now also pass for Nyarugenge ERA5-Land, Nyarugenge MOD13A3, and Rubavu HAND. Their source-pinned summaries are retained under `evidence/`; they establish computational cross-validation only for the stated product, source, place, year or threshold, and acceptance gates.
 
 ## Published v1.3 reference files versus v1.4 development outputs
 
@@ -312,8 +332,8 @@ After every reviewer concern and release gate has executable or documentary evid
 3. insert the reserved v1.4.0 DOI into release-facing metadata and manuscript files;
 4. regenerate the complete tracked-file checksum manifest;
 5. run `python python/run_all_checks.py --verify-manifest` on that exact DOI-bearing commit;
-6. run and review all remaining required real-data numerical validations, including ERA5-Land, MODIS, and HAND;
-7. confirm supported operating-system CI is green and document any unsupported platform boundary;
+6. review the tracked CHIRPS, ERA5-Land, MODIS, and HAND real-data validation evidence against the exact release commit;
+7. confirm the three-platform core smoke matrix and full Ubuntu reproducibility CI remain green, and retain the explicit boundary that credentialed provider acquisition was not exercised on every platform;
 8. complete independent code and manuscript review;
 9. tag the exact approved commit `v1.4.0`;
 10. create the matching GitHub release without altering tagged files;
@@ -328,8 +348,8 @@ After every reviewer concern and release gate has executable or documentary evid
 - The Uganda synthetic-signal gate isolates geometry and identifier portability. A separate source-derived CHIRPS case demonstrates the configured workflow on a real second-country environmental raster and boundary, but does not validate CHIRPS observational accuracy or universal provider portability.
 - The built-in adapter currently covers an already prepared local raster. The plugin boundary is stable, but source-specific production acquisition and QA adapters are not implied by that interface.
 - ERA5-Land and MODIS rebuilds require provider accounts.
-- Independent v1.4 numerical validation is still required for ERA5-Land, MODIS, and HAND.
+- Scoped independent v1.4 numerical checks now exist for ERA5-Land, MODIS, and HAND. Each is a computational cross-check of one stated case and does not establish observational accuracy, universal geographic validity, or provider-wide correctness.
 - Annual administrative summaries suppress seasonality, extremes, and within-unit heterogeneity.
 - MODIS QA filtering reduces spatial and temporal support; reported coverage is therefore part of the result, not an optional cosmetic field.
 - HAND at or below 5 m is a static terrain descriptor, not observed flooding, flood probability, a validated hazard model, a forecast, or operational advice.
-- Current hosted account-free verification is Ubuntu-based. Broader operating-system CI remains a v1.4 release gate unless the final release explicitly documents a narrower supported-platform boundary.
+- Full hosted account-free reproducibility verification remains Ubuntu-based. The core smoke contract passes on Ubuntu 24.04, Windows 2025, and macOS 14; credentialed provider acquisition and the complete geospatial stack are not claimed to have been exercised on every platform.
