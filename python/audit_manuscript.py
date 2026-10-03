@@ -14,6 +14,7 @@ EXPECTED_TITLE = (
     "administrative-scale Earth-data harmonization and provenance labelling"
 )
 VERSION_DOI = "10.5281/zenodo.21840177"
+CURRENT_AFFILIATION = "School of Public Health, College of Medicine and Health Sciences, University of Rwanda, Kigali, Rwanda"
 RELEASE_TAG_URL = "https://github.com/PrinceAudre/surt-virtual-rwanda-repro/tree/v1.3.0"
 REQUIRED_HEADINGS = [
     "Abstract",
@@ -55,6 +56,7 @@ EXPECTED_DOIS = {
     "10.32614/CRAN.package.exactextractr",
     "10.1038/sdata.2016.18",
     "10.3233/DS-210053",
+    "10.12688/wellcomeopenres.24774.3",
 }
 
 
@@ -112,7 +114,7 @@ def main() -> None:
     text = MANUSCRIPT.read_text(encoding="utf-8")
     require(text.startswith(f"# {EXPECTED_TITLE}\n"), "SoftwareX title is exact")
     require("Article type: Original Software Publication" in text, "article type is Original Software Publication")
-    require("Independent Researcher, Kigali, Rwanda" in text, "truthful independent affiliation is present")
+    require(CURRENT_AFFILIATION in text, "current University of Rwanda affiliation is present")
     require("0009-0002-0799-3140" in text, "ORCID is present")
     require("priplee@gmail.com" in text, "corresponding and support email is present")
 
@@ -147,9 +149,9 @@ def main() -> None:
     require("### 2.4. Rwanda reference builders" in text, "reference-builder subsection is present")
 
     narrative_citations = cited_reference_numbers(text[:references_start])
-    require(narrative_citations == set(range(1, 11)),
-            "grouped and ranged narrative citations cover references 1 through 10")
-    for number in range(1, 11):
+    require(narrative_citations == set(range(1, 12)),
+            "grouped and ranged narrative citations cover references 1 through 11")
+    for number in range(1, 12):
         require(re.search(rf"^\[{number}\]\s", text[references_start:metadata_start], re.MULTILINE) is not None,
                 f"reference [{number}] appears in the reference list")
 
@@ -221,6 +223,12 @@ def main() -> None:
         require(phrase in text, f"reviewer-requested tool comparison is represented: {phrase}")
     require("user-defined" in text and "documented primary scope" in text,
             "comparison matrix states its non-overclaiming comparison rule")
+    require("DART-Pipeline" in text and "10.12688/wellcomeopenres.24774.3" in text,
+            "adjacent climate-health data-integration pipeline is acknowledged")
+    require("raster-to-administrative release boundary" in text,
+            "novelty claim is narrowed to the demonstrated release-evidence boundary")
+    require("fixture `module:factory` adapter" in text,
+            "external adapter extension boundary is represented as executable evidence")
 
     require("R/harmonize_admin_raster.R" in text, "manuscript identifies the public generic interface")
     require(VERSION_DOI in text, "manuscript records the published v1.3.0 Zenodo DOI")
