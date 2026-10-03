@@ -4,7 +4,7 @@
 # Rebuild release: python python/build_checksum_manifest.py --all-tracked --write
 fbf815468cd887b5898ba8b2fc367f78f5ea8f30f83ec75dac923b12479e7a7d  .gitattributes
 5157494aa5604e62ff29d02bf2f325fb00ad6002b8cf1c763d58d0841641ef8c  .github/workflows/metadata-validation.yml
-62671aa98a23d341c1f1d7c7eeaa41c568172c8baefde077a98f3f1eb42bbc2d  .github/workflows/public-data-validation.yml
+b2421bceb39256dbb5a791f2a8662b3199ebe1b0b581ec2844e848067d782094  .github/workflows/public-data-validation.yml
 e7a22e852959db5770cf5643ad70f6f4a94f5e71fe706f404ce54a9ffe07b2ce  .github/workflows/reproducibility.yml
 8acbb65ee1816db1f5badf8afe7a2aa8557d012be8c2f08853aa1125ff59de8c  .github/workflows/softwarex-manifest-refresh.yml
 91e1c0f9bd0d6b30d23159d1a7d4e4b980c07a7bb2764883d344fced9eb45e21  .gitignore
