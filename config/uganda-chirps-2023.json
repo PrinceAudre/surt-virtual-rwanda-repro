@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "job_id": "uganda-chirps-2023-real-portability",
+  "provider": {
+    "adapter": "local_raster",
+    "options": {
+      "path": "cache/chirps/chirps-v2.0.2023.tif"
+    }
+  },
+  "boundaries": {
+    "path": "fixtures/uganda_natural_earth_110m.geojson",
+    "id_field": "iso_a3"
+  },
+  "variable": {
+    "name": "annual_rainfall_mm",
+    "layer": 1
+  },
+  "transform": {
+    "scale": 1,
+    "offset": 0,
+    "na_below": 0,
+    "na_above": null
+  },
+  "aggregation": {
+    "method": "surface_area_weighted_mean",
+    "min_valid_fraction": 0.99
+  },
+  "qa": {
+    "mode": "none",
+    "options": {}
+  },
+  "output": {
+    "path": "generated/uganda_chirps_2023.geojson",
+    "crs": "EPSG:4326",
+    "round_digits": 6,
+    "min_value": 0,
+    "max_value": 5000
+  },
+  "provenance": {
+    "text": "CHIRPS v2.0 annual 2023 rainfall, UCSB Climate Hazards Center, public domain; Uganda boundary from Natural Earth 1:110m Admin 0 Countries, public domain; negative CHIRPS values masked; surface-area-weighted administrative mean; source-derived second-country portability case"
+  }
+}
