@@ -169,7 +169,7 @@ Run:
 Rscript R/test_second_country_portability.R
 ```
 
-The test reads `fixtures/uganda_naturalearth_110m.geojson`, a source-derived Uganda national polygon from Natural Earth 1:110m Admin 0 Countries, and combines it with a deterministic synthetic raster created at runtime. It runs that pair through `harmonize_admin_raster()` and checks identifier preservation, valid WGS84 geometry, complete synthetic-raster support, bounded output, source-geometry preservation, and provenance wording.
+The test reads `fixtures/uganda_natural_earth_110m.geojson`, a source-derived Uganda national polygon from Natural Earth 1:110m Admin 0 Countries, and combines it with a deterministic synthetic raster created at runtime. It runs that pair through `harmonize_admin_raster()` and checks identifier preservation, valid WGS84 geometry, complete synthetic-raster support, bounded output, source-geometry preservation, and provenance wording.
 
 This is stronger than a purely synthetic arbitrary-polygon fixture because the administrative geometry is a real non-Rwanda country boundary. It remains a software portability test, not scientific validation of an environmental product for Uganda. If reviewer acceptance requires a source-derived second-country raster product as well as a source-derived boundary, that separate end-to-end real-product case remains outstanding.
 

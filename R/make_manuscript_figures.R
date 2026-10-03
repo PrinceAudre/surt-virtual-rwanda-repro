@@ -124,15 +124,15 @@ open_eps <- function(filename, width, height, pointsize = 10) {
 
 layers <- lapply(specs, read_checked_layer)
 
-# Figure 1: a clean production path plus independent evidence band. Evidence
-# boxes are not connected back into individual production nodes because each
-# gate addresses a different claim class and crossing arrows reduce readability.
+# Figure 1: production contract plus independent evidence band. The v1.4
+# architecture distinguishes provider preparation, declarative configuration,
+# generic harmonization, provenance-labelled output, and release controls.
 draw_architecture <- function() {
   par(mar = rep(0, 4))
   plot.new()
   plot.window(xlim = c(0, 11), ylim = c(0, 7.2))
 
-  box <- function(xleft, ybottom, xright, ytop, label, cex = 0.76, lwd = 1.15) {
+  box <- function(xleft, ybottom, xright, ytop, label, cex = 0.72, lwd = 1.15) {
     rect(xleft, ybottom, xright, ytop, lwd = lwd)
     text((xleft + xright) / 2, (ybottom + ytop) / 2, label, cex = cex)
   }
@@ -140,44 +140,47 @@ draw_architecture <- function() {
     arrows(x0, y0, x1, y1, length = 0.07, lwd = 1.05, lty = lty)
   }
 
-  # Source products.
-  box(0.15, 5.85, 1.75, 6.55, "CHIRPS\nrainfall")
-  box(0.15, 4.95, 1.75, 5.65, "ERA5-Land\ntemperature")
-  box(0.15, 4.05, 1.75, 4.75, "MODIS\nNDVI")
-  box(0.15, 3.15, 1.75, 3.85, "Global HAND\nterrain")
+  # Reference source products.
+  box(0.05, 5.90, 1.45, 6.52, "CHIRPS\nrainfall")
+  box(0.05, 5.10, 1.45, 5.72, "ERA5-Land\ntemperature")
+  box(0.05, 4.30, 1.45, 4.92, "MODIS\nNDVI")
+  box(0.05, 3.50, 1.45, 4.12, "Global HAND\nterrain")
 
-  # Core production path.
-  box(2.20, 4.55, 4.05, 6.05,
-      "Provider-specific\nacquisition, masking,\nscaling, mosaicking and\ntemporal aggregation")
-  box(4.50, 4.55, 6.35, 6.05,
-      "Polygon extraction\nand coverage-fraction-\nweighted administrative\naggregation")
-  box(6.80, 4.55, 8.65, 6.05,
-      "Common GeoJSON\nschema, provenance\nstrings and per-file\nsource terms")
-  box(9.10, 4.55, 10.85, 6.05,
-      "Versioned release\nmetadata, integrity\nmanifest and archive")
+  # Core production and configuration path.
+  box(1.75, 4.55, 3.25, 6.00,
+      "Provider-specific\npreparation:\nacquisition, QA,\nmasking and aggregation")
+  box(3.55, 4.55, 5.05, 6.00,
+      "Declarative JSON\njob contract and\nprovider-adapter\nboundary")
+  box(5.35, 4.55, 6.90, 6.00,
+      "Generic polygon\nharmonization:\noverlap x cell-area\nweighted means")
+  box(7.20, 4.55, 8.70, 6.00,
+      "Coverage fields,\nprovenance-labelled\nWGS84 GeoJSON")
+  box(9.00, 4.55, 10.80, 6.00,
+      "Versioned release\nmetadata, checksum\nmanifest and archive")
 
-  for (y in c(6.20, 5.30, 4.40, 3.50)) arrow(1.75, y, 2.20, 5.30)
-  arrow(4.05, 5.30, 4.50, 5.30)
-  arrow(6.35, 5.30, 6.80, 5.30)
-  arrow(8.65, 5.30, 9.10, 5.30)
+  for (y in c(6.21, 5.41, 4.61, 3.81)) arrow(1.45, y, 1.75, 5.28)
+  arrow(3.25, 5.28, 3.55, 5.28)
+  arrow(5.05, 5.28, 5.35, 5.28)
+  arrow(6.90, 5.28, 7.20, 5.28)
+  arrow(8.70, 5.28, 9.00, 5.28)
 
-  text(5.50, 3.03, "Independent executable evidence and validation", cex = 0.82, font = 2)
+  text(5.50, 3.08, "Independent executable evidence and validation", cex = 0.82, font = 2)
 
-  evidence_centres <- c(1.22, 3.37, 5.52, 7.67, 9.82)
-  box(0.30, 1.55, 2.15, 2.65,
-      "Positive synthetic\ntransformation fixture\n(9 assertions)")
-  box(2.45, 1.55, 4.30, 2.65,
-      "Projected arbitrary-\nidentifier portability\nfixture (6 assertions)")
-  box(4.60, 1.55, 6.45, 2.65,
-      "Transformation\nfailure injection\n(7 assertions)")
-  box(6.75, 1.55, 8.60, 2.65,
-      "Independent release\ncontract and corruption\ntests (10 outcomes)")
-  box(8.90, 1.55, 10.75, 2.65,
-      "Public CHIRPS\nreproduction and\nweighting sensitivity")
+  evidence_centres <- c(1.20, 3.35, 5.50, 7.65, 9.80)
+  box(0.25, 1.55, 2.15, 2.65,
+      "Scientific fixtures:\nweighting, coverage,\nERA5, MODIS and HAND")
+  box(2.40, 1.55, 4.30, 2.65,
+      "Config, adapter and\nSnakemake workflow\ncontract checks")
+  box(4.55, 1.55, 6.45, 2.65,
+      "Portability evidence:\nprojected fixtures plus\nreal Uganda boundary\nwith synthetic signal")
+  box(6.70, 1.55, 8.60, 2.65,
+      "Failure injection and\nindependent GeoJSON\nrelease-contract checks")
+  box(8.85, 1.55, 10.75, 2.65,
+      "Published CHIRPS\nreproduction and\nweighting sensitivity")
 
-  box(0.30, 0.30, 10.75, 1.05,
-      "Clean continuous integration records machine-readable outcomes; listed-file SHA-256 checks establish integrity, not scientific validity",
-      cex = 0.72)
+  box(0.25, 0.30, 10.75, 1.05,
+      "Clean Ubuntu CI records executable evidence; tracked-file SHA-256 checks establish byte integrity, not scientific validity",
+      cex = 0.70)
   for (x in evidence_centres) arrow(x, 1.55, x, 1.05, lty = 2)
 }
 

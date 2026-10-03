@@ -96,7 +96,7 @@ This test creates a projected synthetic raster and arbitrary polygon units, invo
 Rscript R/test_second_country_portability.R
 ```
 
-This gate uses the source-derived Uganda polygon in `fixtures/uganda_naturalearth_110m.geojson` and a deterministic synthetic raster. The output is therefore evidence of geometry and identifier portability only. Source and interpretation terms are recorded in `NOTICE.md`.
+This gate uses the source-derived Uganda polygon in `fixtures/uganda_natural_earth_110m.geojson` and a deterministic synthetic raster. The output is therefore evidence of geometry and identifier portability only. Source and interpretation terms are recorded in `NOTICE.md`.
 
 ## Generic command-line interface
 
