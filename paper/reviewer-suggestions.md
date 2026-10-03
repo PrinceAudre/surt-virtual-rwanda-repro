@@ -1,3 +1,7 @@
+# Historical reviewer-suggestion dossier
+
+> **Superseded.** These candidates were prepared for the earlier Earth Science Informatics submission plan. This file is retained for audit history and must not be used as the active reviewer-suggestion list for SoftwareX.
+
 # Suggested reviewers for Earth Science Informatics
 
 Prepared for the Software article:

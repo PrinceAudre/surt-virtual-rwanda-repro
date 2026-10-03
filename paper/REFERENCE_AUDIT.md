@@ -1,3 +1,7 @@
+# Historical reference verification record
+
+> **Superseded.** This reference audit was prepared for the earlier Earth Science Informatics manuscript. It is retained for provenance only. The current SoftwareX manuscript reference set is governed by `paper/manuscript.md` and its executable audit.
+
 # Reference verification record
 
 **Scope:** active Earth Science Informatics manuscript  

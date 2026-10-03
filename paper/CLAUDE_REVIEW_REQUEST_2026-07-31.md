@@ -1,3 +1,7 @@
+# Historical Claude review request
+
+> **Superseded.** This dated review request belongs to the earlier Earth Science Informatics cycle. It is retained for audit history and does not define the current SoftwareX reviewer-remediation scope.
+
 # Claude review request: provenance-figure integration and manuscript preflight
 
 **Date:** 31 July 2026  

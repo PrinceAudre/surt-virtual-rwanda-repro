@@ -90,6 +90,31 @@ def main() -> None:
     require("all-tracked" in checksum_builder,
             "checksum builder supports the all-tracked integrity contract")
 
+    # Historical submission records remain in-tree for auditability. Any non-archive
+    # paper document that still contains an earlier journal-targeting declaration
+    # must be explicitly bannered as superseded so it cannot be mistaken for the
+    # active SoftwareX submission state.
+    stale_target_markers = (
+        "Primary target: Earth Science Informatics",
+        "Manuscript target:** Earth Science Informatics",
+        "Suggested reviewers for Earth Science Informatics",
+        "Scope:** active Earth Science Informatics manuscript",
+    )
+    paper_root = ROOT / "paper"
+    stale_unbannered: list[str] = []
+    for path in sorted(paper_root.rglob("*.md")):
+        if "archive" in path.relative_to(paper_root).parts:
+            continue
+        text = path.read_text(encoding="utf-8")
+        if any(marker in text for marker in stale_target_markers):
+            if "Superseded." not in text[:800]:
+                stale_unbannered.append(path.relative_to(ROOT).as_posix())
+    require(
+        not stale_unbannered,
+        "legacy non-SoftwareX targeting records are explicitly marked superseded"
+        + (f" ({', '.join(stale_unbannered)})" if stale_unbannered else ""),
+    )
+
     forbidden = [
         "TODO_REVIEWER",
         "TBD_REVIEWER",

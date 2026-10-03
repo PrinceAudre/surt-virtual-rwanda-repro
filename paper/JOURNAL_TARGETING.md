@@ -1,3 +1,7 @@
+# Historical journal-targeting record
+
+> **Superseded.** This 31 July 2026 assessment records the earlier Earth Science Informatics targeting decision. It is retained for audit history and is not the current submission target. The active submission is SoftwareX manuscript `SOFTX-D-26-01014`; use `paper/manuscript.md` and `paper/reviewer-response-draft.md` for current status.
+
 # Journal targeting decision for SuRT-Virtual Rwanda
 
 **Assessment date:** 31 July 2026  
