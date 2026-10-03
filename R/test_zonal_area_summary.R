@@ -11,8 +11,10 @@ file_arg <- sub("^--file=", "", grep("^--file=", commandArgs(), value = TRUE)[1]
 here <- dirname(normalizePath(file_arg, winslash = "/", mustWork = TRUE))
 source(file.path(here, "zonal_area_summary.R"))
 
+passed_checks <- 0L
 stop_if_not <- function(label, condition) {
   if (!isTRUE(condition)) stop(sprintf("[FAIL] %s", label), call. = FALSE)
+  passed_checks <<- passed_checks + 1L
   cat(sprintf("[PASS] %s\n", label))
 }
 
@@ -68,6 +70,25 @@ stop_if_not("extent-limited polygon has complete valid coverage within raster fo
 stop_if_not("extent-limited polygon overall valid coverage matches footprint coverage",
             abs(s_extent$valid_data_fraction - s_extent$raster_coverage_fraction) < 1e-9)
 
+# CHIRPS regression: the public annual GeoTIFF has a tiny floating-point spill
+# beyond 180 degrees longitude. That must not wrap the footprint across the
+# antimeridian and report zero coverage for an African polygon.
+r_chirps_extent <- terra::rast(
+  xmin = -180, xmax = 180.000005364418,
+  ymin = -50.0000014901161, ymax = 50,
+  ncols = 7200, nrows = 2000, crs = "EPSG:4326"
+)
+p_uganda_box <- sf::st_sf(
+  unit_id = "UGA_BOX",
+  geometry = rect_polygon(29.579466, 35.035990, -1.443322, 4.249885, 4326)
+)
+fp_chirps <- surt_raster_footprint(r_chirps_extent)
+stop_if_not("near-global geographic footprint normalizes CHIRPS longitude spill",
+            abs(sf::st_bbox(fp_chirps)[["xmin"]] + 180) < 1e-12 &&
+              abs(sf::st_bbox(fp_chirps)[["xmax"]] - 180) < 1e-12)
+stop_if_not("CHIRPS-like global footprint reports complete Uganda-box coverage",
+            abs(surt_raster_coverage_fraction(r_chirps_extent, p_uganda_box) - 1) < 1e-9)
+
 # Latitude-sensitive fixture: equal-degree cells at high latitude have less surface area.
 # Use one simple valid polygon spanning all rows. Intermediate rows are NA, so only the
 # two finite endpoint cells enter the weighted mean. Cell indices are obtained from
@@ -107,4 +128,4 @@ stop_if_not("latitude-sensitive area-weighted mean matches terra cell-area calcu
 stop_if_not("latitude-sensitive area weighting differs materially from equal-cell mean",
             s_lat$value < 40)
 
-cat("\n=== zonal area and coverage: 10 passed, 0 failed ===\n")
+cat(sprintf("\n=== zonal area and coverage: %d passed, 0 failed ===\n", passed_checks))

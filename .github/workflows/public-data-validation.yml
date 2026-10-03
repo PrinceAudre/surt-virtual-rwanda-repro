@@ -6,6 +6,7 @@ on:
     paths:
       - "R/validate_chirps_rainfall.R"
       - "R/validate_uganda_chirps_case.R"
+      - "R/zonal_area_summary.R"
       - "config/uganda-chirps-2023.json"
       - "fixtures/uganda_natural_earth_110m.geojson"
       - "python/run_configured_harmonization.py"
@@ -19,6 +20,7 @@ on:
     paths:
       - "R/validate_chirps_rainfall.R"
       - "R/validate_uganda_chirps_case.R"
+      - "R/zonal_area_summary.R"
       - "config/uganda-chirps-2023.json"
       - "fixtures/uganda_natural_earth_110m.geojson"
       - "python/run_configured_harmonization.py"

@@ -25,8 +25,6 @@ surt_raster_footprint <- function(raster) {
   if (is.na(raster_crs)) stop("Raster CRS is required for footprint coverage.")
 
   # Use terra's public coordinate accessors rather than `$` fields on SpatExtent.
-  # `$xmin`-style access is not a stable SpatExtent API and produced missing bbox
-  # coordinates on the Linux/R CI stack during the SoftwareX remediation cycle.
   bbox_values <- c(
     xmin = terra::xmin(raster),
     ymin = terra::ymin(raster),
@@ -35,6 +33,34 @@ surt_raster_footprint <- function(raster) {
   )
   if (length(bbox_values) != 4L || any(!is.finite(bbox_values))) {
     stop("Raster extent contains non-finite coordinates.")
+  }
+
+  # Some global geographic GeoTIFFs encode an extent a few floating-point units
+  # beyond +/-180 or +/-90. CHIRPS v2.0 annual 2023, for example, reports
+  # xmax=180.000005364418. Passing that spill directly through PROJ wraps the
+  # eastern edge across the antimeridian and can collapse the footprint overlap
+  # to zero. Normalize only near-global longitude spans, and clamp only tiny
+  # coordinate spill relative to the raster resolution; larger excursions remain
+  # untouched so legitimate nonstandard longitude domains are not silently hidden.
+  if (isTRUE(sf::st_is_longlat(raster_crs))) {
+    raster_res <- abs(terra::res(raster))
+    lon_tol <- max(1e-8, raster_res[[1]] * 1e-3)
+    lat_tol <- max(1e-8, raster_res[[2]] * 1e-3)
+    lon_span <- bbox_values[["xmax"]] - bbox_values[["xmin"]]
+
+    if (is.finite(lon_span) && abs(lon_span - 360) <= 2 * lon_tol) {
+      bbox_values[["xmin"]] <- -180
+      bbox_values[["xmax"]] <- 180
+    } else {
+      if (bbox_values[["xmin"]] < -180 && bbox_values[["xmin"]] >= -180 - lon_tol)
+        bbox_values[["xmin"]] <- -180
+      if (bbox_values[["xmax"]] > 180 && bbox_values[["xmax"]] <= 180 + lon_tol)
+        bbox_values[["xmax"]] <- 180
+    }
+    if (bbox_values[["ymin"]] < -90 && bbox_values[["ymin"]] >= -90 - lat_tol)
+      bbox_values[["ymin"]] <- -90
+    if (bbox_values[["ymax"]] > 90 && bbox_values[["ymax"]] <= 90 + lat_tol)
+      bbox_values[["ymax"]] <- 90
   }
 
   sf::st_as_sfc(sf::st_bbox(bbox_values, crs = raster_crs))
