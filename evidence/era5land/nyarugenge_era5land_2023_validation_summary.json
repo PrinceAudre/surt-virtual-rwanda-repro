@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "status": "passed",
+  "case": "Nyarugenge ERA5-Land 2023 real-data numerical cross-check",
+  "district": "Nyarugenge",
+  "year": 2023,
+  "dataset": "reanalysis-era5-land-monthly-means",
+  "variable": "2m_temperature",
+  "months": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
+  "time": "00:00",
+  "area_north_west_south_east": [-1.0, 28.8, -2.9, 30.95],
+  "cds_request_id": "7484614d-2317-4893-8190-9535b2e81c5e",
+  "source_file": "era5land_t2m_2023.nc",
+  "source_size_bytes": 35224,
+  "source_sha256": "83f1290322a456c111c4650400fd3e41640df682e5dee885abe57425eaacb5ad",
+  "product_terms": "Copernicus Products licence",
+  "production_calendar_day_area_weighted_mean_c": 20.597411498328,
+  "production_reported_rounded_mean_c": 20.6,
+  "independent_terra_area_weighted_mean_c": 20.597414465224,
+  "production_minus_independent_c": -2.966896058609e-06,
+  "raster_coverage_fraction": 1.0,
+  "valid_within_raster_fraction": 1.0,
+  "valid_data_fraction": 1.0,
+  "acceptance_gates": {
+    "max_cross_engine_abs_difference_c": 0.01
+  },
+  "validator": "R/validate_era5land_nyarugenge_real.R",
+  "fetcher": "python/fetch_era5land_temperature.py",
+  "validation_branch": "review/softwarex-era5-validation",
+  "validation_commit": "3f56ae5ab8573547c628b2402d610c254c1bb10a",
+  "limitation": "Computational cross-validation of one district and year; not validation of ERA5-Land observational accuracy."
+}
