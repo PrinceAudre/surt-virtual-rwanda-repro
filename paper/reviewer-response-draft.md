@@ -107,23 +107,28 @@ This document is a response draft for a rebuilt submission. The verbatim five-pa
 - `config/uganda-chirps-2023.json`
 - `R/validate_uganda_chirps_case.R`
 - Public CHIRPS CI run and artifact
+
 ### R2.2 The design lacked sufficient customizability and extensibility
 
-**Response:** Addressed in the software architecture. A fail-closed JSON Schema now declares provider input, boundaries, variable/layer selection, transformations, aggregation, QA, coverage threshold, output, and provenance. A stable Python adapter boundary exposes a built-in `local_raster` adapter plus an external `module:factory` extension mechanism, so a new provider can be added without modifying the generic R harmonizer.
+**Response:** Addressed in the software architecture and now demonstrated by an executable external-extension test. A fail-closed JSON Schema declares provider input, boundaries, variable/layer selection, transformations, aggregation, QA, coverage threshold, output, and provenance. A stable Python adapter boundary exposes a built-in `local_raster` adapter plus an external `module:factory` extension mechanism. The account-free suite now loads `fixture_external_adapter:make_adapter` from a module that is not registered in the core `_BUILTINS` mapping, prepares a declared raster artifact through that adapter, checks its provenance contribution, and separately rejects a malformed external adapter object and undeclared adapter options. The generic R harmonizer is not edited for this extension.
 
 **Code/evidence:**
 - `config/harmonization-job.schema.json`
 - `python/config_contract.py`
 - `python/provider_adapters.py`
+- `python/fixture_external_adapter.py`
+- `python/test_config_contract.py`
 - `python/run_configured_harmonization.py`
 
-**Documentation:** `docs/CONFIGURATION_AND_ADAPTERS.md` now provides a worked bring-your-own-raster/boundaries sequence, the stable adapter contract, an external `module:factory` example, QA ownership rules, and adapter testing requirements.
+**Documentation:** `docs/CONFIGURATION_AND_ADAPTERS.md` provides the bring-your-own-raster/boundaries sequence, stable adapter contract, external `module:factory` example, QA ownership rules, adapter testing requirements, and the scope of the executable plugin proof. This demonstrates the extension boundary itself; it does not claim that every third-party provider is already implemented.
 
 ### R2.3 The manuscript did not demonstrate enough value over a tailored reimplementation
 
-**Response:** Addressed through a narrower value proposition and explicit comparison. The revised manuscript no longer presents a new raster algorithm. It identifies the reusable contribution as an integrated contract combining provider-preparation boundaries, generic administrative harmonization, area and coverage semantics, provenance-labelled outputs, fail-closed configuration, negative tests, independent release validation, checksums, CI, and versioned evidence. Table 1 compares that integration against the documented primary scope of Google Earth Engine, MODIStsp, and exactextractr without portraying those tools as deficient.
+**Response:** Addressed through a narrower value proposition, executable reuse evidence, and a broader related-software audit. The revised manuscript does not present a new raster, zonal-statistics, or cell-area algorithm. It identifies the reusable contribution as a raster-to-administrative release-evidence contract combining provider-preparation boundaries, generic harmonization, explicit area and three-part coverage semantics, provenance-labelled outputs, fail-closed declarative configuration, a tested external adapter boundary, negative and corruption tests, independent release validation, source-pinned numerical cross-checks, checksums, CI, and versioned evidence. The same configured generic engine is exercised on a source-derived Uganda CHIRPS case without Rwanda-specific core edits.
 
-**Evidence:** Manuscript Sections 1 and 4; Table 1; `paper/tool-comparison-evidence.md`.
+The comparison retains Google Earth Engine, MODIStsp, and exactextractr because they were named by the reviewer, but the related-work audit now also discusses GDAL, `terra`, Snakemake, and DART-Pipeline. DART is a particularly relevant adjacent climate-sensitive-disease pipeline: it integrates epidemiological, socioeconomic, climatic, and environmental data and performs administrative aggregation. The revised manuscript therefore makes a deliberately narrower claim. SuRT does not claim broader integration than DART; it focuses on the raster-to-administrative release boundary and its explicit coverage, provenance, fail-closed, numerical-cross-check, and release-integrity contracts. The systems can be complementary at different layers of an analytical stack.
+
+**Evidence:** Manuscript Sections 1 and 4; Table 1; `paper/tool-comparison-evidence.md`; `paper/FINAL_REVIEW_PROTOCOL.md`; Dasgupta et al., DOI `10.12688/wellcomeopenres.24774.3`.
 
 ### R2.4 The project did not use a workflow-management system
 
@@ -136,7 +141,8 @@ This document is a response draft for a rebuilt submission. The verbatim five-pa
 The following are intentionally unresolved rather than overstated:
 - final release metadata, v1.4.0 tag, and version-specific Zenodo DOI;
 - final exact-manifest verification on the DOI-bearing release commit;
-- final rendered manuscript inspection and independent final code/manuscript review.
+- final rendered manuscript inspection and evidence-led final code/manuscript review under `paper/FINAL_REVIEW_PROTOCOL.md`.
+
 ## Evidence and commit index
 
 Major reviewer-remediation commits on `review/softwarex-resubmission-v1.4.0` include:
