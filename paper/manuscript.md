@@ -41,9 +41,7 @@ Mature tools solve important parts of the problem. Google Earth Engine provides 
 | Provider extension boundary | Platform/data-catalogue model | MODIS-specific | Raster-agnostic extraction | Adapter contract |
 | Workflow orchestration | Platform task model/user workflow | Processing workflow | Function-level | Snakemake evidence DAG |
 
-SuRT-GeoHarmonizer addresses a narrower integration problem than end-to-end domain pipelines. For example, DART-Pipeline integrates climatic, socioeconomic, and epidemiological inputs for climate-sensitive disease analysis and includes configurable administrative aggregation [11]. SuRT-GeoHarmonizer does not reproduce that broader function. Its scope is the raster-to-administrative release boundary: explicit surface-area and valid-coverage semantics, fail-closed job configuration, restricted provenance-labelled GeoJSON output, negative tests, independent output-contract validation, source-pinned numerical cross-checks, and exact release-integrity controls. This narrower boundary can complement broader analytical pipelines. It also does not claim novelty for zonal-statistics algorithms; established geospatial libraries already provide polygon coverage and weighting capabilities.
-
-SuRT-GeoHarmonizer is intended to make preparation of administrative environmental covariates inspectable and reusable before those covariates enter downstream statistical, epidemiological, climate, ecological, or planning analyses. A prepared covariate is not automatically a forecast, hazard probability, causal effect, exposure estimate, or recommendation.
+SuRT-GeoHarmonizer addresses a narrower integration problem than end-to-end domain pipelines. DART-Pipeline, for example, integrates epidemiological, socioeconomic, climatic, and environmental data for climate-sensitive-disease analysis and performs configurable administrative aggregation [11]. SuRT does not reproduce that broader function. Its scope is the raster-to-administrative release boundary: explicit surface-area and coverage semantics, fail-closed job configuration, restricted provenance-labelled GeoJSON output, negative tests, independent output-contract validation, source-pinned numerical cross-checks, and exact release-integrity controls. This boundary can complement broader analytical pipelines. It does not claim novelty for zonal-statistics or cell-area algorithms.
 
 The contribution is software architecture and executable release evidence rather than a new raster algorithm. Rwanda is the primary reference implementation. Reuse outside Rwanda is demonstrated through a generic raster and polygon interface, a declarative configuration contract, an adapter extension boundary, controlled arbitrary-geometry tests, a real Uganda-boundary portability gate, and a source-derived Uganda CHIRPS case. The Uganda CHIRPS case is computational cross-validation of one public environmental product, not validation of CHIRPS observational accuracy or evidence that every provider and geography is scientifically interchangeable.
 
@@ -81,7 +79,7 @@ For each polygon, finite raster contributions are weighted by polygon-cell overl
 
 ### 2.3. Declarative workflow contract
 
-`config/harmonization-job.schema.json` defines schema version 1.0 and rejects unknown top-level and nested fields. `python/run_configured_harmonization.py` validates the configuration and adapter before mapping its declared controls to the generic R harmonizer. The bundled `local_raster` adapter accepts an already prepared raster and rejects undeclared provider-specific QA. External providers can implement the same adapter protocol without modifying the generic R engine.
+`config/harmonization-job.schema.json` defines schema version 1.0 and rejects unknown top-level and nested fields. `python/run_configured_harmonization.py` validates the configuration and adapter before mapping its declared controls to the generic R harmonizer. The bundled `local_raster` adapter accepts an already prepared raster and rejects undeclared provider-specific QA. External providers can implement the same adapter protocol without modifying the generic R engine. The external loading boundary is exercised account-free by loading a fixture `module:factory` adapter that is absent from the built-in registry, preparing a declared raster, preserving adapter-supplied provenance, and rejecting malformed plugin objects and undeclared options.
 
 The `Snakefile` provides a deterministic account-free evidence DAG. It prepares a controlled multilayer raster and polygon fixture, validates the configuration, transforms the controlled raster, runs configured harmonization, validates the output, and writes machine-readable workflow evidence. This verifies orchestration and interface boundaries; the controlled raster is synthetic and is not real-product validation.
 
@@ -146,22 +144,52 @@ This work received no specific grant from public, commercial, or not-for-profit 
 
 ## Data and software availability
 
-The public repository is `https://github.com/PrinceAudre/surt-virtual-rwanda-repro`. The current published software release is version 1.3.0, archived at `https://doi.org/10.5281/zenodo.21840177`; the concept DOI is `https://doi.org/10.5281/zenodo.21671788`. The v1.4.0 reviewer-remediation branch is development material and must not be cited as a released version until its exact source tree is frozen, tagged, archived, and assigned a version-specific DOI.
+The public repository is `https://github.com/PrinceAudre/surt-virtual-rwanda-repro`. The current published software release is version 1.3.0, archived at `https://doi.org/10.5281/zenodo.21840177`. Version 1.4.0 is an unreleased reviewer-remediation target on branch `review/softwarex-resubmission-v1.4.0`; no v1.4.0 version DOI is valid until the exact approved release commit is frozen. The immutable historical version 1.2.0 is archived at `https://doi.org/10.5281/zenodo.21744708`; the release-family concept DOI is `https://doi.org/10.5281/zenodo.21671788`.
 
-## Generative AI statement
+## Declaration of generative AI and AI-assisted technologies in the writing process
 
-OpenAI ChatGPT and Codex and Anthropic Claude were used during development for coding assistance, critical review, and language editing. The author reviewed and edited all generated material, reran reported checks, verified the reported evidence and citations, and remains responsible for the final software and manuscript. These tools did not generate source data or empirical results.
+During preparation, the author used OpenAI ChatGPT and Codex and Anthropic Claude for coding assistance, critical review, and language editing. The author reviewed and edited all outputs, reran the reported checks, verified cited facts and licences, and takes full responsibility for the software and manuscript. These tools did not generate source data or empirical results.
 
 ## References
 
-1. Funk C, Peterson P, Landsfeld M, et al. The climate hazards infrared precipitation with stations - a new environmental record for monitoring extremes. *Sci Data*. 2015;2:150066. https://doi.org/10.1038/sdata.2015.66.
-2. Muñoz-Sabater J, Dutra E, Agustí-Panareda A, et al. ERA5-Land: a state-of-the-art global reanalysis dataset for land applications. *Earth Syst Sci Data*. 2021;13:4349-4383. https://doi.org/10.5194/essd-13-4349-2021.
-3. Didan K. MODIS/Terra Vegetation Indices Monthly L3 Global 1 km SIN Grid V061 [Dataset]. NASA EOSDIS Land Processes Distributed Active Archive Center; 2021. https://doi.org/10.5067/MODIS/MOD13A3.061.
-4. Nobre AD, Cuartas LA, Hodnett M, et al. Height Above the Nearest Drainage - a hydrologically relevant new terrain model. *J Hydrol*. 2011;404:13-29. https://doi.org/10.1016/j.jhydrol.2011.03.051.
-5. Gorelick N, Hancher M, Dixon M, et al. Google Earth Engine: planetary-scale geospatial analysis for everyone. *Remote Sens Environ*. 2017;202:18-27. https://doi.org/10.1016/j.rse.2017.06.031.
-6. Busetto L, Ranghetti L. MODIStsp: an R package for automatic preprocessing of MODIS Land Products time series. *Comput Geosci*. 2016;97:40-48. https://doi.org/10.1016/j.cageo.2016.08.020.
-7. Baston D. exactextractr: fast extraction from raster datasets using polygons. R package version 0.10.1; 2025. https://doi.org/10.32614/CRAN.package.exactextractr.
-8. Wilkinson MD, Dumontier M, Aalbersberg IJ, et al. The FAIR Guiding Principles for scientific data management and stewardship. *Sci Data*. 2016;3:160018. https://doi.org/10.1038/sdata.2016.18.
-9. Lebo T, Sahoo S, McGuinness D, eds. PROV-O: The PROV Ontology. W3C Recommendation; 2013. https://www.w3.org/TR/prov-o/.
-10. Soiland-Reyes S, Sefton P, Crosas M, et al. Packaging research artefacts with RO-Crate. *Data Sci*. 2022;5(2):97-138. https://doi.org/10.3233/DS-210053.
-11. Dasgupta A, Perez-Fernandez I, Huynh T, et al. Scalable, open-access and multidisciplinary data integration pipeline for climate-sensitive diseases. *Wellcome Open Res*. 2025;10:467. https://doi.org/10.12688/wellcomeopenres.24774.3.
+[1] C. Funk, P. Peterson, M. Landsfeld, et al., The climate hazards infrared precipitation with stations: a new environmental record for monitoring extremes, Scientific Data 2 (2015) 150066. https://doi.org/10.1038/sdata.2015.66.
+
+[2] J. Muñoz-Sabater, E. Dutra, A. Agustí-Panareda, et al., ERA5-Land: a state-of-the-art global reanalysis dataset for land applications, Earth System Science Data 13 (2021) 4349–4383. https://doi.org/10.5194/essd-13-4349-2021.
+
+[3] K. Didan, MOD13A3 MODIS/Terra Vegetation Indices Monthly L3 Global 1 km SIN Grid V061, NASA EOSDIS Land Processes DAAC (2021). https://doi.org/10.5067/MODIS/MOD13A3.061.
+
+[4] A.D. Nobre, L.A. Cuartas, M. Hodnett, et al., Height Above the Nearest Drainage: a hydrologically relevant new terrain model, Journal of Hydrology 404 (2011) 13–29. https://doi.org/10.1016/j.jhydrol.2011.03.051.
+
+[5] N. Gorelick, M. Hancher, M. Dixon, et al., Google Earth Engine: planetary-scale geospatial analysis for everyone, Remote Sensing of Environment 202 (2017) 18–27. https://doi.org/10.1016/j.rse.2017.06.031.
+
+[6] L. Busetto, L. Ranghetti, MODIStsp: an R package for automatic preprocessing of MODIS Land Products time series, Computers & Geosciences 97 (2016) 40–48. https://doi.org/10.1016/j.cageo.2016.08.020.
+
+[7] D. Baston, exactextractr: Fast Extraction from Raster Datasets using Polygons, R package (2025). https://doi.org/10.32614/CRAN.package.exactextractr.
+
+[8] M.D. Wilkinson, M. Dumontier, I.J. Aalbersberg, et al., The FAIR Guiding Principles for scientific data management and stewardship, Scientific Data 3 (2016) 160018. https://doi.org/10.1038/sdata.2016.18.
+
+[9] T. Lebo, S. Sahoo, D. McGuinness (Eds.), PROV-O: The PROV Ontology, W3C Recommendation (2013).
+
+[10] S. Soiland-Reyes, P. Sefton, M. Crosas, et al., Packaging research artefacts with RO-Crate, Data Science 5 (2022) 97–138. https://doi.org/10.3233/DS-210053.
+
+[11] A. Dasgupta, I. Perez-Fernandez, T. Huynh, et al., Scalable, open-access and multidisciplinary data integration pipeline for climate-sensitive diseases, Wellcome Open Research 10 (2025) 467. https://doi.org/10.12688/wellcomeopenres.24774.3.
+
+## Current code version
+
+| Nr. | Code metadata description | Metadata |
+|---|---|---|
+| C1 | Current published code version | 1.3.0; v1.4.0 is the unreleased reviewer-remediation target |
+| C2 | Permanent link to published code version | https://github.com/PrinceAudre/surt-virtual-rwanda-repro/tree/v1.3.0 |
+| C3 | Permanent link to published reproducible capsule | https://doi.org/10.5281/zenodo.21840177 |
+| C4 | Legal code licence | MIT License |
+| C5 | Code versioning system used | Git |
+| C6 | Software code languages, tools and services used | R, Python, Snakemake, terra, sf, exactextractr, jsonlite, GitHub Actions, Zenodo |
+| C7 | Compilation requirements, operating environments and dependencies | R 4.6.0; Python 3; locked R packages in `renv.lock`; GDAL, GEOS, PROJ and UDUNITS; full reproducibility CI on Ubuntu; core smoke CI on Ubuntu 24.04, Windows 2025, and macOS 14 |
+| C8 | Developer documentation/manual | README.md, REPRODUCIBILITY.md, DATA_DICTIONARY.md, NOTICE.md, CONTRIBUTING.md, docs/CONFIGURATION_AND_ADAPTERS.md |
+| C9 | Support email for questions | priplee@gmail.com |
+
+## Figure captions
+
+**Fig. 1.** SuRT-GeoHarmonizer architecture. Provider preparation is separated from declarative configuration and adapters, source-specific transformation, surface-area-weighted administrative harmonization, provenance controls, executable verification, and release archival.
+
+**Fig. 2.** Published v1.3 Rwanda reference implementation. District-level annual rainfall, mean temperature, mean NDVI, and HAND share at or below 5 m are descriptive environmental layers and are not validated hazards or operational outputs.
