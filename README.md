@@ -273,6 +273,8 @@ These are computational reproduction and cross-validation results for the specif
 - `python/config_contract.py`: fail-closed config validation and command mapping.
 - `python/provider_adapters.py`: built-in and external provider-adapter protocol.
 - `python/run_configured_harmonization.py`: configured generic-harmonization runner.
+- docs/CONFIGURATION_AND_ADAPTERS.md: bring-your-own-raster/boundaries workflow and adapter-author contract.
+- docs/WORKFLOW.md: explicit Snakemake stage model, evidence boundaries, and failure behavior.
 - `Snakefile`: account-free orchestration and workflow-evidence DAG.
 - `R/`: provider transformations, builders, fixtures, failure tests, and figure generation.
 - `python/`: provider clients, orchestration, release validation, checksum generation, and metadata checks.
