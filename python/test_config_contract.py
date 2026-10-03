@@ -102,6 +102,17 @@ def main() -> None:
         "module:factory",
     )
 
+    external = load_adapter("fixture_external_adapter:make_adapter")
+    check(
+        "external module factory loads a provider without core-registry edits",
+        external.name == "fixture_external",
+    )
+    expect_error(
+        "malformed external adapter object fails closed at the plugin boundary",
+        lambda: load_adapter("fixture_external_adapter:make_invalid_adapter"),
+        "non-empty string 'name'",
+    )
+
     with tempfile.TemporaryDirectory() as temp_dir:
         missing = Path(temp_dir) / "missing.tif"
         expect_error(
@@ -114,6 +125,26 @@ def main() -> None:
         dummy.write_bytes(b"fixture")
         artifact = adapter.prepare({"path": str(dummy)}, {"mode": "none", "options": {}}, ROOT)
         check("local raster adapter resolves an existing prepared artifact", artifact.path == dummy)
+
+        external_artifact = external.prepare(
+            {"path": str(dummy), "label": "account-free plugin proof"},
+            {"mode": "none", "options": {}},
+            ROOT,
+        )
+        check(
+            "external adapter prepares the same declared artifact through the plugin contract",
+            external_artifact.path == dummy
+            and external_artifact.provenance_suffix == "External adapter fixture: account-free plugin proof",
+        )
+        expect_error(
+            "external adapter rejects undeclared options",
+            lambda: external.prepare(
+                {"path": str(dummy), "label": "fixture", "extra": True},
+                {"mode": "none", "options": {}},
+                ROOT,
+            ),
+            "only 'path' and 'label'",
+        )
 
     command = build_harmonizer_command(config, Path("/tmp/prepared.tif"), ROOT)
     joined = "\n".join(command)

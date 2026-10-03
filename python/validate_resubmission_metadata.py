@@ -21,6 +21,10 @@ PREVIOUS_TAG = "v1.3.0"
 PREVIOUS_DOI = "10.5281/zenodo.21840177"
 CONCEPT_DOI = "10.5281/zenodo.21671788"
 MANUSCRIPT_ID = "SOFTX-D-26-01014"
+CURRENT_AFFILIATION = (
+    "School of Public Health, College of Medicine and Health Sciences, "
+    "University of Rwanda, Kigali, Rwanda"
+)
 
 
 class MetadataError(ValueError):
@@ -56,6 +60,8 @@ def main() -> None:
             "published v1.3.0 Zenodo DOI remains documented")
     require(CONCEPT_DOI in readme and CONCEPT_DOI in manuscript,
             "Zenodo concept DOI remains documented")
+    require(CURRENT_AFFILIATION in manuscript,
+            "manuscript uses the author's current University of Rwanda affiliation")
 
     require((ROOT / "R" / "zonal_area_summary.R").is_file(),
             "reviewer-remediation zonal aggregation module exists")
@@ -87,10 +93,18 @@ def main() -> None:
     require(f"Version: {PREVIOUS_VERSION}" in description or release_is_frozen,
             "DESCRIPTION identifies either the published baseline or the frozen v1.4.0 release")
 
-    codemeta = json.loads(read("codemeta.json"))
+    citation = read("CITATION.cff")
+    codemeta_text = read("codemeta.json")
+    codemeta = json.loads(codemeta_text)
     require(codemeta.get("name") == SOFTWARE_NAME, "CodeMeta product name remains canonical")
     require("all-tracked" in checksum_builder,
             "checksum builder supports the all-tracked integrity contract")
+    if release_is_frozen:
+        require(CURRENT_AFFILIATION in citation and "University of Rwanda" in codemeta_text,
+                "frozen v1.4 release metadata uses the current University of Rwanda affiliation")
+    else:
+        require(PREVIOUS_VERSION in citation and PREVIOUS_VERSION in codemeta_text,
+                "development tree preserves immutable v1.3 metadata until the v1.4 release freeze")
 
     # Historical submission records remain in-tree for auditability. Any non-archive
     # paper document that still contains an earlier journal-targeting declaration
@@ -117,6 +131,14 @@ def main() -> None:
         + (f" ({', '.join(stale_unbannered)})" if stale_unbannered else ""),
     )
 
+    # Final review must be tool-independent. Historical Claude review files may be
+    # retained as explicitly superseded audit records, but no active release gate may
+    # depend on them.
+    require((ROOT / "paper" / "FINAL_REVIEW_PROTOCOL.md").is_file(),
+            "active evidence-led final-review protocol exists")
+    require(not (ROOT / "paper" / "CLAUDE_FABLE5_SOFTWAREX_FINAL_PROMPT.md").exists(),
+            "active Claude-dependent final-review prompt has been retired")
+
     # Submission-facing sources previously survived a journal cycle with stale
     # release identity and an incorrect statement that external peer review had not
     # occurred. Lock those regressions out of the active branch.
@@ -132,6 +154,10 @@ def main() -> None:
             "cover letter discloses prior external peer review")
     require("has not undergone external peer review" not in cover.casefold(),
             "false pre-review cover-letter claim is absent")
+    require(CURRENT_AFFILIATION in submission_checklist,
+            "submission checklist records the current University of Rwanda affiliation")
+    require("University of Rwanda" in cover and "affiliation has changed" in cover,
+            "cover letter transparently explains the changed affiliation")
     require(TARGET_VERSION in cover and TARGET_VERSION in submission_readme and TARGET_VERSION in submission_checklist,
             "submission sources identify v1.4.0 as the reviewer-remediated target")
     require("exact validated version `1.3.0` release" not in submission_material,

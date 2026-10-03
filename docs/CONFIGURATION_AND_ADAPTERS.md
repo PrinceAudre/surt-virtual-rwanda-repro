@@ -10,8 +10,9 @@ This is a development contract. Existing Rwanda provider builders are being migr
 - `config/demo-harmonization.json`: account-free example configuration.
 - `python/config_contract.py`: strict standard-library validation used at runtime.
 - `python/provider_adapters.py`: adapter protocol, built-in registry, and external plugin loader.
+- `python/fixture_external_adapter.py`: account-free external plugin used to prove that `module:factory` works without a core-registry edit.
 - `python/run_configured_harmonization.py`: validated configuration-to-R CLI bridge.
-- `python/test_config_contract.py`: fail-closed configuration and adapter regressions.
+- `python/test_config_contract.py`: fail-closed configuration and adapter regressions, including positive and malformed external-plugin cases.
 
 The Python validator intentionally mirrors the distributed JSON Schema without requiring a JSON-Schema package. This keeps the core account-free pathway dependency-light while still publishing a machine-readable schema for editors, IDEs, and external validators.
 
@@ -92,6 +93,8 @@ The corresponding configuration uses:
 ```
 
 The surrounding job still supplies the standard boundaries, variable, transform, aggregation, QA, output, and provenance sections required by the schema.
+
+The extension path is executable evidence, not only documentation. `python/fixture_external_adapter.py` lives outside the built-in `_BUILTINS` registry. The account-free contract test loads `fixture_external_adapter:make_adapter`, prepares a declared fixture artifact, checks its provenance contribution, and separately verifies that a malformed factory result and undeclared options are rejected. This proves the external loading boundary itself while making no claim that every third-party provider is already implemented.
 
 ## QA ownership
 
