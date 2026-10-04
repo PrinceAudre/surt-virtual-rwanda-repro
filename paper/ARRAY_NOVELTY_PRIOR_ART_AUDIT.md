@@ -9,7 +9,7 @@
 
 Proceed with an Array-specific manuscript and final hardening cycle.
 
-The prior-art search does not support any claim that SuRT-GeoHarmonizer invents zonal statistics, polygon-cell overlap weighting, raster-cell area weighting, environmental or climate-health data integration, configurable geospatial workflows, plugin architectures, provenance recording, checksums, or reproducible scientific workflows. Mature systems already provide each of these capabilities, and several combine many of them.
+The prior-art search does not support any claim that SuRT-GeoHarmonizer invents zonal statistics, polygon-cell overlap weighting, raster-cell area weighting, environmental or climate-health data integration, configurable geospatial workflows, robust polygon-covariate wrappers, missing-value handling, plugin architectures, provenance recording, checksums, or reproducible scientific workflows. Mature systems already provide each of these capabilities, and several combine many of them.
 
 The evidence now supports a narrower software-engineering contribution:
 
@@ -80,7 +80,7 @@ Primary sources:
 - https://isciences.github.io/exactextract/
 - https://isciences.gitlab.io/exactextractr/
 
-These tools provide exact polygon-cell coverage fractions, weighted summaries and area weighting. SuRT uses exactextractr. Those algorithms are inherited primitives, not SuRT inventions.
+These tools provide exact polygon-cell coverage fractions, weighted summaries and area weighting. `exactextractr` also exposes coverage-fraction rasters and supports custom functions over values and coverage fractions. SuRT uses exactextractr. Those algorithms and diagnostics are inherited primitives, not SuRT inventions.
 
 ### 3.6 GDAL and terra
 
@@ -89,9 +89,20 @@ Primary sources:
 - https://gdal.org/en/stable/programs/gdal_raster_zonal_stats.html
 - https://rspatial.org/terra/
 
-GDAL and terra provide mature raster/vector operations including zonal statistics and area calculations. SuRT must not imply otherwise.
+GDAL and terra provide mature raster/vector operations including zonal statistics and area calculations. Current GDAL 3.12 documentation exposes fractional polygon-pixel inclusion, coverage reporting, a weighting raster, and weighted zonal statistics. SuRT must not imply that fractional coverage, weighted zonal summaries, or a command-line zonal-statistics interface are novel.
 
-### 3.7 Google Earth Engine
+### 3.7 spatcovar
+
+Primary sources:
+
+- https://cran.r-project.org/package=spatcovar
+- https://doi.org/10.32614/CRAN.package.spatcovar
+
+`spatcovar` 0.1.0, published 2026-09-08, provides a consistent interface for constructing polygon-level spatial covariates. Its documented raster path uses `exactextractr` for coverage-fraction-weighted zonal summaries and includes CRS validation/reprojection, geometry repair, row preservation, unit handling and standardized missing-value behavior.
+
+Therefore SuRT must not claim novelty for a consistent polygon-covariate wrapper, robust geometry/CRS handling, coverage-weighted raster summaries, or standardized missing-value semantics alone.
+
+### 3.8 Google Earth Engine
 
 Primary sources:
 
@@ -100,7 +111,7 @@ Primary sources:
 
 Earth Engine supports regional reducers, masks, CRS/scale controls and user-defined area weighting backed by a broad cloud catalogue. SuRT does not compete on catalogue breadth or computational scale.
 
-### 3.8 openEO
+### 3.9 openEO
 
 Primary source:
 
@@ -108,7 +119,7 @@ Primary source:
 
 openEO already provides declarative process graphs for geospatial computation. JSON or declarative execution alone is therefore not novel.
 
-### 3.9 Reproducible geospatial workflow frameworks
+### 3.10 Reproducible geospatial workflow frameworks
 
 Relevant recent work includes:
 
@@ -117,7 +128,7 @@ Relevant recent work includes:
 
 Workflow reproducibility, provenance and hash-based verification are established ideas and cannot be claimed as generic novelty.
 
-### 3.10 Array precedent: FairFlow
+### 3.11 Array precedent: FairFlow
 
 Primary source:
 
@@ -137,7 +148,7 @@ SuRT reports:
 2. `valid_within_raster_fraction`: fraction of the raster-covered polygon supported by finite values after masking/QA;
 3. `valid_data_fraction`: overall supported polygon fraction, equal to the product of the first two quantities.
 
-This is a mandatory output contract, not a first-ever claim.
+This is a mandatory output contract, not a first-ever claim. Other libraries expose sufficient primitives for users to construct comparable diagnostics. The evaluated distinction is that the three quantities are required, algebraically linked, independently validated, and carried through the same job/output/release contract.
 
 ### 4.2 Fail-closed harmonization job schema
 
@@ -212,10 +223,12 @@ Do not state or imply that SuRT is:
 - the first software to aggregate rasters to administrative units;
 - the first to use exact polygon-cell overlap fractions;
 - the first to perform cell-area-weighted zonal statistics;
+- the first to expose coverage diagnostics;
+- the first robust polygon-covariate wrapper;
 - the first to record provenance or checksums;
 - the first to use declarative configuration, plugins, or workflow orchestration;
 - the first reproducible geospatial workflow;
-- scientifically more accurate than DART, GEE, exactextractr, xagg, GDAL, terra, DHIS2 Climate Tools, or other comparators without a direct study designed to test that proposition; or
+- scientifically more accurate than DART, GEE, exactextractr, xagg, GDAL, terra, spatcovar, DHIS2 Climate Tools, or other comparators without a direct study designed to test that proposition; or
 - an observational validation of CHIRPS, ERA5-Land, MODIS or HAND.
 
 Preferred language: **contract-first**, **fixed contract**, **mandatory output semantics**, **integrated assurance boundary**, **release-evidence contract**.
@@ -253,7 +266,7 @@ The final benchmark now provides machine-specific runtime and R-heap measurement
 
 The manuscript should compare systems by layer rather than score unlike tools as interchangeable products:
 
-- primitive/extraction: exactextract(r), GDAL, terra, xagg;
+- primitive/extraction and covariate wrappers: exactextract(r), GDAL, terra, xagg, spatcovar;
 - cloud/process platforms: Google Earth Engine, openEO;
 - domain integration: DART-Pipeline, DHIS2 Climate Tools, AREAdata;
 - workflow/reproducibility infrastructure: Snakemake and general reproducibility frameworks;
@@ -277,7 +290,7 @@ Proceed to final Array submission only if:
 
 **GO FOR ARRAY MANUSCRIPT HARDENING.**
 
-The feature-level overlap with DART, DHIS2 Climate Tools, AREAdata, xagg, exactextract and general reproducibility frameworks is substantial and must remain visible in the manuscript. That overlap narrows the claim rather than invalidating the project.
+The feature-level overlap with DART, DHIS2 Climate Tools, AREAdata, xagg, exactextract, GDAL 3.12, spatcovar and general reproducibility frameworks is substantial and must remain visible in the manuscript. That overlap narrows the claim rather than invalidating the project.
 
 The empirical evidence now demonstrates the remaining contribution more strongly: the mandatory three-part support contract distinguishes identical zonal results with different evidence support; an out-of-tree provider can be added without modifying the generic harmonizer or built-in registry; and the added support semantics carry a measured, disclosed runtime and R-heap cost on the tested workload while preserving numerical means.
 
