@@ -46,9 +46,7 @@ make_fixture <- function(ncells_side, polygon_side) {
   values[idx %% 13L == 0L] <- NA_real_
   terra::values(r) <- values
 
-  frame <- sf::st_sf(
-    geometry = rect_polygon(0, extent_max, 0, extent_max, 3857)
-  )
+  frame <- sf::st_sf(geometry = rect_polygon(0, extent_max, 0, extent_max, 3857))
   grid <- sf::st_make_grid(frame, n = c(polygon_side, polygon_side), what = "polygons")
   polygons <- sf::st_sf(
     unit_id = sprintf("U%04d", seq_along(grid)),
@@ -88,16 +86,27 @@ direct_area_weighted_mean <- function(raster, polygons) {
 
 measure_once <- function(fun) {
   invisible(gc())
-  invisible(gc(reset = TRUE))
+  before <- gc(reset = TRUE)
+  baseline_heap_mb <- sum(before[, 2], na.rm = TRUE)
   started <- proc.time()
   result <- fun()
   elapsed <- as.numeric((proc.time() - started)[["elapsed"]])
-  gc_stats <- gc()
-  # gc() columns are used, Mb, gc trigger, Mb, max used, Mb. The sixth
-  # column is the high-water mark in MB for Ncells and Vcells. This is an
-  # R-heap indicator, not total operating-system resident set size.
-  heap_high_water_mb <- sum(gc_stats[, 6], na.rm = TRUE)
-  list(result = result, elapsed_s = elapsed, heap_high_water_mb = heap_high_water_mb)
+  after <- gc()
+
+  # gc() columns are: used, Mb, gc trigger, Mb, max used, Mb.
+  # Column 6 is the R-heap high-water mark after reset. Subtracting the live
+  # heap at measurement start gives an incremental R-heap peak indicator. These
+  # are R heap metrics, not total operating-system resident set size.
+  heap_high_water_mb <- sum(after[, 6], na.rm = TRUE)
+  heap_peak_delta_mb <- max(0, heap_high_water_mb - baseline_heap_mb)
+
+  list(
+    result = result,
+    elapsed_s = elapsed,
+    baseline_heap_mb = baseline_heap_mb,
+    heap_high_water_mb = heap_high_water_mb,
+    heap_peak_delta_mb = heap_peak_delta_mb
+  )
 }
 
 scenarios <- data.frame(
@@ -146,7 +155,9 @@ for (i in seq_len(nrow(scenarios))) {
         repetition = rep,
         mode = entry$mode,
         elapsed_s = entry$measurement$elapsed_s,
+        r_heap_baseline_mb = entry$measurement$baseline_heap_mb,
         r_heap_high_water_mb = entry$measurement$heap_high_water_mb,
+        r_heap_peak_delta_mb = entry$measurement$heap_peak_delta_mb,
         max_value_difference_vs_peer = max_diff,
         stringsAsFactors = FALSE
       )
@@ -165,6 +176,7 @@ summary_rows <- do.call(rbind, lapply(split(raw, interaction(raw$scenario, raw$m
     polygon_count = x$polygon_count[[1]],
     mode = x$mode[[1]],
     median_elapsed_s = median(x$elapsed_s),
+    max_r_heap_peak_delta_mb = max(x$r_heap_peak_delta_mb),
     max_r_heap_high_water_mb = max(x$r_heap_high_water_mb),
     max_value_difference_vs_peer = max(x$max_value_difference_vs_peer),
     stringsAsFactors = FALSE
@@ -175,7 +187,7 @@ summary_rows <- summary_rows[order(match(summary_rows$scenario, scenarios$scenar
 
 cat("Array cost-of-auditability benchmark summary\n")
 print(summary_rows, row.names = FALSE, digits = 6)
-cat("\nMemory note: r_heap_high_water_mb is the R garbage-collector heap high-water indicator, not total process RSS.\n")
+cat("\nMemory note: R-heap metrics come from gc(); they are not total process RSS.\n")
 
 if (nzchar(output_path)) {
   dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
