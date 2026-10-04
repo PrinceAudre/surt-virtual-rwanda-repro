@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import importlib
 import json
 from pathlib import Path
+import sys
 import tempfile
 
 from config_contract import ConfigError, load_job_config, validate_job_config
@@ -102,6 +104,8 @@ def main() -> None:
         "module:factory",
     )
 
+    # Repository fixture proves the normal module:factory path while remaining
+    # absent from the built-in registry.
     external = load_adapter("fixture_external_adapter:make_adapter")
     check(
         "external module factory loads a provider without core-registry edits",
@@ -114,14 +118,15 @@ def main() -> None:
     )
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        missing = Path(temp_dir) / "missing.tif"
+        temp_path = Path(temp_dir)
+        missing = temp_path / "missing.tif"
         expect_error(
             "local raster adapter fails closed on missing prepared artifact",
             lambda: adapter.prepare({"path": str(missing)}, {"mode": "none", "options": {}}, ROOT),
             "artifact not found",
         )
 
-        dummy = Path(temp_dir) / "prepared.tif"
+        dummy = temp_path / "prepared.tif"
         dummy.write_bytes(b"fixture")
         artifact = adapter.prepare({"path": str(dummy)}, {"mode": "none", "options": {}}, ROOT)
         check("local raster adapter resolves an existing prepared artifact", artifact.path == dummy)
@@ -145,6 +150,60 @@ def main() -> None:
             ),
             "only 'path' and 'label'",
         )
+
+        # Array E3: construct a provider module outside the repository at runtime.
+        # Loading and execution must require no edit to _BUILTINS, provider_adapters.py,
+        # or the generic R harmonizer.
+        module_name = "array_out_of_tree_adapter"
+        module_path = temp_path / f"{module_name}.py"
+        module_path.write_text(
+            "from pathlib import Path\n"
+            "from provider_adapters import PreparedRaster\n\n"
+            "class TempAdapter:\n"
+            "    name = 'array_out_of_tree'\n"
+            "    def validate_options(self, options, qa):\n"
+            "        if set(options) != {'path'}:\n"
+            "            raise ValueError('path only')\n"
+            "        if qa != {'mode': 'none', 'options': {}}:\n"
+            "            raise ValueError('qa none only')\n"
+            "    def prepare(self, options, qa, root):\n"
+            "        self.validate_options(options, qa)\n"
+            "        p = Path(options['path'])\n"
+            "        if not p.is_file():\n"
+            "            raise ValueError('missing artifact')\n"
+            "        return PreparedRaster(path=p, provenance_suffix='Temporary out-of-tree adapter')\n\n"
+            "def make_adapter():\n"
+            "    return TempAdapter()\n",
+            encoding="utf-8",
+        )
+        check(
+            "out-of-tree adapter fixture is physically outside the repository",
+            ROOT.resolve() not in module_path.resolve().parents,
+        )
+        sys.path.insert(0, str(temp_path))
+        importlib.invalidate_caches()
+        try:
+            temp_adapter = load_adapter(f"{module_name}:make_adapter")
+            check(
+                "out-of-tree module factory loads without built-in registry edits",
+                temp_adapter.name == "array_out_of_tree",
+            )
+            temp_artifact = temp_adapter.prepare(
+                {"path": str(dummy)},
+                {"mode": "none", "options": {}},
+                ROOT,
+            )
+            check(
+                "out-of-tree adapter preserves the declared artifact and provenance boundary",
+                temp_artifact.path == dummy
+                and temp_artifact.provenance_suffix == "Temporary out-of-tree adapter",
+            )
+        finally:
+            sys.modules.pop(module_name, None)
+            try:
+                sys.path.remove(str(temp_path))
+            except ValueError:
+                pass
 
     command = build_harmonizer_command(config, Path("/tmp/prepared.tif"), ROOT)
     joined = "\n".join(command)
