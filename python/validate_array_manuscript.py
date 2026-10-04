@@ -96,7 +96,7 @@ def main() -> None:
     for phrase in risky_phrases:
         require(phrase not in lower, f"blocked priority/superiority phrase absent: {phrase}")
 
-    require("mandatory three-part spatial-support semantics" in prior,
+    require("mandatory three-part spatial-support semantics" in prior.casefold(),
             "main novelty audit retains the mandatory support-semantic boundary")
     require("first`, `unique`, `unprecedented`" in claims,
             "claim matrix blocks unverified priority language")
