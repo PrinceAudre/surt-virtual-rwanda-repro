@@ -80,26 +80,25 @@ surt_raster_coverage_fraction <- function(raster, polygons) {
 
   transformed <- sf::st_transform(polygons, raster_crs)
   footprint <- surt_raster_footprint(raster)
-  footprint_bbox <- sf::st_bbox(footprint)
 
-  # Raster footprints are rectangles. If a polygon's bbox is wholly inside the
-  # normalized raster bbox, the polygon is necessarily fully covered. Return 1
-  # directly and reserve the more expensive equal-area intersection for polygons
-  # that can actually be clipped by the raster extent. This is an exact geometric
-  # fast path, not an approximation.
-  wholly_inside <- vapply(seq_len(nrow(transformed)), function(i) {
-    b <- sf::st_bbox(sf::st_geometry(transformed[i, , drop = FALSE]))
-    all(is.finite(b)) &&
-      b[["xmin"]] >= footprint_bbox[["xmin"]] &&
-      b[["xmax"]] <= footprint_bbox[["xmax"]] &&
-      b[["ymin"]] >= footprint_bbox[["ymin"]] &&
-      b[["ymax"]] <= footprint_bbox[["ymax"]]
-  }, logical(1))
+  # Raster footprints are rectangles. Use the vectorized topological predicate
+  # first: polygons wholly covered by the footprint have an exact coverage ratio
+  # of 1 and do not require an equal-area intersection. Any FALSE result falls
+  # through to the conservative area-ratio path, so the fast path cannot turn a
+  # genuinely partial polygon into a computed partial ratio.
+  wholly_inside <- as.logical(sf::st_covered_by(
+    sf::st_geometry(transformed),
+    footprint,
+    sparse = FALSE
+  )[, 1])
 
   out <- rep(1, nrow(transformed))
   partial_idx <- which(!wholly_inside)
   if (!length(partial_idx)) return(out)
 
+  # Raster-footprint coverage is an areal overlap ratio. Compute partial cases
+  # in a global equal-area CRS. This also avoids an s2 artefact for longitude/
+  # latitude rectangles whose constant-latitude edges have different segmenting.
   partial_equal_area <- surt_equal_area_geometry(transformed[partial_idx, , drop = FALSE])
   footprint_equal_area <- surt_equal_area_geometry(footprint)
 
