@@ -41,9 +41,9 @@ The contribution is therefore empirical and architectural. We evaluate the infor
 
 ### 2.1. Raster extraction and polygon aggregation
 
-`exactextractr` and its underlying exact-extraction approach calculate polygon-cell overlap fractions and weighted summaries [1]. xagg aggregates gridded xarray data to polygons with fractional-area and optional secondary weights [2]. `terra` and GDAL provide broad raster/vector processing, including area calculations and zonal operations [3,4]. Google Earth Engine provides regional reducers, pixel-area operations, masking, coordinate-system controls and a large cloud catalogue [5].
+`exactextractr` and its underlying exact-extraction approach calculate polygon-cell overlap fractions and weighted summaries [1]. xagg aggregates gridded xarray data to polygons with fractional-area and optional secondary weights [2]. `terra` and GDAL provide broad raster/vector processing, including area calculations and zonal operations [3,4]. Current GDAL 3.12 documentation further exposes fractional polygon-pixel inclusion, coverage reporting and weighted zonal summaries [4]. The recently released `spatcovar` 0.1.0 package provides a consistent polygon-covariate interface with coverage-fraction-weighted raster summaries, CRS handling, geometry repair, unit conversion and standardized missing-value semantics [17]. Google Earth Engine provides regional reducers, pixel-area operations, masking, coordinate-system controls and a large cloud catalogue [5].
 
-SuRT-GeoHarmonizer uses these mature ideas rather than replacing them. The workflow uses `exactextractr`, `terra` and `sf` for the core geospatial implementation. The novelty claim does not include polygon-cell intersection, cell-area calculation, zonal means or reprojection.
+These capabilities further preclude novelty claims based on generic coverage reporting, robust polygon-covariate wrappers, missing-value handling or weighted zonal summaries alone. SuRT-GeoHarmonizer uses mature geospatial ideas rather than replacing them. The workflow uses `exactextractr`, `terra` and `sf` for the core geospatial implementation. The novelty claim does not include polygon-cell intersection, cell-area calculation, zonal means, reprojection, generic coverage calculation or robust geometry handling.
 
 ### 2.2. Climate and environmental integration
 
@@ -63,13 +63,13 @@ Table 1 positions the software by system layer rather than scoring unlike produc
 
 | Layer | Examples | Established capability | SuRT relationship |
 |---|---|---|---|
-| Extraction / geospatial primitives | exactextract(r), terra, GDAL, xagg | fractional overlap, zonal summaries, area weighting, raster/vector operations | SuRT composes these primitives and does not claim their algorithms |
+| Extraction / geospatial primitives | exactextract(r), terra, GDAL, xagg, spatcovar | fractional overlap, zonal summaries, area weighting, coverage diagnostics, raster/vector operations, polygon-covariate interfaces | SuRT composes mature primitives and does not claim their algorithms or generic wrappers |
 | Cloud / geospatial process platforms | Google Earth Engine, openEO | large catalogues, regional reduction, declarative or programmable processing | SuRT provides a smaller local handoff contract for prepared inputs |
 | Domain integration | DART-Pipeline, DHIS2 Climate Tools, AREAdata | climate/environmental acquisition, administrative aggregation, health or domain integration | SuRT is narrower and can serve as an auditable raster-to-administrative boundary |
 | Workflow / reproducibility infrastructure | Snakemake, general reproducibility frameworks | dependency orchestration, repeatable execution, provenance patterns | SuRT uses workflow infrastructure to verify its domain contract |
 | Contract-first handoff | SuRT-GeoHarmonizer | mandatory support decomposition, fail-closed job/output semantics, tested provider boundary and release-evidence gates | evaluated contribution of this study |
 
-The defensible novelty is therefore not a single unique feature. It is the evaluated combination of mandatory support semantics, a fail-closed configuration contract, an out-of-tree provider boundary, independent numerical evidence and exact release-integrity controls around one bounded raster-to-administrative handoff.
+The defensible novelty is therefore not a single unique feature. It is the evaluated combination of mandatory support semantics, a fail-closed configuration contract, an out-of-tree provider boundary, independent numerical evidence and exact release-integrity controls around one bounded raster-to-administrative handoff. Equivalent component capabilities can be assembled in other geospatial stacks; the claim concerns the tested integration contract implemented and evaluated here.
 
 ## 3. System design
 
@@ -255,7 +255,7 @@ Rwanda provides a relevant reference setting because climate and environmental d
 
 ## 7. Threats to validity and limitations
 
-**Prior-art completeness.** The related-software search covers the closest systems identified during reviewer remediation and Array hardening, but no literature search can prove that no other project implements similar support semantics. We therefore avoid `first`, `unique` and priority claims.
+**Prior-art completeness.** The related-software search covers the closest systems identified during reviewer remediation and Array hardening, including current GDAL 3.12 zonal-statistics capabilities and `spatcovar` 0.1.0, but no literature search can prove that no other project implements similar support semantics. We therefore avoid `first`, `unique` and priority claims. The contribution is evaluated as an integrated contract, not inferred from the absence of equivalent primitives elsewhere.
 
 **Evaluation scope.** RQ1 and RQ3 are controlled software experiments. RQ2 contains scoped public-data calculations, not multi-site environmental validation. Uganda CHIRPS supplies one real second-country configuration case; ERA5-Land and MODIS checks are limited to Nyarugenge in 2023, and the HAND check to Rubavu and one public tile.
 
@@ -336,3 +336,5 @@ During development and manuscript preparation, the author used OpenAI ChatGPT an
 [15] K. Didan, MOD13A3 MODIS/Terra Vegetation Indices Monthly L3 Global 1 km SIN Grid V061, NASA EOSDIS Land Processes DAAC (2021). https://doi.org/10.5067/MODIS/MOD13A3.061.
 
 [16] A. D. Nobre, L. A. Cuartas, M. Hodnett, et al., Height Above the Nearest Drainage: a hydrologically relevant new terrain model, Journal of Hydrology 404 (2011) 13-29. https://doi.org/10.1016/j.jhydrol.2011.03.051.
+
+[17] E. Cebeci, spatcovar: Construct Spatial Covariates from Polygon Data, R package version 0.1.0 (2026). https://doi.org/10.32614/CRAN.package.spatcovar.
