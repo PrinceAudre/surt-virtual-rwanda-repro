@@ -1,0 +1,31 @@
+name: Array manuscript validation
+
+on:
+  push:
+    branches:
+      - review/softwarex-resubmission-v1.4.0
+    paths:
+      - 'paper/array-manuscript.md'
+      - 'paper/ARRAY_NOVELTY_PRIOR_ART_AUDIT.md'
+      - 'paper/ARRAY_PRIOR_ART_UPDATE_2026-10-04.md'
+      - 'paper/ARRAY_CLAIM_EVIDENCE_MATRIX.md'
+      - 'evidence/array/**'
+      - 'python/validate_array_manuscript.py'
+      - '.github/workflows/array-manuscript-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-array-manuscript:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate Array manuscript against tracked evidence
+        run: python python/validate_array_manuscript.py
