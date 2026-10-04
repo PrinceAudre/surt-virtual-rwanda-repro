@@ -24,7 +24,6 @@ surt_raster_footprint <- function(raster) {
   raster_crs <- sf::st_crs(terra::crs(raster, proj = TRUE))
   if (is.na(raster_crs)) stop("Raster CRS is required for footprint coverage.")
 
-  # Use terra's public coordinate accessors rather than `$` fields on SpatExtent.
   bbox_values <- c(
     xmin = terra::xmin(raster),
     ymin = terra::ymin(raster),
@@ -36,12 +35,8 @@ surt_raster_footprint <- function(raster) {
   }
 
   # Some global geographic GeoTIFFs encode an extent a few floating-point units
-  # beyond +/-180 or +/-90. CHIRPS v2.0 annual 2023, for example, reports
-  # xmax=180.000005364418. Passing that spill directly through PROJ wraps the
-  # eastern edge across the antimeridian and can collapse the footprint overlap
-  # to zero. Normalize only near-global longitude spans, and clamp only tiny
-  # coordinate spill relative to the raster resolution; larger excursions remain
-  # untouched so legitimate nonstandard longitude domains are not silently hidden.
+  # beyond +/-180 or +/-90. Normalize only tiny coordinate spill relative to the
+  # raster resolution; larger excursions remain untouched.
   if (isTRUE(sf::st_is_longlat(raster_crs))) {
     raster_res <- abs(terra::res(raster))
     lon_tol <- max(1e-8, raster_res[[1]] * 1e-3)
@@ -66,12 +61,6 @@ surt_raster_footprint <- function(raster) {
   sf::st_as_sfc(sf::st_bbox(bbox_values, crs = raster_crs))
 }
 
-# Raster-footprint coverage is an areal overlap ratio. Compute both polygon and
-# footprint in a global equal-area CRS before intersection. This avoids a subtle
-# s2 artefact for longitude/latitude rectangles: the same constant-latitude edge
-# represented as one long geodesic segment versus several shorter segments can
-# otherwise yield a fraction slightly below 1 even when the polygon is exactly
-# inside the raster extent.
 surt_equal_area_crs <- function() sf::st_crs(6933)
 
 surt_equal_area_geometry <- function(geometry) {
@@ -91,11 +80,31 @@ surt_raster_coverage_fraction <- function(raster, polygons) {
 
   transformed <- sf::st_transform(polygons, raster_crs)
   footprint <- surt_raster_footprint(raster)
-  transformed_equal_area <- surt_equal_area_geometry(transformed)
+  footprint_bbox <- sf::st_bbox(footprint)
+
+  # Raster footprints are rectangles. If a polygon's bbox is wholly inside the
+  # normalized raster bbox, the polygon is necessarily fully covered. Return 1
+  # directly and reserve the more expensive equal-area intersection for polygons
+  # that can actually be clipped by the raster extent. This is an exact geometric
+  # fast path, not an approximation.
+  wholly_inside <- vapply(seq_len(nrow(transformed)), function(i) {
+    b <- sf::st_bbox(sf::st_geometry(transformed[i, , drop = FALSE]))
+    all(is.finite(b)) &&
+      b[["xmin"]] >= footprint_bbox[["xmin"]] &&
+      b[["xmax"]] <= footprint_bbox[["xmax"]] &&
+      b[["ymin"]] >= footprint_bbox[["ymin"]] &&
+      b[["ymax"]] <= footprint_bbox[["ymax"]]
+  }, logical(1))
+
+  out <- rep(1, nrow(transformed))
+  partial_idx <- which(!wholly_inside)
+  if (!length(partial_idx)) return(out)
+
+  partial_equal_area <- surt_equal_area_geometry(transformed[partial_idx, , drop = FALSE])
   footprint_equal_area <- surt_equal_area_geometry(footprint)
 
-  vapply(seq_len(nrow(transformed_equal_area)), function(i) {
-    geom <- sf::st_geometry(transformed_equal_area[i, , drop = FALSE])
+  out[partial_idx] <- vapply(seq_along(partial_idx), function(j) {
+    geom <- sf::st_geometry(partial_equal_area[j, , drop = FALSE])
     total_area <- as.numeric(sum(sf::st_area(geom)))
     if (!is.finite(total_area) || total_area <= 0) return(NA_real_)
     overlap <- suppressWarnings(sf::st_intersection(geom, footprint_equal_area))
@@ -103,6 +112,8 @@ surt_raster_coverage_fraction <- function(raster, polygons) {
     overlap_area <- as.numeric(sum(sf::st_area(overlap)))
     surt_clamp_fraction(overlap_area / total_area)
   }, numeric(1))
+
+  out
 }
 
 surt_area_weighted_summary <- function(raster, polygons) {
@@ -124,10 +135,7 @@ surt_area_weighted_summary <- function(raster, polygons) {
       touched <- is.finite(coverage_fraction) & coverage_fraction > 0 &
         is.finite(weights) & weights > 0
       if (!any(touched)) {
-        return(data.frame(
-          value = NA_real_,
-          valid_within_raster_fraction = 0
-        ))
+        return(data.frame(value = NA_real_, valid_within_raster_fraction = 0))
       }
 
       values <- values[touched]
@@ -138,10 +146,7 @@ surt_area_weighted_summary <- function(raster, polygons) {
 
       if (!is.finite(total_area) || total_area <= 0 ||
           !is.finite(valid_area) || valid_area <= 0) {
-        return(data.frame(
-          value = NA_real_,
-          valid_within_raster_fraction = 0
-        ))
+        return(data.frame(value = NA_real_, valid_within_raster_fraction = 0))
       }
 
       data.frame(
@@ -158,9 +163,7 @@ surt_area_weighted_summary <- function(raster, polygons) {
 
   raster_fraction <- surt_raster_coverage_fraction(raster, transformed)
   extracted$raster_coverage_fraction <- surt_clamp_fraction(raster_fraction)
-  extracted$valid_within_raster_fraction <- surt_clamp_fraction(
-    extracted$valid_within_raster_fraction
-  )
+  extracted$valid_within_raster_fraction <- surt_clamp_fraction(extracted$valid_within_raster_fraction)
   extracted$valid_data_fraction <- surt_clamp_fraction(
     extracted$raster_coverage_fraction * extracted$valid_within_raster_fraction
   )
