@@ -1,137 +1,202 @@
 # Tool-comparison evidence dossier
 
-Prepared for the SoftwareX reviewer-remediation comparison of SuRT-GeoHarmonizer with established geospatial tools and adjacent environmental-data pipelines.
+Prepared originally for the SoftwareX reviewer-remediation comparison and retained as prior-art evidence for the Array hardening cycle.
 
-Evidence checked: 2026-10-03.
+Evidence checked: 2026-10-04.
+
+See also `paper/ARRAY_NOVELTY_PRIOR_ART_AUDIT.md`.
 
 ## Comparison rule
 
-The manuscript compares each tool at the level of its documented primary scope and built-in workflow contract. A cell marked "user-constructed" does not mean that the platform cannot implement the capability; it means the capability is not a fixed output/release contract of the named tool. The comparison must not portray mature tools as deficient merely because SuRT integrates several controls into one reproducible release workflow.
+Compare each tool at the level of its documented primary scope and built-in workflow contract. A cell marked "user-constructed" does not mean that the platform cannot implement the capability; it means the capability is not a fixed output/release contract of the named tool. Mature tools must not be portrayed as deficient merely because SuRT integrates several controls into one bounded workflow.
 
-The novelty claim must remain architectural. SuRT does **not** claim a new zonal-statistics algorithm, a new cell-area algorithm, the first configurable environmental-data pipeline, or the first reproducible geospatial workflow.
+The novelty claim must remain architectural. SuRT does **not** claim a new zonal-statistics algorithm, polygon-cell overlap method, raster-cell-area algorithm, first configurable environmental-data pipeline, first reproducible geospatial workflow, first provenance/checksum pipeline, or first climate-health integration system.
 
 ## Google Earth Engine
 
 Primary evidence:
 
-- Google Earth Engine `ee.Image.reduceRegions`: https://developers.google.com/earth-engine/apidocs/ee-image-reduceregions
-- Earth Engine authentication and initialization: https://developers.google.com/earth-engine/guides/auth
+- `ee.Image.reduceRegions`: https://developers.google.com/earth-engine/apidocs/ee-image-reduceregions
+- `ee.Image.pixelArea`: https://developers.google.com/earth-engine/apidocs/ee-image-pixelarea
+- authentication: https://developers.google.com/earth-engine/guides/auth
 
 Supported claims:
 
-- `reduceRegions` applies a reducer to each feature in a collection and returns the input features augmented with reducer results.
-- Scale and CRS can be explicitly supplied for regional reductions.
-- Python and command-line clients require authentication and initialization with a Google Cloud project.
-- Earth Engine is therefore a broad cloud geospatial computation platform, not a fixed local release contract for SuRT-style coverage, provenance, checksums, and negative-test evidence.
+- Earth Engine applies reducers to feature collections and allows scale/CRS control.
+- Pixel area and masking can be composed into custom weighted workflows.
+- Python and command-line service use requires authentication/initialization.
+- Earth Engine is a broad cloud geospatial platform, not a fixed local SuRT-style administrative output/release contract.
 
 ## MODIStsp
 
 Primary evidence:
 
-- Package overview: https://docs.ropensci.org/MODIStsp/
-- Interactive processing and QA controls: https://docs.ropensci.org/MODIStsp/articles/interactive_execution.html
-- Non-interactive JSON options: https://docs.ropensci.org/MODIStsp/articles/noninteractive_execution.html
-- Offline processing: https://docs.ropensci.org/MODIStsp/articles/faq.html
+- https://docs.ropensci.org/MODIStsp/
+- https://docs.ropensci.org/MODIStsp/articles/interactive_execution.html
+- https://docs.ropensci.org/MODIStsp/articles/noninteractive_execution.html
+- https://docs.ropensci.org/MODIStsp/articles/faq.html
 
 Supported claims:
 
-- MODIStsp automates creation of raster time series from MODIS Land Products, including download, mosaicking, reprojection, resize, and data extraction.
-- It can extract quality indicators from MODIS QA layers and compute spectral indices.
-- It supports non-interactive execution using saved JSON options and can process already-downloaded MODIS data in offline mode.
-- Its documented scope is MODIS-specific preprocessing and time-series production rather than an arbitrary-provider administrative harmonization and release-evidence contract.
+- MODIStsp automates MODIS download, mosaicking, reprojection, resize and data extraction.
+- It supports MODIS QA controls, spectral indices, saved JSON options and offline processing after acquisition.
+- Its documented scope is MODIS-specific preprocessing/time-series production rather than arbitrary-provider administrative harmonization.
 
-## exactextractr
+## exactextract / exactextractr
 
 Primary evidence:
 
-- Package documentation: https://isciences.gitlab.io/exactextractr/
-- `exact_extract` reference: https://isciences.gitlab.io/exactextractr/reference/exact_extract.html
+- https://isciences.github.io/exactextract/
+- https://isciences.gitlab.io/exactextractr/
 
 Supported claims:
 
-- exactextractr extracts or summarizes raster values covered by polygons.
-- Named operations include polygon coverage-aware summaries.
-- `weighted_mean` weights cell values by polygon coverage fraction and a weighting raster.
-- `weights = "area"` calculates cell areas and uses them as weights.
-- SuRT-GeoHarmonizer uses exactextractr as an extraction engine; it does not claim the underlying exact polygon extraction or area-weighting algorithm as a new contribution.
+- exactextract(r) provides exact polygon-cell coverage fractions and zonal summaries.
+- Weighted operations can combine polygon coverage with a weighting raster; cell-area weighting is supported.
+- SuRT uses exactextractr as an extraction engine and does not claim these algorithms as new.
+
+## xagg
+
+Primary evidence:
+
+- https://xagg.readthedocs.io/
+- https://doi.org/10.21105/joss.07239
+
+Supported claims:
+
+- xagg aggregates xarray gridded data to polygons using fractional area overlap and optional secondary weights.
+- Climate econometrics and administrative societal-data applications are explicit use cases.
+- SuRT therefore cannot claim novelty for area-weighted gridded-to-administrative aggregation itself.
 
 ## GDAL and terra
 
 Primary evidence:
 
-- GDAL raster zonal statistics documentation: https://gdal.org/en/stable/programs/gdal_raster_zonal_stats.html
-- terra package documentation: https://rspatial.org/pkg/
+- https://gdal.org/en/stable/programs/gdal_raster_zonal_stats.html
+- https://rspatial.org/terra/
 
 Supported claims:
 
-- Current GDAL provides zonal-statistics operations, including fractional pixel coverage and weighted statistics where configured.
-- `terra` provides mature raster/vector processing and raster-cell area calculation and is used in SuRT's independent numerical cross-checks.
-- These tools reinforce the boundary of the SuRT novelty claim: the contribution is not zonal statistics or area weighting themselves, but the integration of explicit semantics and release-evidence controls.
+- Current GDAL provides zonal-statistics operations including fractional pixel coverage when configured.
+- terra provides mature raster/vector processing and cell-area calculation and is used in SuRT's independent numerical cross-checks.
+
+## AREAdata
+
+Primary evidence:
+
+- Pearse WD et al. *AREAdata: A worldwide climate dataset averaged across spatial units at different scales through time*. https://pmc.ncbi.nlm.nih.gov/articles/PMC9278028/
+
+Supported claims:
+
+- AREAdata uses CDO and exactextractr to aggregate climate variables to administrative units with fractional-overlap weighting.
+- Its automated pipeline updates and republishes derived datasets and can be rerun locally.
+- Automated/reproducible administrative climate aggregation is therefore prior art.
 
 ## DART-Pipeline
 
 Primary evidence:
 
-- Dasgupta A, Perez-Fernandez I, Huynh T, et al. *Scalable, open-access and multidisciplinary data integration pipeline for climate-sensitive diseases*. Wellcome Open Research. DOI: https://doi.org/10.12688/wellcomeopenres.24774.3
-- Repository: https://github.com/kraemer-lab/DART-Pipeline
+- Dasgupta A, Perez-Fernandez I, Huynh T, et al. *Scalable, open-access and multidisciplinary data integration pipeline for climate-sensitive diseases*. https://doi.org/10.12688/wellcomeopenres.24774.3
+- repository: https://github.com/kraemer-lab/DART-Pipeline
+- configuration documentation: https://dart-pipeline.readthedocs.io/en/latest/workflow/configuration.html
+- custom metrics: https://dart-pipeline.readthedocs.io/en/latest/reference/custom_metrics.html
 
-Supported claims:
+Directly supported claims:
 
-- DART is a locally deployable, scalable pipeline for integrating epidemiological, socioeconomic, climatic, and environmental data for climate-sensitive-disease analyses.
-- Users can specify country, administrative level, and time period; the pipeline acquires and preprocesses several data sources and aggregates them to administrative units.
-- The published methods include area- or population-weighted spatial aggregation, extensible aggregation methods, testing, version locking, and structured metadata.
-- DART is therefore a closer adjacent system than a simple raster extraction package for the climate-health/public-health use case.
-- SuRT must not claim broader data-integration functionality than DART. The safe distinction is narrower: SuRT formalizes a raster-to-administrative release boundary with three explicit coverage quantities, fail-closed declarative jobs, a provider extension contract, restricted provenance-labelled GeoJSON outputs, deliberate negative and release-corruption tests, source-pinned independent numerical checks, and complete tracked-file release-integrity gates.
-- The two systems can be described as complementary at different layers of an analytical stack; absence of any specific DART feature must not be claimed unless directly established from its primary documentation.
+- DART is a locally deployable climate-health pipeline integrating epidemiological, socioeconomic, climatic and environmental data.
+- Users specify geography/administrative level and time; multiple source products are prepared and aggregated to administrative units.
+- DART/geoglue uses exact polygon-cell coverage fractions and spherical cell-area weighting, with area- or population-weighted aggregation.
+- DART has tests, CI, version locking, structured metadata, licences/citations, valid bounds and documented custom-source/metric extension.
+- Repository inspection of the ERA5 daily processing path shows provenance propagation and a SHA-256 of a resampled source artifact included in provenance. SuRT therefore must **not** imply that provenance plus checksums distinguishes it from DART.
+- DART's documented convenience workflow uses a shell configuration (`config.sh`). Its custom-metric documentation instructs users to add a module under `src/dart_pipeline/metrics` and register metadata/fetch/process functions.
+- Targeted repository searches performed on 2026-10-04 did not identify an output contract equivalent to SuRT's mandatory decomposition into `raster_coverage_fraction`, `valid_within_raster_fraction`, and `valid_data_fraction`. This is only a candidate differentiator; it is **not** evidence of first-ever priority.
 
-## Snakemake
+Safe distinction:
+
+- DART is broader and stronger for climate-health integration.
+- SuRT is narrower: a raster-to-administrative handoff with a fail-closed JSON Schema job contract, three mandatory support quantities, an out-of-tree `module:factory` provider boundary, restricted output schema, deliberate failure/release-corruption tests, independent numerical cross-checks and complete tracked-file release-integrity gates.
+- The systems can be complementary. Do not claim absence of a DART capability unless directly established from primary code/documentation.
+
+## DHIS2 Climate Tools
 
 Primary evidence:
 
-- Snakemake documentation: https://snakemake.readthedocs.io/
+- https://dhis2.org/climate/
+- https://climate-tools.dhis2.org/
 
 Supported claims:
 
-- Snakemake is mature workflow infrastructure. SuRT does not claim workflow-management novelty.
-- The v1.4 evidence DAG uses Snakemake to make controlled preparation, configured harmonization, validation, and evidence steps executable in CI.
+- DHIS2 provides climate/health integration tooling and reproducible reference workflows for products such as ERA5-Land and CHIRPS.
+- The initiative explicitly serves health-system settings including Africa and Asia and emphasizes local adaptation/ownership.
+- SuRT must not claim to be the first LMIC/Africa climate-health integration tool.
+
+## openEO
+
+Primary evidence:
+
+- https://openeo.org/documentation/
+
+Supported claims:
+
+- openEO provides declarative geospatial process graphs and spatial aggregation.
+- Declarative geospatial configuration/process graphs are therefore not generic novelty for SuRT.
+
+## Reproducibility/workflow infrastructure
+
+Relevant evidence:
+
+- Snakemake: https://snakemake.readthedocs.io/
+- Wang S et al. RRE geospatial framework, 2026: https://doi.org/10.1016/j.jag.2026.105239
+- Pritchard NJ, Wicenec A. reproducibility tenets/workflow signatures, 2025: https://doi.org/10.1016/j.future.2024.107684
+
+Supported claims:
+
+- Workflow orchestration, FAIR/RRE framing, provenance and hash-based reproducibility checks are mature research areas.
+- SuRT uses Snakemake for an evidence DAG; it does not claim workflow-manager novelty.
+
+## Array precedent
+
+- D'Onofrio A et al. *FairFlow: A transparency-first framework for verifiable and reproducible bioinformatics*. Array, 2026. https://doi.org/10.1016/j.array.2026.101150
+
+FairFlow is evidence that Array accepts reproducibility/framework contributions when the contract is technically defined and quantitatively evaluated. It is precedent for evaluation style, not evidence of SuRT novelty.
 
 ## SuRT-GeoHarmonizer evidence
 
 Repository evidence used for SuRT claims:
 
 - `R/harmonize_admin_raster.R`: arbitrary raster/polygon CLI, validation, coverage and provenance output.
-- `R/zonal_area_summary.R`: polygon-overlap times cell-area weighting and explicit coverage fractions.
-- `config/harmonization-job.schema.json`: fail-closed declarative job schema.
-- `python/provider_adapters.py`: built-in local-raster adapter and external adapter extension boundary.
-- `python/fixture_external_adapter.py` and `python/test_config_contract.py`: positive executable proof that a `module:factory` adapter works without editing the built-in registry, plus malformed-plugin failures.
+- `R/zonal_area_summary.R`: polygon-overlap × raster-cell-surface-area weighting and the three support fractions.
+- `config/harmonization-job.schema.json`: Draft 2020-12 fail-closed job schema with unknown fields rejected.
+- `python/provider_adapters.py`: built-in local-raster adapter plus external `module:factory` loading boundary.
+- `python/fixture_external_adapter.py` and `python/test_config_contract.py`: executable external-adapter proof plus malformed-plugin failures.
 - `Snakefile`: account-free orchestration evidence DAG.
-- `python/run_all_checks.py`: executable verification and negative-test aggregation.
-- `python/validate_release_contract.py`: independent output-contract validation and corruption tests.
+- `python/run_all_checks.py`: verification and negative-test aggregation.
+- `python/validate_release_contract.py`: independent output-contract validation and deliberate corruptions.
 - `CHECKSUMS.sha256` plus CI workflows: tracked-file integrity and clean-run evidence.
-- `config/uganda-chirps-2023.json` and `R/validate_uganda_chirps_case.R`: source-derived second-country environmental case and independent numerical cross-check.
-- `evidence/era5land/`, `evidence/modis/`, and `evidence/hand/`: scoped source-pinned real-data numerical cross-check records.
+- `config/uganda-chirps-2023.json` and `R/validate_uganda_chirps_case.R`: source-derived second-country case and independent cross-check.
+- `evidence/era5land/`, `evidence/modis/`, `evidence/hand/`: scoped source-pinned public-data cross-check records.
 
 ## Safe comparison language
 
-Use "integrated contract" or "release-evidence boundary" rather than "unique capability" when distinguishing SuRT. Google Earth Engine and exactextractr can be composed into sophisticated workflows, MODIStsp has substantial automation and QA, GDAL and terra provide mature geospatial primitives, and DART provides a broader climate-disease data-integration pipeline. SuRT's demonstrated contribution is the integration of provider preparation boundaries, a generic administrative schema, explicit area and coverage semantics, provenance, fail-closed configuration, a tested external adapter boundary, negative tests, independent release validation, source-pinned cross-checks, checksums, CI, and versioned evidence in one small research-software workflow.
+Use **contract-first harmonization**, **fixed administrative output contract**, **mandatory spatial-support semantics**, or **integrated release-evidence boundary** rather than `unique capability`.
 
-## Reviewer-facing comparison matrix
+SuRT's defensible candidate contribution is the integration of:
 
-| Capability | Google Earth Engine | MODIStsp | exactextractr | SuRT-GeoHarmonizer |
-|---|---|---|---|---|
-| Data acquisition | Cloud catalogue | MODIS-specific | Not primary scope | Adapter/provider layer |
-| Arbitrary raster + polygon processing | Platform capability | MODIS-oriented | Yes | Yes |
-| Polygon zonal summaries | Yes | Downstream/user-defined | Core capability | Core workflow |
-| Explicit cell-area weighting | User-defined reducers/weights | User-defined | Built in via area weights | Fixed default contract |
-| Separate valid-data coverage fields | User-defined | Product/QA dependent | Coverage information available | Fixed output schema |
-| Per-feature provenance field | User-defined | Processing metadata | User-defined | Fixed output schema |
-| Fail-closed configuration schema | User-defined | Saved processing options | Not primary scope | Built in |
-| Negative/failure tests | User workflow | Package tests | Package tests | Release gate |
-| Independent output-contract validation | User workflow | Not primary scope | Not primary scope | Built in |
-| Tracked-file checksums | User workflow | Not primary scope | Not primary scope | Release gate |
-| Clean-run CI evidence | User workflow | Package CI | Package CI | Release gate |
-| Account-free verification path | Cloud service authentication/project required | Offline processing possible after acquisition | Yes | Yes |
-| Provider extension boundary | Platform/data-catalogue model | MODIS-specific | Raster-agnostic extraction | Adapter contract |
-| Workflow orchestration | Platform task model/user workflow | Processing workflow | Function-level | Snakemake evidence DAG |
+1. mandatory separation of raster-footprint coverage, within-footprint finite-data support and overall valid-data support;
+2. a fail-closed machine-readable harmonization job contract;
+3. an out-of-tree provider extension boundary that leaves the core harmonizer/registry unchanged;
+4. independent numerical/output validation, deliberate failures/corruptions, source-pinned evidence, CI and release-integrity checks.
 
-The matrix is deliberately architectural and retains the three tools named by the SoftwareX reviewer. DART, GDAL, terra, and Snakemake are discussed in prose because they occupy different layers and forcing them into the same matrix would imply false one-to-one equivalence.
+The Array manuscript must demonstrate the value and cost of this contract empirically. No first-ever or superiority claim is currently authorized.
+
+## Layer-aware comparison posture for Array
+
+| Layer | Representative systems | What is prior art | SuRT positioning |
+|---|---|---|---|
+| Extraction primitives | exactextract(r), GDAL, terra, xagg | Exact overlap, area weighting, zonal summaries | Composes these primitives; no algorithm claim |
+| Cloud/process platforms | Google Earth Engine, openEO | Catalogue-scale computation, reducers, declarative process graphs | Local bounded harmonization/output contract |
+| Domain integration | DART, DHIS2 Climate Tools, AREAdata | Climate/health integration, administrative aggregation, reproducible pipelines | Narrow raster-to-admin handoff, not end-to-end health integration |
+| Workflow/reproducibility | Snakemake, FAIR/RRE workflow frameworks | Orchestration, reproducibility, provenance, signatures | Uses them as release/evidence controls |
+| SuRT | SuRT-GeoHarmonizer | Not a replacement for the above | Contract-first support/configuration/extension/release assurance |
+
+This layer-aware comparison should replace any table that implies one-to-one equivalence among tools that operate at different architectural levels.
