@@ -2,37 +2,32 @@
 
 **Target journal:** Array  
 **Audit date:** 2026-10-04  
-**Status:** GO WITH CONDITIONS for Array hardening  
-**Scope:** SuRT-GeoHarmonizer v1.4 development branch. This is an internal evidence record, not submission text.
+**Status:** GO FOR ARRAY MANUSCRIPT HARDENING, RELEASE NOT AUTHORIZED  
+**Scope:** SuRT-GeoHarmonizer v1.4 development branch. Internal evidence record, not submission text.
 
 ## 1. Decision
 
-Proceed with an Array-specific hardening cycle.
+Proceed with an Array-specific manuscript and final hardening cycle.
 
-The audit does **not** support a claim that SuRT-GeoHarmonizer invents zonal statistics, polygon-cell overlap weighting, raster-cell area weighting, climate-data integration, configurable geospatial workflows, provenance recording, checksums, reproducible scientific workflows, or LMIC climate-health data integration. Strong prior systems already provide each of those capabilities, and some provide several of them together.
+The prior-art search does not support any claim that SuRT-GeoHarmonizer invents zonal statistics, polygon-cell overlap weighting, raster-cell area weighting, environmental or climate-health data integration, configurable geospatial workflows, plugin architectures, provenance recording, checksums, or reproducible scientific workflows. Mature systems already provide each of these capabilities, and several combine many of them.
 
-The audit **does** support a narrower systems/software-engineering contribution that is worth testing and presenting to Array:
+The evidence now supports a narrower software-engineering contribution:
 
 > SuRT-GeoHarmonizer is a contract-first administrative-raster harmonization layer that makes spatial support, transformation, extension, output semantics, numerical verification, and release identity machine-verifiable as one bounded workflow contract.
 
-This contribution is potentially publishable because it changes the unit of assurance from an individual raster statistic or processing script to a fixed, executable handoff contract for administrative environmental covariates. However, the manuscript must demonstrate the value of that contract empirically rather than assert uniqueness.
+The value claim is no longer purely architectural. Three Array-specific experiments now provide direct empirical evidence for the contract: support-semantics collision, cost-of-auditability, and out-of-tree provider extension.
 
-The main evidence still required before final Array submission is:
+The remaining work is manuscript framing, adversarial claim review, exact-release validation, and journal submission preparation. No v1.4.0 DOI, tag, GitHub release, or Zenodo version is authorized by this audit.
 
-1. a controlled **support-semantics experiment** showing that indistinguishable or near-indistinguishable zonal means can arise from materially different raster-footprint and finite-data support, while SuRT's mandatory three-part support fields expose the difference;
-2. a **performance and resource benchmark** quantifying the runtime and memory cost of the contract relative to direct underlying geospatial primitives over increasing raster and polygon workloads;
-3. an explicit **extension experiment** demonstrating that a third-party provider can be loaded out-of-tree without changing the core provider registry or R harmonizer, with the changed-file/LOC boundary recorded;
-4. an Array-oriented manuscript that treats the Rwanda/Uganda cases as domain evaluation rather than as the definition of the software.
+## 2. What `novel` means for this manuscript
 
-If those experiments fail to demonstrate practical value, the novelty claim must be reduced or the Array submission reconsidered.
+Array requires submissions to be novel, technically sound, and clearly presented. Novelty does not require every primitive in a system to be new. A defensible systems contribution may instead reside in a new architecture, interface or verification contract, provided the claimed difference is clearly defined and empirically evaluated.
 
-## 2. What Array-level novelty means here
+For SuRT, novelty must therefore be expressed as a **newly evaluated integration contract**, not as new raster mathematics.
 
-Array does not require every primitive used by a system to be new. A software/systems contribution can be novel through architecture, interface contracts, integration, validation methodology, or demonstrated behaviour built on established libraries. Recent Array work reinforces this interpretation. For example, FairFlow presents a reproducibility framework whose contribution is an integrated transparency and execution contract across existing languages/workflow environments rather than a new underlying bioinformatics algorithm; the paper reports cross-environment concordance as evidence. Array also publishes application-domain pipeline and framework work where novelty resides in system structure and evaluation.
+The manuscript should use research questions and controlled experiments to show what the contract adds to established geospatial primitives.
 
-For SuRT, therefore, novelty must be expressed as a **newly evaluated software contract**, not a claim to novel raster mathematics.
-
-## 3. Closest prior art and what it removes from our novelty claim
+## 3. Closest prior art and claims it removes
 
 ### 3.1 DART-Pipeline / geoglue
 
@@ -42,29 +37,13 @@ Primary sources:
 - https://github.com/kraemer-lab/DART-Pipeline
 - https://dart-pipeline.readthedocs.io/
 
-DART is the most important adjacent comparator because it is explicitly a climate-health pipeline, runs locally, supports country/administrative-level configuration, downloads and processes multiple environmental/socioeconomic sources, and aggregates gridded variables to administrative units.
+DART is the closest climate-health comparator. It runs locally, supports country and administrative-level configuration, downloads and processes multiple environmental and socioeconomic sources, aggregates gridded variables to administrative units, supports area- and population-weighted aggregation, records metadata/provenance, uses checksums in parts of its processing, has tests and CI, and documents custom metric/source extension.
 
-Direct repository inspection confirms that DART already provides:
+Therefore SuRT must not claim that area weighting, provenance, checksums, extensibility, local climate-health processing, or reproducibility are individually unique.
 
-- polygon-cell fractional-overlap weighting through exactextract/geoglue;
-- spherical cell-area weighting;
-- area- and population-weighted aggregation;
-- metadata including units, valid ranges, licences and citations;
-- provenance propagation;
-- SHA-256 values for processed inputs in at least parts of the ERA5 workflow;
-- version locking, tests and CI;
-- CLI execution;
-- custom metric/source registration and documented extension mechanisms.
+The narrower distinction supported by current evidence is that SuRT binds a fail-closed machine-readable job schema to fixed raster-to-administrative output semantics, requires three explicit support quantities, and allows an out-of-tree `module:factory` provider adapter without editing the built-in registry or generic R harmonizer.
 
-Therefore SuRT must **not** claim that area weighting, provenance, checksums, extensibility, local climate-health processing or reproducibility are individually unique.
-
-Relevant distinction supported by current evidence:
-
-- DART's convenience workflow is configured primarily through a shell configuration (`config.sh`) and its custom-metric integration documentation instructs users to add a source module under the DART source tree and register fetch/process functions.
-- SuRT's harmonization job is a Draft 2020-12 JSON Schema with unknown fields rejected (`additionalProperties: false`), fixed aggregation/output semantics, an explicit minimum-valid-data gate, and an external `module:factory` adapter that is executable without changing the built-in provider registry or R harmonizer.
-- Targeted inspection did not identify a DART output contract equivalent to SuRT's mandatory decomposition into `raster_coverage_fraction`, `valid_within_raster_fraction`, and `valid_data_fraction`. This is a **candidate differentiator**, not a priority or first-ever claim.
-
-The manuscript must state that DART is broader than SuRT for climate-health data integration. SuRT is a smaller raster-to-administrative handoff layer that can complement DART-like systems.
+DART is broader than SuRT for climate-health data integration. SuRT is a smaller handoff and assurance layer that can complement DART-like systems.
 
 ### 3.2 DHIS2 Climate & Health / Climate Tools
 
@@ -73,11 +52,9 @@ Primary sources:
 - https://dhis2.org/climate/
 - https://climate-tools.dhis2.org/
 
-DHIS2 Climate tooling provides reproducible reference workflows for integrating ERA5, CHIRPS and other climate/environmental data into health-information systems. It is explicitly targeted to health-system use, including deployments and partnerships in Africa and Asia, and the broader initiative emphasizes local ownership and digital sovereignty.
+DHIS2 Climate tooling already supports climate and environmental integration for health-information systems, including use in Africa and other LMIC settings. SuRT must not claim to be the first open climate-health integration tool for Africa or LMICs.
 
-Therefore SuRT must **not** claim that it is the first open climate-health integration tool for Africa/LMICs, or that local climate-data integration for public-health systems is novel.
-
-Safe distinction: SuRT operates below the HMIS/application layer and formalizes a generic raster-to-administrative output/evidence contract. It does not ingest epidemiological records, provide DHIS2 integration, or provide a health-information platform.
+Safe distinction: SuRT operates below the HMIS/application layer. It does not ingest epidemiological records or provide a health-information platform. Its contribution is the raster-to-administrative contract.
 
 ### 3.3 AREAdata
 
@@ -85,11 +62,7 @@ Primary source:
 
 - Pearse WD et al. *AREAdata: A worldwide climate dataset averaged across spatial units at different scales through time*. https://pmc.ncbi.nlm.nih.gov/articles/PMC9278028/
 
-AREAdata uses CDO and exactextractr to automate climate-variable aggregation across administrative units, weights cells by fractional polygon overlap, updates outputs automatically, and publishes reproducible code/data archives.
-
-Therefore administrative climate aggregation plus an automated/reproducible publication pipeline is not novel.
-
-Safe distinction: AREAdata is primarily a maintained climate-data product/pipeline. SuRT's candidate contribution is a generic fail-closed job/output/release contract with mandatory support diagnostics and provider extension boundaries.
+AREAdata automates climate aggregation across administrative units, uses fractional polygon overlap, and publishes reproducible code/data. Administrative climate aggregation plus reproducible publication is therefore not novel.
 
 ### 3.4 xagg
 
@@ -98,9 +71,7 @@ Primary sources:
 - https://xagg.readthedocs.io/
 - https://doi.org/10.21105/joss.07239
 
-xagg aggregates xarray gridded data to polygons using fractional area overlaps and optional secondary weights, with export to common formats. Its motivating use cases include climate econometrics where societal outcomes are at administrative level.
-
-Therefore area-weighted raster-to-polygon aggregation for downstream health/social analyses is not novel.
+xagg performs fractional-area raster-to-polygon aggregation with optional secondary weights. Area-weighted administrative aggregation is therefore not novel.
 
 ### 3.5 exactextract / exactextractr
 
@@ -109,18 +80,16 @@ Primary sources:
 - https://isciences.github.io/exactextract/
 - https://isciences.gitlab.io/exactextractr/
 
-These tools provide exact polygon-cell coverage fractions, weighted summaries, and area-weighted operations. SuRT itself uses exactextractr.
+These tools provide exact polygon-cell coverage fractions, weighted summaries and area weighting. SuRT uses exactextractr. Those algorithms are inherited primitives, not SuRT inventions.
 
-Therefore exact polygon extraction, coverage-fraction weighting and raster-cell area weighting are inherited primitives, not SuRT inventions.
-
-### 3.6 GDAL, terra and general GIS tooling
+### 3.6 GDAL and terra
 
 Primary sources:
 
 - https://gdal.org/en/stable/programs/gdal_raster_zonal_stats.html
 - https://rspatial.org/terra/
 
-Current GDAL and terra provide mature raster/vector operations, including zonal statistics and area calculations. SuRT must not imply otherwise.
+GDAL and terra provide mature raster/vector operations including zonal statistics and area calculations. SuRT must not imply otherwise.
 
 ### 3.7 Google Earth Engine
 
@@ -129,28 +98,24 @@ Primary sources:
 - https://developers.google.com/earth-engine/apidocs/ee-image-reduceregions
 - https://developers.google.com/earth-engine/apidocs/ee-image-pixelarea
 
-Earth Engine supports regional reducers, masking, scale/CRS controls and user-defined area weighting, backed by a very broad cloud catalogue.
+Earth Engine supports regional reducers, masks, CRS/scale controls and user-defined area weighting backed by a broad cloud catalogue. SuRT does not compete on catalogue breadth or computational scale.
 
-Therefore SuRT does not compete on data catalogue breadth or computational scale. Safe distinction: SuRT's core verification can run locally/account-free on prepared inputs, and the release contract is fixed by the project rather than constructed ad hoc by each Earth Engine user.
-
-### 3.8 openEO and declarative geospatial processing
+### 3.8 openEO
 
 Primary source:
 
 - https://openeo.org/documentation/
 
-openEO uses declarative process graphs and supports geospatial aggregation and validation concepts. JSON/graph-based declarative execution is therefore not itself novel.
-
-SuRT's relevant contribution is the domain-specific combination of a fail-closed harmonization schema with mandatory administrative output/support semantics and release-evidence gates.
+openEO already provides declarative process graphs for geospatial computation. JSON or declarative execution alone is therefore not novel.
 
 ### 3.9 Reproducible geospatial workflow frameworks
 
-Relevant recent work includes the Repeatable, Reproducible and Expandable (RRE) geospatial framework and workflow-management research integrating FAIR principles, workflow representations, provenance and reproducible packaging. Examples include:
+Relevant recent work includes:
 
 - Wang S et al. *Advancing sustainable geospatial analytics and geoinformatics through repeatable, reproducible, and expandable (RRE) framework and design*. International Journal of Applied Earth Observation and Geoinformation, 2026. https://doi.org/10.1016/j.jag.2026.105239
 - Pritchard NJ, Wicenec A. *Formal definition and implementation of reproducibility tenets for computational workflows*. Future Generation Computer Systems, 2025. https://doi.org/10.1016/j.future.2024.107684
 
-Therefore reproducible geospatial workflow management, provenance and hash-based reproducibility checks are not generic novelty claims available to SuRT.
+Workflow reproducibility, provenance and hash-based verification are established ideas and cannot be claimed as generic novelty.
 
 ### 3.10 Array precedent: FairFlow
 
@@ -158,180 +123,162 @@ Primary source:
 
 - D'Onofrio A et al. *FairFlow: A transparency-first framework for verifiable and reproducible bioinformatics*. Array, 2026. https://doi.org/10.1016/j.array.2026.101150
 
-FairFlow is strategically important because it shows that Array will publish a systems/framework contribution focused on verifiability and reproducibility when the framework is technically defined and empirically evaluated. Its reported cross-operating-system/architecture concordance demonstrates the style of evidence expected from a reproducibility-centric software paper.
+FairFlow is relevant as an evaluation precedent for a reproducibility-centric systems paper. It is not evidence that SuRT is novel by analogy.
 
-This is precedent for our **evaluation strategy**, not evidence that SuRT is novel by analogy.
+## 4. Contribution that survives the audit
 
-## 4. Candidate SuRT contribution that survives the prior-art audit
-
-The strongest defensible contribution is not any single feature. It is a **fixed integration contract with mandatory evidence at the raster-to-administrative handoff**.
+The strongest defensible contribution is a **fixed integration and assurance contract at the raster-to-administrative handoff**.
 
 ### 4.1 Mandatory three-part spatial-support semantics
 
-Current SuRT output separates:
+SuRT reports:
 
 1. `raster_coverage_fraction`: fraction of polygon area intersecting the raster footprint;
-2. `valid_within_raster_fraction`: fraction of the raster-covered polygon supported by finite raster values after masking/QA;
-3. `valid_data_fraction`: overall supported polygon fraction, defined as the product of the first two quantities.
+2. `valid_within_raster_fraction`: fraction of the raster-covered polygon supported by finite values after masking/QA;
+3. `valid_data_fraction`: overall supported polygon fraction, equal to the product of the first two quantities.
 
-This decomposition matters because two polygons can yield the same mean while having different reasons for incomplete support. A single mean, a single count, or a generic coverage statistic can hide whether missing support is caused by raster extent or invalid/masked data.
-
-No first-ever claim is authorized from the current search. The defensible claim is that this is a **mandatory output contract in SuRT**, and its value must be demonstrated experimentally.
+This is a mandatory output contract, not a first-ever claim.
 
 ### 4.2 Fail-closed harmonization job schema
 
-`config/harmonization-job.schema.json` fixes provider, boundary, variable, raw-value transformation, aggregation, QA, output and provenance fields. Unknown top-level/nested keys fail validation. The method is fixed to surface-area-weighted mean for this contract, output CRS is fixed, and a minimum valid fraction can be required.
+`config/harmonization-job.schema.json` fixes provider, boundary, variable, raw-value transformation, aggregation, QA, output and provenance fields. Unknown keys fail validation. JSON Schema itself is prior art; the contribution is binding the domain semantics to an executable contract.
 
-JSON Schema itself is prior art. The contribution is making the spatial/result semantics machine-checkable and binding them to the execution path.
+### 4.3 Out-of-tree provider boundary
 
-### 4.3 Out-of-tree provider extension boundary
-
-The tested `module:factory` mechanism can load an external provider without modifying the generic R harmonizer or built-in provider registry. Malformed plugin objects and undeclared options fail closed.
-
-Plugin architectures are prior art. The candidate value is reducing coupling between provider acquisition and a fixed harmonization/output contract. This should be quantified in an extension experiment.
+The public `module:factory` mechanism loads a provider implementation outside the repository without changing the generic R harmonizer or built-in provider registry. Plugin architecture itself is prior art; the value is the tested decoupling around a fixed contract.
 
 ### 4.4 Executable release-evidence contract
 
-The project combines:
+The project combines deliberate failure injection, independent output-contract validation, source-pinned numerical cross-checks, second-country portability, multi-platform core smoke tests, tracked-file SHA-256 validation, release corruption tests, and explicit separation of software verification from environmental-product validity.
 
-- deliberate failure injection;
-- independent output-contract validation;
-- source-pinned real-data numerical cross-checks;
-- second-country portability evidence;
-- multi-platform core smoke tests;
-- tracked-file SHA-256 manifest validation;
-- release corruption tests;
-- explicit distinction between software validation and environmental-product observational validity.
+None is unique alone. The claim is the bounded integration of these controls around the same handoff contract.
 
-None is unique alone. The candidate contribution is that these controls are required as part of the same small administrative-raster release boundary.
+## 5. Array-specific empirical evidence
 
-## 5. Claims that are prohibited unless new evidence changes this audit
+### E1. Support-semantics collision - COMPLETE
 
-Do **not** state or imply that SuRT is:
+`R/test_zonal_area_summary.R` contains four controlled cases with the same zonal mean of `10` but different support states:
+
+| case | raster coverage | valid within raster | overall valid data |
+|---|---:|---:|---:|
+| complete | 1.0 | 1.0 | 1.00 |
+| finite_gap | 1.0 | 0.5 | 0.50 |
+| footprint_gap | 0.5 | 1.0 | 0.50 |
+| combined_gap | 0.5 | 0.5 | 0.25 |
+
+Local result on 2026-10-04: **18 passed, 0 failed** for the full zonal area/coverage regression suite.
+
+Interpretation: a zonal mean alone can be identical while the evidence support differs materially. SuRT's mandatory fields expose whether loss is due to raster extent, finite-data support, or both. This does not claim that competing libraries cannot calculate comparable diagnostics when explicitly programmed.
+
+### E2. Cost-of-auditability benchmark - COMPLETE
+
+`R/benchmark_array_contract.R` compares a direct area-weighted mean using the same `terra`/`exactextractr` primitives against the SuRT support contract. Five repetitions were run on Microsoft Windows 11 Pro, Intel Core i7-8850H @ 2.60 GHz, approximately 15.76 GB installed RAM, R 4.6.0.
+
+| workload | direct median | SuRT median | absolute overhead | direct R-heap peak delta | SuRT R-heap peak delta |
+|---|---:|---:|---:|---:|---:|
+| 10,000 cells / 16 polygons | 0.11 s | 0.14 s | +0.03 s | 22.7 MB | 26.8 MB |
+| 90,000 cells / 64 polygons | 0.20 s | 0.24 s | +0.04 s | 88.9 MB | 97.6 MB |
+| 360,000 cells / 144 polygons | 0.50 s | 0.57 s | +0.07 s | 144.7 MB | 150.7 MB |
+
+All paired mean outputs were identical at the benchmark tolerance (`max_value_difference_vs_peer = 0`). R-heap measurements come from `gc()` and are **not process RSS**. Results are machine- and workload-specific and do not support a universal efficiency or speed claim.
+
+Tracked evidence: `evidence/array/array_contract_benchmark.csv`, `evidence/array/array_contract_benchmark_summary.csv`, and `evidence/array/README.md`.
+
+### E3. Out-of-tree extension - COMPLETE
+
+`python/test_config_contract.py` creates a temporary adapter module physically outside the repository, loads it through `module:factory`, verifies artifact and provenance propagation, and exercises malformed-adapter and undeclared-option failure paths.
+
+Local result on 2026-10-04: **21 passed, 0 failed**.
+
+The experiment demonstrates zero required edits to the built-in provider registry and generic R harmonizer for the fixture provider. It does not claim plugin architectures are novel.
+
+### E4. Additional geography/product replication - OPTIONAL
+
+The real Uganda CHIRPS case plus Rwanda ERA5-Land, MODIS and HAND already provide multiple geography/product checks. Additional cases should be added only if they exercise a genuinely new boundary condition, not to inflate a validation count.
+
+## 6. Performance hardening prompted by the Array audit
+
+The first E2 prototype exposed a performance hotspot in `surt_raster_coverage_fraction()`: per-feature equal-area geometry intersections dominated runtime. The implementation was replaced by rectangular raster-footprint overlap extraction using the same exact-extraction stack, with a complete-footprint short circuit where appropriate.
+
+Controlled large-fixture timing for that support path fell from approximately **19.3 s to 0.64 s**, while coverage results remained identical and the full zonal regression suite remained green. This is a local optimization result, not a general benchmark against other software.
+
+## 7. Claims prohibited unless future evidence changes the audit
+
+Do not state or imply that SuRT is:
 
 - the first climate-health data integration pipeline;
 - the first environmental-data harmonization workflow;
 - the first reusable geospatial pipeline for Africa or LMICs;
-- the first software to aggregate raster data to administrative units;
+- the first software to aggregate rasters to administrative units;
 - the first to use exact polygon-cell overlap fractions;
 - the first to perform cell-area-weighted zonal statistics;
 - the first to record provenance or checksums;
-- the first to use declarative configuration or workflow orchestration;
+- the first to use declarative configuration, plugins, or workflow orchestration;
 - the first reproducible geospatial workflow;
-- more scientifically accurate than GEE, DART, exactextractr, xagg, GDAL, terra or DHIS2 Climate Tools without a direct benchmark designed to test that claim;
-- observational validation of CHIRPS, ERA5-Land, MODIS or HAND.
+- scientifically more accurate than DART, GEE, exactextractr, xagg, GDAL, terra, DHIS2 Climate Tools, or other comparators without a direct study designed to test that proposition; or
+- an observational validation of CHIRPS, ERA5-Land, MODIS or HAND.
 
-Use terms such as **contract-first**, **fixed contract**, **mandatory output semantics**, **integrated assurance boundary**, or **release-evidence contract**. Avoid `unique`, `first`, `unprecedented`, `best`, `superior` and comparable priority claims.
+Preferred language: **contract-first**, **fixed contract**, **mandatory output semantics**, **integrated assurance boundary**, **release-evidence contract**.
 
-## 6. LMIC/Africa/tropical value: what is supportable
+Avoid priority or superiority language such as `first`, `unique`, `unprecedented`, `best`, or `superior`.
 
-The LMIC/Africa argument is a **deployment and usability rationale**, not a novelty claim.
+## 8. LMIC/Africa/tropical value
 
-The context is real: African climate/health work is affected by uneven observing networks, heterogeneous environmental products, infrastructure constraints and limited specialist capacity. Rwanda itself has active national work integrating climate data into DHIS2. DART and DHIS2 Climate initiatives already respond to several of these challenges, so SuRT must not claim ownership of this problem space.
+The LMIC/Africa argument is a deployment and usability rationale, not a novelty claim.
 
-Potential SuRT value that can be demonstrated rather than asserted:
+Supportable value statements are:
 
-- the core harmonizer accepts a prepared local raster and does not require a proprietary cloud platform;
-- account-free verification can run locally without provider credentials;
-- mandatory support fractions expose incomplete spatial/data support rather than silently treating all administrative means as equally supported;
-- provider logic can be replaced while preserving the same output contract;
-- release artifacts are portable, inspectable and checksum-verifiable;
-- open R/Python dependencies permit institutional reuse without a commercial licence.
+- the generic harmonizer accepts prepared local rasters and does not require a proprietary cloud platform;
+- the account-free verification path runs without provider credentials once declared inputs are present;
+- mandatory support fields prevent incomplete spatial/data support from being hidden behind a single administrative mean;
+- provider logic can be replaced while preserving the harmonization/output contract;
+- release artifacts are inspectable and checksum-verifiable; and
+- the core implementation uses open R/Python dependencies rather than a commercial software licence.
 
-Before claiming suitability for constrained computing environments, measure runtime and peak memory on a documented commodity machine. Do not use `lightweight`, `low-resource`, `efficient` or similar language without those measurements.
+The final benchmark now provides machine-specific runtime and R-heap measurements. Do not generalize those measurements into `lightweight`, `low-resource`, or universal efficiency claims without a dedicated deployment study.
 
-## 7. Experiments required for immutable value evidence
+## 9. Proposed Array research questions
 
-### E1. Support-semantics collision experiment — required
+**RQ1. Spatial-support semantics:** Can a fixed three-part support contract distinguish administrative summaries with identical values but materially different raster-footprint and finite-data support?
 
-Construct controlled polygons/raster cases that deliberately produce the same or nearly the same zonal mean while differing in support:
+**RQ2. Computational correctness:** Does the configured workflow reproduce independently computed results across controlled fixtures and scoped public-data cases within declared tolerances?
 
-- A: full raster footprint, partial finite data;
-- B: partial raster footprint, all in-footprint data finite;
-- C: partial raster footprint plus partial finite data;
-- D: complete support control.
+**RQ3. Extensibility:** Can a provider be added out of tree without modifying the generic harmonization engine while retaining schema, provenance and output contracts?
 
-Report the mean and all three support fractions. The experiment succeeds if cases can share the same mean while the mandatory support fields correctly distinguish why evidence is incomplete.
+**RQ4. Portability:** Does the same contract execute across non-Rwanda geometry and supported operating systems without geography-specific modifications to the generic harmonizer?
 
-This experiment demonstrates the practical information value of the contract. It must not claim competing libraries cannot calculate comparable diagnostics when explicitly programmed.
+**RQ5. Computational cost:** What runtime and measured R-heap overhead is introduced by mandatory support semantics relative to a direct area-weighted mean using the same geospatial primitives?
 
-### E2. Cost-of-auditability benchmark — required
+## 10. Comparison posture
 
-Benchmark representative workloads across increasing:
+The manuscript should compare systems by layer rather than score unlike tools as interchangeable products:
 
-- raster dimensions/cell counts;
-- polygon counts/complexity;
-- finite-data missingness patterns.
+- primitive/extraction: exactextract(r), GDAL, terra, xagg;
+- cloud/process platforms: Google Earth Engine, openEO;
+- domain integration: DART-Pipeline, DHIS2 Climate Tools, AREAdata;
+- workflow/reproducibility infrastructure: Snakemake and general reproducibility frameworks;
+- SuRT: contract-first raster-to-administrative harmonization and release-evidence layer.
 
-Capture wall-clock time and peak memory for:
+SuRT composes mature primitives and is not presented as a replacement for broader platforms.
 
-1. a direct underlying spatial-summary baseline;
-2. SuRT harmonization with support/provenance/output validation;
-3. full configured run where meaningful.
+## 11. Stop/go rule
 
-Report absolute performance and incremental overhead. The goal is not to prove SuRT is fastest; the goal is to quantify the computational price of its additional guarantees.
+Proceed to final Array submission only if:
 
-### E3. Out-of-tree extension experiment — required
+- E1, E2 and E3 remain reproducible on the intended release source tree;
+- major numerical claims remain independently cross-checked;
+- no unsupported priority or superiority claim enters the manuscript;
+- the paper states the contribution as a bounded software contract and evaluates it through explicit research questions;
+- the final manuscript and metadata use the author's current truthful affiliation;
+- exact release metadata, checksums and DOI resolve to the same v1.4.0 artifact; and
+- final journal/APC eligibility is verified at submission time.
 
-Use a provider fixture outside the built-in provider registry. Record:
+## 12. Audit conclusion
 
-- files/LOC added outside core;
-- files/LOC modified in the generic harmonizer and provider registry (target: zero);
-- successful artifact preparation and provenance propagation;
-- fail-closed behaviour for malformed adapter and undeclared options.
+**GO FOR ARRAY MANUSCRIPT HARDENING.**
 
-### E4. Geographic/provider replication — desirable
+The feature-level overlap with DART, DHIS2 Climate Tools, AREAdata, xagg, exactextract and general reproducibility frameworks is substantial and must remain visible in the manuscript. That overlap narrows the claim rather than invalidating the project.
 
-The Uganda CHIRPS case already provides one source-derived second-country check. If inexpensive and scientifically appropriate, add another geography/product only if it tests a genuinely different boundary condition. Do not add countries merely to inflate a count.
+The empirical evidence now demonstrates the remaining contribution more strongly: the mandatory three-part support contract distinguishes identical zonal results with different evidence support; an out-of-tree provider can be added without modifying the generic harmonizer or built-in registry; and the added support semantics carry a measured, disclosed runtime and R-heap cost on the tested workload while preserving numerical means.
 
-## 8. Proposed Array research questions
-
-The Array manuscript should be organized around testable software questions rather than a product description:
-
-**RQ1. Spatial-support semantics:** Can a fixed three-part support contract distinguish administrative summaries that have similar values but materially different raster-footprint and finite-data support?
-
-**RQ2. Reproducibility/correctness:** Does the configured workflow reproduce independently computed results across controlled fixtures and scoped public-data cases within declared numerical tolerances?
-
-**RQ3. Extensibility:** Can a provider be added out-of-tree without modifying the generic harmonization engine while retaining schema, provenance and output contracts?
-
-**RQ4. Portability:** Does the same contract execute across non-Rwanda geometry and supported operating systems without geography-specific modifications to the core harmonizer?
-
-**RQ5. Computational cost:** What runtime and memory overhead is introduced by the added support, validation, provenance and release-evidence controls?
-
-These questions are stronger than a claim that SuRT is merely `reproducible` or `generalizable`.
-
-## 9. Comparison posture for the Array paper
-
-A fair comparator table should distinguish tool layers rather than score all systems as if they solve identical problems:
-
-- **Primitive/extraction:** exactextract(r), GDAL, terra, xagg.
-- **Cloud/process platform:** Google Earth Engine, openEO.
-- **Domain integration:** DART-Pipeline, DHIS2 Climate Tools, AREAdata.
-- **Workflow/reproducibility infrastructure:** Snakemake and general FAIR/RRE workflow frameworks.
-- **SuRT:** contract-first raster-to-administrative harmonization and release-evidence layer.
-
-The manuscript should explicitly state that SuRT composes mature primitives and does not attempt to replace broader platforms.
-
-## 10. Stop/go rule before final submission
-
-Proceed to Array submission only if all of the following are true:
-
-- E1 demonstrates information that a zonal mean alone does not expose;
-- E2 quantifies acceptable resource/latency cost without hiding unfavourable results;
-- E3 proves the intended decoupled extension boundary;
-- all major numerical claims remain independently cross-checked;
-- the paper makes no unsupported priority/superiority claim;
-- the contribution is stated as a bounded software contract and evaluated through explicit research questions;
-- final code/manuscript/release metadata identify the same exact v1.4.0 artifact.
-
-If these conditions fail, do not manufacture novelty. Reframe the contribution or reconsider the target journal.
-
-## 11. Audit conclusion
-
-**GO WITH CONDITIONS.**
-
-The prior-art search finds substantial overlap at the feature level, especially with DART, DHIS2 Climate Tools, AREAdata, xagg, exactextract and general reproducibility frameworks. That overlap is a reason to narrow the claim, not to abandon the project.
-
-The remaining defensible research contribution is the **mandatory, machine-verifiable integration contract at the raster-to-administrative handoff**, especially the separation of spatial support semantics and the coupling of that contract to fail-closed configuration, out-of-tree extension, independent numerical checks and exact release evidence.
-
-The next engineering work should be evidence generation for E1-E3 and performance measurement, not additional feature accumulation.
+The next work is Array-specific manuscript construction and adversarial claim-to-evidence review, not additional feature accumulation unless a concrete manuscript or reviewer gap requires it.
