@@ -2,7 +2,7 @@
   "evidence_type": "controlled_support_semantics_experiment",
   "date": "2026-10-04",
   "script": "R/test_zonal_area_summary.R",
-  "purpose": "Demonstrate that an administrative zonal mean alone can be identical while raster-footprint and finite-data support differ materially.",
+  "purpose": "Demonstrate that an administrative zonal mean alone can be identical while raster-footprint and finite-data support differ materially, and quantify how much support-state information is retained by progressively richer handoff interfaces.",
   "claim_boundary": "This experiment demonstrates the information value of SuRT-GeoHarmonizer's mandatory three-part support contract. It does not claim that underlying geospatial libraries are incapable of calculating comparable diagnostics when explicitly programmed.",
   "cases": [
     {
@@ -34,10 +34,18 @@
       "valid_data_fraction": 0.25
     }
   ],
+  "interface_collision_analysis": {
+    "mean_only_unique_signatures": 1,
+    "mean_plus_overall_valid_coverage_unique_signatures": 3,
+    "mean_plus_three_part_support_unique_signatures": 4,
+    "critical_collision": ["finite_gap", "footprint_gap"],
+    "critical_collision_explanation": "The finite-gap and footprint-gap cases both return mean 10 and overall valid-data fraction 0.5. A mean plus one overall valid-coverage field therefore cannot distinguish whether support was lost because the raster footprint did not cover the polygon or because values within the covered footprint were invalid. The three-part contract distinguishes the causes as (1.0, 0.5, 0.5) versus (0.5, 1.0, 0.5).",
+    "claim_boundary": "This is an interface-information result for the controlled fixture, not a claim that competing software cannot be configured to emit the same component quantities."
+  },
   "local_verification": {
     "environment": "Windows authorized development machine, R 4.6.0",
     "result": "PASS",
     "test_summary": "18 passed, 0 failed",
-    "notes": "All four collision cases returned value 10 while the mandatory support fields distinguished complete support, finite-data loss, raster-footprint loss, and combined loss."
+    "notes": "All four collision cases returned value 10 while the mandatory support fields distinguished complete support, finite-data loss, raster-footprint loss, and combined loss. The interface-collision analysis is a deterministic derivation from these frozen case outputs and is regression-checked by python/validate_array_manuscript.py."
   }
 }

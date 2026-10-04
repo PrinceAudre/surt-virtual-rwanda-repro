@@ -138,6 +138,41 @@ def main() -> None:
         for c in cases
     }
     require(observed == expected, "collision evidence matches the frozen four-case support tuples")
+
+    # RQ1 interface-information analysis. The point is not that other software
+    # cannot compute these quantities; it is that a single overall valid-coverage
+    # field cannot identify why support was lost in this controlled fixture.
+    mean_only = {(vals[0],) for vals in observed.values()}
+    mean_plus_overall = {(vals[0], vals[3]) for vals in observed.values()}
+    full_support = {(vals[0], vals[1], vals[2], vals[3]) for vals in observed.values()}
+    require(len(mean_only) == 1,
+            "mean-only handoff collapses all four controlled support states")
+    require(len(mean_plus_overall) == 3,
+            "mean plus one overall valid-coverage field leaves one controlled support-state collision")
+    require(len(full_support) == 4,
+            "mean plus the three-part support tuple identifies all four controlled support states")
+
+    finite_gap = observed["finite_gap"]
+    footprint_gap = observed["footprint_gap"]
+    require(
+        finite_gap[0] == footprint_gap[0]
+        and finite_gap[3] == footprint_gap[3]
+        and finite_gap[1:3] != footprint_gap[1:3],
+        "single overall coverage conflates finite-data loss with raster-footprint loss in the controlled fixture",
+    )
+
+    collision_meta = collision.get("interface_collision_analysis", {})
+    require(int(collision_meta.get("mean_only_unique_signatures", -1)) == len(mean_only),
+            "tracked interface analysis records the mean-only signature count")
+    require(int(collision_meta.get("mean_plus_overall_valid_coverage_unique_signatures", -1)) == len(mean_plus_overall),
+            "tracked interface analysis records the mean-plus-overall signature count")
+    require(int(collision_meta.get("mean_plus_three_part_support_unique_signatures", -1)) == len(full_support),
+            "tracked interface analysis records the three-part signature count")
+    require(collision_meta.get("critical_collision") == ["finite_gap", "footprint_gap"],
+            "tracked interface analysis identifies the finite-gap versus footprint-gap collision")
+    require("not a claim" in str(collision_meta.get("claim_boundary", "")).casefold(),
+            "tracked interface analysis preserves the non-exclusivity claim boundary")
+
     require("| Complete | 10 | 1.0 | 1.0 | 1.00 |" in manuscript,
             "manuscript collision table matches complete-support evidence")
     require("| Combined gap | 10 | 0.5 | 0.5 | 0.25 |" in manuscript,
