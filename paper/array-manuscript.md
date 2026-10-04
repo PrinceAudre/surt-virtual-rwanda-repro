@@ -13,7 +13,7 @@ Corresponding author: TUYISHIME AUDRE PRINCE, priplee@gmail.com
 
 ## Abstract
 
-Administrative analyses in public health, environmental science, ecology and related fields routinely convert gridded environmental products into polygon-level covariates. The numerical reduction is mature, but the handoff can obscure whether a reported value represents the whole administrative unit, only the part covered by the raster, or only finite values remaining after provider-specific quality control. We present SuRT-GeoHarmonizer, an open R and Python workflow that treats this raster-to-administrative handoff as a machine-verifiable software contract. The contract combines surface-area-weighted polygon extraction, separate raster-footprint and finite-data support semantics, fail-closed declarative jobs, an out-of-tree provider extension boundary, provenance-labelled outputs, independent numerical cross-checks and release-integrity gates. We evaluate five research questions. First, four controlled fixtures all produced the same zonal mean of 10 while their support tuples differed as 1.0/1.0/1.00, 1.0/0.5/0.50, 0.5/1.0/0.50 and 0.5/0.5/0.25 for raster coverage, finite support within the raster, and overall valid support, respectively. Second, source-pinned public-data cases agreed with independent calculations: Uganda CHIRPS 2023 differed by 0.000016 mm, Nyarugenge ERA5-Land 2023 by approximately 0.000003 °C, MOD13A3 agreed under the declared two-decimal output contract, and Rubavu HAND differed by less than 1e-9 percentage points. Third, a provider module located outside the repository loaded through the public adapter interface without modification of the generic harmonizer or built-in provider registry, while malformed adapters failed closed. Fourth, the same core contract is exercised on Rwanda and Uganda geometry and passes a separate core smoke matrix on Ubuntu, Windows and macOS, with full provider acquisition deliberately excluded from the cross-platform claim. Fifth, on one documented Windows workstation, the mandatory support contract added median wall-clock costs of 0.03, 0.04 and 0.07 s over a direct area-weighted mean for workloads of 10,000/16, 90,000/64 and 360,000/144 raster cells/polygons, with identical paired means. SuRT-GeoHarmonizer does not introduce a new zonal-statistics algorithm. Its contribution is the evaluated integration and assurance contract around a common scientific-data handoff.
+Administrative analyses in public health, environmental science, ecology and related fields routinely convert gridded environmental products into polygon-level covariates. The numerical reduction is mature, but the handoff can obscure whether a reported value represents the whole administrative unit, only the part intersecting the raster grid extent, or only finite values remaining after provider-specific quality control. We present SuRT-GeoHarmonizer, an open R and Python workflow that treats this raster-to-administrative handoff as a machine-verifiable software contract. The contract combines surface-area-weighted polygon extraction, explicit grid-coverage and finite-data support semantics, fail-closed declarative jobs, an out-of-tree provider extension boundary, provenance-labelled outputs, independent numerical cross-checks and release-integrity gates. We evaluate five research questions. First, four controlled fixtures all produced the same zonal mean of 10. A mean-only handoff therefore produced one unique interface signature; adding only overall valid-data support produced three because raster-grid loss and finite-data loss can yield the same total support; reporting the two causal support factors plus their explicit overall product produced four signatures. Second, source-pinned public-data cases agreed with independent calculations: Uganda CHIRPS 2023 differed by 0.000016 mm, Nyarugenge ERA5-Land 2023 by approximately 0.000003 °C, MOD13A3 agreed under the declared two-decimal output contract, and Rubavu HAND differed by less than 1e-9 percentage points. Third, a provider module located outside the repository loaded through the public adapter interface without modification of the generic harmonizer or built-in provider registry, while malformed adapters failed closed. Fourth, the same core contract is exercised on Rwanda and Uganda geometry and passes a separate core smoke matrix on Ubuntu, Windows and macOS, with full provider acquisition deliberately excluded from the cross-platform claim. Fifth, on one documented Windows workstation, the mandatory support contract added median wall-clock costs of 0.03, 0.04 and 0.07 s over a direct area-weighted mean for workloads of 10,000/16, 90,000/64 and 360,000/144 raster cells/polygons, with identical paired means. SuRT-GeoHarmonizer does not introduce a new zonal-statistics algorithm. Its contribution is the evaluated integration and assurance contract around a common scientific-data handoff.
 
 **Keywords:** research software; geospatial computing; zonal statistics; environmental data; reproducibility; provenance; climate and health; software verification
 
@@ -21,39 +21,43 @@ Administrative analyses in public health, environmental science, ecology and rel
 
 Environmental covariates are increasingly combined with administrative health, demographic, ecological and socioeconomic data. Precipitation, temperature, vegetation indices, terrain descriptors and other environmental variables usually originate as rasters, whereas routine public-health and policy data are frequently reported for districts, provinces, catchments or other polygons. Converting one representation into the other is therefore a common analytical step.
 
-The underlying geospatial operations are well established. `exactextractr`, `exactextract`, `terra`, GDAL, xagg and cloud platforms such as Google Earth Engine provide mature mechanisms for polygon extraction, fractional pixel coverage, area weighting and related raster operations [1-5]. Broader systems already automate environmental and climate-data integration. DART-Pipeline integrates epidemiological, socioeconomic, climatic and environmental data for climate-sensitive-disease analyses [6]. AREAdata publishes climate variables averaged over administrative units [7]. DHIS2 Climate Tools and the DHIS2 Climate App integrate climate and environmental products with health-information systems [8,9]. These systems remove any defensible claim that raster-to-polygon aggregation, climate-health data integration, reproducible geospatial workflows, declarative execution or provenance are individually new.
+The underlying geospatial operations are well established. `exactextractr`, `exactextract`, `terra`, GDAL, xagg and cloud platforms such as Google Earth Engine provide mature mechanisms for polygon extraction, fractional pixel coverage, area weighting and related raster operations [1-5]. Broader systems already automate environmental and climate-data integration. DART-Pipeline integrates epidemiological, socioeconomic, climatic and environmental data for climate-sensitive-disease analyses [6]. AREAdata publishes climate variables averaged over administrative units [7]. DHIS2 Climate Tools, the DHIS2 Climate App and the 2026 Open Climate Service integrate or serve climate and environmental products for health and other operational systems [8,9,18]. These systems remove any defensible claim that raster-to-polygon aggregation, climate-health data integration, reproducible geospatial workflows, declarative execution, local climate infrastructure or provenance are individually new.
 
-A narrower problem remains important. A polygon-level value can be numerically valid while the evidence supporting that value is incomplete or ambiguous. A raster can cover only part of a polygon. Within the covered area, provider-specific quality control, no-data values or masking can remove additional cells. If a workflow emits only a mean, these distinct support failures can become invisible downstream. At the same time, a reusable pipeline needs a clear boundary between source-specific preparation and generic harmonization, and a release needs evidence that its declared configuration, output semantics and exact files are internally consistent.
+Coverage diagnostics are also established. Current GDAL exposes coverage arrays and weighted zonal summaries [4]; `exactextractr` exposes polygon-cell coverage and non-NA counts [1]; STAC raster-band metadata standardizes `valid_percent` [21]; valid-data footprint software can derive geometry from non-NoData raster support [22]; and documented modelling workflows already fail when required raster coverage falls below a configured polygon threshold [23]. A novelty claim based on reporting coverage, identifying NoData, deriving a footprint or rejecting low coverage would therefore be unsustainable.
+
+A narrower problem remains important. A polygon-level value can be numerically valid while the evidence supporting that value is incomplete or ambiguous. A rectangular raster grid can intersect only part of a polygon. Within the grid-covered area, provider-specific quality control, no-data values or masking can remove additional cells. A single overall valid-data percentage reports the magnitude of remaining support but not why support was lost. At the same time, a reusable pipeline needs a clear boundary between source-specific preparation and generic harmonization, and a release needs evidence that its declared configuration, output semantics and exact files are internally consistent.
 
 SuRT-GeoHarmonizer addresses that boundary. It is not presented as a replacement for broad geospatial platforms or domain pipelines. Instead, it defines a small, contract-first layer in which input transformation, spatial support, provider extension, output semantics, numerical verification and release identity are explicit and testable.
 
 This study asks five questions:
 
-- **RQ1, spatial-support semantics:** Can a fixed three-part support contract distinguish administrative summaries that have identical values but materially different raster-footprint and finite-data support?
+- **RQ1, spatial-support semantics:** Can a fixed support contract distinguish administrative summaries that have identical values and even identical overall valid support but different causes of support loss?
 - **RQ2, computational correctness:** Does the configured workflow reproduce independently computed results across controlled fixtures and scoped public-data cases within declared numerical tolerances?
 - **RQ3, extensibility:** Can a provider be added out of tree without modifying the generic harmonization engine while retaining schema, provenance and output contracts?
 - **RQ4, portability:** Does the same contract execute across non-Rwanda geometry and supported operating systems without geography-specific changes to the generic harmonizer?
 - **RQ5, computational cost:** What runtime and measured R-heap overhead is introduced by the mandatory support semantics relative to a direct area-weighted mean using the same geospatial primitives?
 
-The contribution is therefore empirical and architectural. We evaluate the information added by explicit support semantics, the cost of calculating them, the coupling required to extend the provider layer, and the numerical agreement of scoped real-data cases. We deliberately avoid priority claims and distinguish software verification from validation of the environmental products themselves.
+The contribution is therefore empirical and architectural. We evaluate the information added by explicit support decomposition, the cost of calculating it, the coupling required to extend the provider layer, and the numerical agreement of scoped real-data cases. We deliberately avoid priority claims and distinguish software verification from validation of the environmental products themselves.
 
 ## 2. Related systems and novelty boundary
 
-### 2.1. Raster extraction and polygon aggregation
+### 2.1. Raster extraction, coverage and polygon aggregation
 
 `exactextractr` and its underlying exact-extraction approach calculate polygon-cell overlap fractions and weighted summaries [1]. xagg aggregates gridded xarray data to polygons with fractional-area and optional secondary weights [2]. `terra` and GDAL provide broad raster/vector processing, including area calculations and zonal operations [3,4]. Current GDAL 3.12 documentation further exposes fractional polygon-pixel inclusion, coverage reporting and weighted zonal summaries [4]. The recently released `spatcovar` 0.1.0 package provides a consistent polygon-covariate interface with coverage-fraction-weighted raster summaries, CRS handling, geometry repair, unit conversion and standardized missing-value semantics [17]. Google Earth Engine provides regional reducers, pixel-area operations, masking, coordinate-system controls and a large cloud catalogue [5].
 
-These capabilities further preclude novelty claims based on generic coverage reporting, robust polygon-covariate wrappers, missing-value handling or weighted zonal summaries alone. SuRT-GeoHarmonizer uses mature geospatial ideas rather than replacing them. The workflow uses `exactextractr`, `terra` and `sf` for the core geospatial implementation. The novelty claim does not include polygon-cell intersection, cell-area calculation, zonal means, reprojection, generic coverage calculation or robust geometry handling.
+Other software and standards further narrow the claim. STAC raster metadata includes a standardized valid-pixel percentage [21], and `raster-footprint` constructs geometries that bound valid raster data [22]. The SWATbuildR modelling workflow documents minimum per-polygon raster coverage checks that raise errors below configured thresholds [23]. `mbg` provides model-based geostatistics and polygon aggregation of raster predictions while preserving uncertainty [20].
+
+These capabilities preclude novelty claims based on generic coverage reporting, valid-data percentages, footprint derivation, thresholded coverage rejection, robust polygon-covariate wrappers, missing-value handling, health-oriented raster aggregation or weighted zonal summaries alone. SuRT-GeoHarmonizer uses mature geospatial ideas rather than replacing them. The workflow uses `exactextractr`, `terra` and `sf` for the core geospatial implementation. The novelty claim does not include polygon-cell intersection, cell-area calculation, zonal means, reprojection, generic coverage calculation or robust geometry handling.
 
 ### 2.2. Climate and environmental integration
 
-DART-Pipeline is the closest climate-health comparator. It is locally deployable, can acquire and process multiple climatic, environmental, socioeconomic and epidemiological sources, supports administrative aggregation, area- and population-weighted statistics, metadata, provenance, tests, CI and extension through custom metrics [6]. DART is broader than SuRT in domain integration and disease-modelling preparation.
+DART-Pipeline is the closest published climate-health comparator. It is locally deployable, can acquire and process multiple climatic, environmental, socioeconomic and epidemiological sources, supports administrative aggregation, area- and population-weighted statistics, metadata, provenance, tests, CI and extension through custom metrics [6]. DART is broader than SuRT in domain integration and disease-modelling preparation.
 
-AREAdata provides a maintained global resource of climate variables averaged across administrative units and demonstrates that automated, reproducible production of administrative climate summaries is established practice [7]. DHIS2 Climate Tools provides open Python workflows for accessing, processing and uploading climate and environmental data to DHIS2, while the DHIS2 Climate App offers no-code integration through Google Earth Engine [8,9]. Rwanda is among the countries participating in DHIS2 Climate & Health work, so climate-data harmonization for health systems is an active local practice rather than a novel problem owned by this project [10].
+AREAdata provides a maintained global resource of climate variables averaged across administrative units and demonstrates that automated, reproducible production of administrative climate summaries is established practice [7]. DHIS2 Climate Tools provides open Python workflows for accessing, processing and uploading climate and environmental data to DHIS2, while the DHIS2 Climate App offers no-code integration through Google Earth Engine [8,9]. The 2026 DHIS2 Open Climate Service goes further by self-hosting sources including CHIRPS and ERA5-Land, scheduling updates, summarizing data by administrative or health-service area, accepting custom data sources and deploying locally, in the cloud or on national infrastructure [18]. Rwanda is among the countries participating in DHIS2 Climate & Health work, so climate-data harmonization for health systems is an active local practice rather than a novel problem owned by this project [10].
 
-### 2.3. Reproducibility and workflow infrastructure
+### 2.3. Reproducibility, provenance and workflow infrastructure
 
-Snakemake provides mature workflow orchestration and is used by SuRT only as infrastructure [11]. Recent work such as FairFlow demonstrates that Array publishes reproducibility-centred software frameworks when their execution and verification contracts are clearly defined and empirically evaluated [12]. FairFlow is relevant to evaluation style, not evidence of SuRT novelty.
+Snakemake provides mature workflow orchestration and is used by SuRT only as infrastructure [11]. QFlowCrate records QGIS workflow inputs, processing steps, parameters and symbology and exports standards-compliant RO-Crates through a modular provenance architecture [19]. Provenance capture, reproducibility packaging and modular geospatial workflow documentation are therefore not SuRT novelty claims. Recent work such as FairFlow demonstrates that Array publishes reproducibility-centred software frameworks when their execution and verification contracts are clearly defined and empirically evaluated [12]. FairFlow is relevant to evaluation style, not evidence of SuRT novelty.
 
 ### 2.4. Position of SuRT-GeoHarmonizer
 
@@ -63,13 +67,16 @@ Table 1 positions the software by system layer rather than scoring unlike produc
 
 | Layer | Examples | Established capability | SuRT relationship |
 |---|---|---|---|
-| Extraction / geospatial primitives | exactextract(r), terra, GDAL, xagg, spatcovar | fractional overlap, zonal summaries, area weighting, coverage diagnostics, raster/vector operations, polygon-covariate interfaces | SuRT composes mature primitives and does not claim their algorithms or generic wrappers |
+| Extraction / geospatial primitives | exactextract(r), terra, GDAL, xagg, spatcovar, raster-footprint | fractional overlap, zonal summaries, area weighting, coverage diagnostics, valid-data footprints, raster/vector operations, polygon-covariate interfaces | SuRT composes mature primitives and does not claim their algorithms or generic wrappers |
+| Health / spatial modelling | mbg and related geostatistical workflows | raster prediction, polygon aggregation, weighting and uncertainty-aware summaries | SuRT does not claim a new health or geostatistical aggregation category |
 | Cloud / geospatial process platforms | Google Earth Engine, openEO | large catalogues, regional reduction, declarative or programmable processing | SuRT provides a smaller local handoff contract for prepared inputs |
-| Domain integration | DART-Pipeline, DHIS2 Climate Tools, AREAdata | climate/environmental acquisition, administrative aggregation, health or domain integration | SuRT is narrower and can serve as an auditable raster-to-administrative boundary |
-| Workflow / reproducibility infrastructure | Snakemake, general reproducibility frameworks | dependency orchestration, repeatable execution, provenance patterns | SuRT uses workflow infrastructure to verify its domain contract |
-| Contract-first handoff | SuRT-GeoHarmonizer | mandatory support decomposition, fail-closed job/output semantics, tested provider boundary and release-evidence gates | evaluated contribution of this study |
+| Domain integration | DART-Pipeline, DHIS2 Climate Tools, Open Climate Service, AREAdata | climate/environmental acquisition, administrative aggregation, health or domain integration, local/national deployment | SuRT is narrower and can serve as an auditable raster-to-administrative boundary |
+| Workflow / provenance infrastructure | Snakemake, QFlowCrate, general reproducibility frameworks | dependency orchestration, repeatable execution, provenance and packaging patterns | SuRT uses these ideas to verify its bounded domain contract |
+| Contract-first handoff | SuRT-GeoHarmonizer | explicit grid-support and finite-support decomposition, overall-support invariant, fail-closed job/output semantics, tested provider boundary and release-evidence gates | evaluated contribution of this study |
 
-The defensible novelty is therefore not a single unique feature. It is the evaluated combination of mandatory support semantics, a fail-closed configuration contract, an out-of-tree provider boundary, independent numerical evidence and exact release-integrity controls around one bounded raster-to-administrative handoff. Equivalent component capabilities can be assembled in other geospatial stacks; the claim concerns the tested integration contract implemented and evaluated here.
+The defensible novelty is therefore not a single unique feature. It is the evaluated integration of explicit support decomposition, a fail-closed configuration contract, an out-of-tree provider boundary, independent numerical evidence and exact release-integrity controls around one bounded raster-to-administrative handoff. Equivalent component capabilities can be assembled in other geospatial stacks; the claim concerns the tested integration contract implemented and evaluated here.
+
+The three reported support fields are also not presented as three independent measurements. Only two factors are algebraically independent because overall valid support is their product. All three are emitted so downstream users receive both causal components and the total support directly, while independent validators can check the invariant.
 
 ## 3. System design
 
@@ -87,7 +94,7 @@ The built-in provider adapter accepts a prepared local raster. Provider-specific
 
 ### 3.2. Spatial-support semantics
 
-For polygon \(P\), let \(P_R\) be the portion intersecting the raster footprint and let \(P_V\) be the finite, quality-accepted portion of \(P_R\). SuRT reports three distinct fractions:
+For polygon \(P\), let \(P_R\) be the portion intersecting the raster's rectangular grid extent and let \(P_V\) be the finite, quality-accepted portion of \(P_R\). SuRT reports three fields:
 
 \[
 r = \frac{A(P_R)}{A(P)},
@@ -103,7 +110,9 @@ and
 d = r\,v = \frac{A(P_V)}{A(P)}.
 \]
 
-In the output schema these are `raster_coverage_fraction`, `valid_within_raster_fraction`, and `valid_data_fraction`. The implementation clamps numerical round-off to the interval [0,1], verifies the algebraic relationship in independent output validation, and can fail closed below a configured minimum overall valid-data fraction.
+In the output schema these are `raster_coverage_fraction`, `valid_within_raster_fraction`, and `valid_data_fraction`. Only \(r\) and \(v\) are algebraically independent; \(d\) is reported explicitly as the overall support fraction and independently validated against \(r\times v\). The implementation clamps numerical round-off to the interval [0,1] and can fail closed below a configured minimum overall valid-data fraction.
+
+Here, raster coverage refers to the rectangular grid extent, not a geometry derived from valid pixels. Internal NoData, provider QA rejection and other finite-data loss are represented by \(v\). Keeping these meanings separate is the point of the contract.
 
 The zonal value itself is a surface-area-weighted mean over finite contributions. If raster cell \(i\) has value \(x_i\), cell surface area \(a_i\), and polygon-cell coverage fraction \(c_i\), then
 
@@ -117,7 +126,7 @@ The zonal value itself is a surface-area-weighted mean over finite contributions
 
 The Draft 2020-12 job schema uses `additionalProperties: false` for the contract objects. The configured aggregation method is fixed to the surface-area-weighted mean for this version of the public contract. Output CRS is fixed to EPSG:4326. Raw-value no-data thresholds are applied before scale and offset, and integer-only controls such as output rounding are parsed strictly. Invalid CRS, unsupported geometry, duplicate or empty identifiers, missing layers, no finite values, invalid bounds and incomplete configuration trigger explicit failure paths.
 
-This does not make JSON Schema novel. The engineering point is that scientific handoff semantics are machine-checkable rather than remaining informal documentation.
+This does not make JSON Schema, quality thresholds or fail-closed validation novel. The engineering point is that this workflow binds its scientific handoff semantics to machine-checkable requirements rather than leaving them only in prose documentation.
 
 ### 3.4. Provider extension boundary
 
@@ -135,12 +144,12 @@ The verification layer includes controlled fixtures, deliberate failure injectio
 
 A controlled two-cell projected raster fixture was constructed to create four cases with the same finite zonal mean while varying two independent causes of incomplete support:
 
-- complete footprint and complete finite support;
-- complete footprint with one of two in-footprint cells missing;
-- half-footprint coverage with all covered cells finite;
-- half-footprint coverage with half of the covered area finite.
+- complete grid coverage and complete finite support;
+- complete grid coverage with one of two in-grid cells missing;
+- half-grid coverage with all covered cells finite;
+- half-grid coverage with half of the covered area finite.
 
-All finite cells were assigned value 10, so a mean-only interface has no way to distinguish the cases from the returned value. The experiment passes only if all means are equal and the three support fields identify the intended support structure.
+All finite cells were assigned value 10. We therefore compare three interface states: mean only; mean plus the single overall valid-data fraction \(d\); and mean plus the full reported support tuple \((r,v,d)\). The experiment records the number of unique signatures under each interface and specifically tests whether finite-data loss can be distinguished from raster-grid extent loss when both yield the same overall valid support. This is an interface-information experiment, not a claim that other geospatial software cannot be programmed to compute the same quantities.
 
 ### 4.2. RQ2: independent numerical reproduction
 
@@ -179,7 +188,7 @@ Portability is evaluated at separate levels to avoid conflation.
 `R/benchmark_array_contract.R` compares two paths using the same `terra` and `exactextractr` stack:
 
 1. `direct_mean`, which returns only the finite-value surface-area-weighted mean;
-2. `surt_support_contract`, which returns that mean plus raster coverage, finite support within the raster, and overall valid-data support.
+2. `surt_support_contract`, which returns that mean plus raster-grid coverage, finite support within the grid-covered area, and overall valid-data support.
 
 Three deterministic workloads were used: 10,000 raster cells with 16 polygons, 90,000 cells with 64 polygons, and 360,000 cells with 144 polygons. Each mode was warmed before timing and run five times. The final benchmark machine was Microsoft Windows 11 Pro with an Intel Core i7-8850H @ 2.60 GHz, approximately 15.76 GB installed RAM, and R 4.6.0.
 
@@ -193,14 +202,16 @@ All four collision fixtures returned a zonal mean of 10, while the mandatory sup
 
 **Table 2. Support-semantics collision experiment.**
 
-| Case | Mean | Raster coverage | Valid within raster | Overall valid data |
+| Case | Mean | Raster-grid coverage | Valid within grid-covered area | Overall valid data |
 |---|---:|---:|---:|---:|
 | Complete | 10 | 1.0 | 1.0 | 1.00 |
 | Finite-data gap | 10 | 1.0 | 0.5 | 0.50 |
-| Raster-footprint gap | 10 | 0.5 | 1.0 | 0.50 |
+| Raster-grid footprint gap | 10 | 0.5 | 1.0 | 0.50 |
 | Combined gap | 10 | 0.5 | 0.5 | 0.25 |
 
-The result demonstrates information value rather than algorithmic exclusivity. A user can program comparable diagnostics with other geospatial libraries. The SuRT claim is that this decomposition is mandatory and validated in its output contract.
+A mean-only handoff produced **one** unique interface signature across the four cases. Adding only the overall valid-data fraction produced **three** signatures: the finite-data-gap and raster-grid-gap cases both returned `(mean = 10, overall valid data = 0.5)`. Reporting the two causal support factors plus their explicit overall product produced **four** signatures and distinguished those mechanisms as `(1.0, 0.5, 0.5)` versus `(0.5, 1.0, 0.5)`.
+
+The result demonstrates information value rather than algorithmic exclusivity. The three support fields are not algebraically independent, and other geospatial software can be programmed to calculate comparable quantities. The SuRT claim is that both causal factors and their overall product are mandatory, semantically fixed and regression-validated in its output contract.
 
 ### 5.2. RQ2: scoped numerical agreement
 
@@ -241,21 +252,23 @@ The support contract preserved the direct baseline mean in every paired run (`ma
 
 These results quantify the tested cost rather than establish performance superiority. They are specific to the benchmark implementation, workload, dependency versions and machine.
 
-The initial benchmark also revealed an inefficient per-feature equal-area intersection in raster-footprint coverage calculation. Replacing it with rectangular raster-footprint overlap extraction and a complete-footprint short circuit reduced the controlled large-fixture coverage path from approximately 19.3 s to 0.64 s without changing the support results; all zonal regression tests remained green. The final benchmark in Table 4 was run after this correction.
+The initial benchmark also revealed an inefficient per-feature equal-area intersection in raster-grid coverage calculation. Replacing it with rectangular grid-extent overlap extraction and a complete-coverage short circuit reduced the controlled large-fixture coverage path from approximately 19.3 s to 0.64 s without changing the support results; all zonal regression tests remained green. The final benchmark in Table 4 was run after this correction.
 
 ## 6. Relevance to climate-health and public-sector data workflows
 
-Environmental covariates are commonly joined to administrative health data for studies of climate-sensitive disease, maternal and child health, nutrition, environmental exposure and service planning. The existence of DART and DHIS2 Climate & Health demonstrates that this is already an active research and implementation area [6,8-10]. SuRT does not attempt to replace those systems.
+Environmental covariates are commonly joined to administrative health data for studies of climate-sensitive disease, maternal and child health, nutrition, environmental exposure and service planning. The existence of DART, DHIS2 Climate & Health, Open Climate Service and health-oriented geostatistical software such as `mbg` demonstrates that this is already an active research and implementation area [6,8-10,18,20]. SuRT does not attempt to replace those systems.
 
-Its practical role is lower in the stack. Once an appropriate raster is available, the harmonizer can create an administrative covariate while retaining explicit evidence about how much of each polygon and how much finite data supported the result. This distinction can matter when downstream analysts would otherwise receive two identical-looking means produced from different spatial support.
+Its practical role is lower in the stack. Once an appropriate raster is available, the harmonizer can create an administrative covariate while retaining explicit evidence about how much of each polygon intersects the raster grid and how much of that covered area remains finite after quality control. This distinction can matter when downstream analysts would otherwise receive identical-looking means, or even the same overall valid-support fraction, produced by different mechanisms of support loss.
 
-For LMIC and African settings, the defensible benefit is portability and inspectability rather than a claim of being uniquely designed for constrained environments. The account-free verification path works on prepared local inputs without a proprietary cloud account; outputs and release files can be inspected and checksum-verified; provider-specific acquisition can remain local; and the core dependencies are open-source. The benchmark provides one documented resource profile, but it is insufficient to label the software universally `lightweight` or `low-resource`.
+For LMIC and African settings, the defensible benefit is portability and inspectability rather than a claim of being uniquely designed for constrained environments. The account-free verification path works on prepared local inputs without a proprietary cloud account; outputs and release files can be inspected and checksum-verified; provider-specific acquisition can remain local; and the core dependencies are open-source. Open Climate Service already demonstrates that self-hosted, country-scale climate infrastructure for African and Asian settings is an active field [18]. The benchmark provides one documented resource profile, but it is insufficient to label SuRT universally `lightweight` or `low-resource`.
 
 Rwanda provides a relevant reference setting because climate and environmental data are already being integrated into national DHIS2-oriented health workflows [10]. SuRT's contribution is complementary: it focuses on an auditable covariate handoff and does not claim institutional endorsement, health-system deployment, forecasting capability, epidemiological modelling or direct DHIS2 integration.
 
 ## 7. Threats to validity and limitations
 
-**Prior-art completeness.** The related-software search covers the closest systems identified during reviewer remediation and Array hardening, including current GDAL 3.12 zonal-statistics capabilities and `spatcovar` 0.1.0, but no literature search can prove that no other project implements similar support semantics. We therefore avoid `first`, `unique` and priority claims. The contribution is evaluated as an integrated contract, not inferred from the absence of equivalent primitives elsewhere.
+**Prior-art completeness.** The related-software search covers the closest systems identified during reviewer remediation and Array hardening, including current GDAL zonal-statistics capabilities, `spatcovar` 0.1.0, DART-Pipeline, Open Climate Service, `mbg`, QFlowCrate, STAC validity metadata, valid-data footprint tooling and documented fail-closed raster-coverage checks. No literature or software search can prove that no other project implements the same integrated semantics. We therefore avoid `first`, `unique` and priority claims. The contribution is evaluated as an integrated contract, not inferred from the absence of equivalent primitives elsewhere.
+
+**Support-field dependence.** The three reported support fields are intentionally redundant: `valid_data_fraction = raster_coverage_fraction × valid_within_raster_fraction`. Only two are algebraically independent. The overall fraction is emitted so downstream users receive total support directly and validators can check the invariant. RQ1 demonstrates information preserved by separating the two causes of support loss; it does not show that three independent quantities are required or that other software cannot expose them.
 
 **Evaluation scope.** RQ1 and RQ3 are controlled software experiments. RQ2 contains scoped public-data calculations, not multi-site environmental validation. Uganda CHIRPS supplies one real second-country configuration case; ERA5-Land and MODIS checks are limited to Nyarugenge in 2023, and the HAND check to Rubavu and one public tile.
 
@@ -287,9 +300,9 @@ The software is distributed under the MIT License. Third-party environmental dat
 
 SuRT-GeoHarmonizer does not propose a new zonal-statistics algorithm. It addresses a narrower software-engineering problem: making a common raster-to-administrative handoff explicit enough that spatial support, transformation, provider extension, numerical agreement and release identity can be tested as one contract.
 
-The evaluation shows why that contract can add information. Four administrative summaries with identical means were distinguished by mandatory raster-footprint and finite-data support fields. Scoped CHIRPS, ERA5-Land, MODIS and HAND calculations agreed with independent implementations within declared tolerances. A provider was loaded from outside the repository without changes to the generic harmonizer or built-in registry. The core contract is exercised beyond Rwanda and across a bounded three-operating-system smoke matrix. Finally, the computational price of the added support fields was measured rather than hidden, with small absolute timing overheads in the tested benchmark and no change in paired means.
+The evaluation shows why that contract can add information. Four administrative summaries with identical means collapsed to one mean-only signature. Adding only overall valid support yielded three signatures because finite-data loss and raster-grid extent loss can produce the same total support. Exposing the two causal factors plus their explicit product yielded four signatures while preserving an independently checkable invariant. Scoped CHIRPS, ERA5-Land, MODIS and HAND calculations agreed with independent implementations within declared tolerances. A provider was loaded from outside the repository without changes to the generic harmonizer or built-in registry. The core contract is exercised beyond Rwanda and across a bounded three-operating-system smoke matrix. Finally, the computational price of the added support fields was measured rather than hidden, with small absolute timing overheads in the tested benchmark and no change in paired means.
 
-The resulting contribution is best understood as an auditable integration boundary that complements, rather than replaces, broader systems such as DART, DHIS2 Climate Tools, Google Earth Engine and established geospatial libraries. Release and submission remain contingent on exact-tree validation and final claim-to-evidence review.
+The resulting contribution is best understood as an auditable integration boundary that complements, rather than replaces, broader systems such as DART, Open Climate Service, DHIS2 Climate Tools, Google Earth Engine and established geospatial libraries. Release and submission remain contingent on exact-tree validation and final claim-to-evidence review.
 
 ## Declaration of competing interest
 
@@ -338,3 +351,15 @@ During development and manuscript preparation, the author used OpenAI ChatGPT an
 [16] A. D. Nobre, L. A. Cuartas, M. Hodnett, et al., Height Above the Nearest Drainage: a hydrologically relevant new terrain model, Journal of Hydrology 404 (2011) 13-29. https://doi.org/10.1016/j.jhydrol.2011.03.051.
 
 [17] E. Cebeci, spatcovar: Construct Spatial Covariates from Polygon Data, R package version 0.1.0 (2026). https://doi.org/10.32614/CRAN.package.spatcovar.
+
+[18] DHIS2, Introducing Open Climate Service: Self-Hosted Climate Data Infrastructure for DHIS2 and Chap, 24 August 2026. https://dhis2.org/introducing-open-climate-service/ (accessed 4 October 2026).
+
+[19] A. Rademaker, E. Koukouraki, B. Pondi, QFlowCrate: A QGIS Plugin for Workflow Documentation and Provenance Capture to Enhance Geoscientific Reproducibility, Journal of Open Research Software 14 (2026) 44. https://doi.org/10.5334/jors.704.
+
+[20] N. Henry, B. Mayala, R. Burstein, N. Sadat, M. Richards, M. Collison, M. Cork, mbg: Model-Based Geostatistics, R package version 1.2.0 (2026). https://doi.org/10.32614/CRAN.package.mbg.
+
+[21] SpatioTemporal Asset Catalog, Common Metadata, Statistics Object and `valid_percent`. https://github.com/radiantearth/stac-spec/blob/master/commons/common-metadata.md (accessed 4 October 2026).
+
+[22] P. Hartzell, raster-footprint: create GeoJSON geometries that bound valid raster data, Python package version 0.3.0 (2026). https://pypi.org/project/raster-footprint/.
+
+[23] OPTAIN, SWAT+ modelling protocol, section on `check_raster_coverage()` and minimum raster-data coverage by spatial object. https://www.optain.eu/sites/default/files/delivrables/OPTAIN%20D4.2%20-%20Modelling_Protocols.pdf (accessed 4 October 2026).
