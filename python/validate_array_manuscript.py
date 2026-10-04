@@ -78,8 +78,7 @@ def main() -> None:
     require("spatcovar" in prior and "spatcovar" in manuscript,
             "spatcovar prior-art finding is integrated into audit and manuscript")
 
-    # Expanded October 2026 novelty controls. These are intentionally checked in
-    # the internal delta before they are promoted into final manuscript wording.
+    # Expanded October 2026 novelty controls.
     require("open climate service" in delta_lower and "chirps" in delta_lower and "health-service" in delta_lower,
             "prior-art delta captures DHIS2 Open Climate Service and administrative health-area processing")
     require("qflowcrate" in delta_lower and "ro-crate" in delta_lower,
@@ -92,8 +91,25 @@ def main() -> None:
             "prior-art delta blocks generic data-contract novelty")
     require("he2at" in delta_lower and "sub-saharan african" in delta_lower,
             "prior-art delta treats African climate-health integration as established application context")
-    require("manuscript integration" in delta_lower and "required before submission" in delta_lower,
-            "newest prior-art findings remain an explicit pre-submission integration gate")
+    require("fail-closed raster-coverage thresholds" in delta_lower and "check_raster_coverage" in delta_lower,
+            "prior-art delta blocks minimum-coverage rejection as a novelty claim")
+    require("valid-data footprints" in delta_lower and "valid_percent" in delta_lower,
+            "prior-art delta distinguishes grid extent from established valid-data footprint/percent concepts")
+
+    # The strongest new prior-art findings must not remain only in an internal audit.
+    for comparator in ("Open Climate Service", "QFlowCrate", "mbg", "STAC", "raster-footprint", "SWATbuildR"):
+        require(comparator in manuscript,
+                f"expanded prior-art finding is integrated into manuscript: {comparator}")
+
+    require("rectangular grid extent" in lower,
+            "manuscript defines raster coverage as rectangular grid-extent coverage")
+    require("are algebraically independent" in lower and
+            "valid_data_fraction = raster_coverage_fraction × valid_within_raster_fraction" in manuscript,
+            "manuscript discloses algebraic dependence of the three reported support fields")
+    require("produced **one** unique interface signature" in manuscript and
+            "produced **three** signatures" in manuscript and
+            "produced **four** signatures" in manuscript,
+            "manuscript reports the 1/3/4 support-interface signature result")
 
     require(V13_DOI in manuscript, "published v1.3.0 DOI is retained")
     require("No v1.4.0 DOI is valid until" in manuscript,
@@ -114,8 +130,8 @@ def main() -> None:
     for phrase in risky_phrases:
         require(phrase not in lower, f"blocked priority/superiority phrase absent: {phrase}")
 
-    require("mandatory three-part spatial-support semantics" in prior.casefold(),
-            "main novelty audit retains the mandatory support-semantic boundary")
+    require("fixed integration and assurance contract" in prior.casefold(),
+            "main novelty audit retains the bounded integration-contract contribution")
     require("first`, `unique`, `unprecedented`" in claims,
             "claim matrix blocks unverified priority language")
 
@@ -150,7 +166,7 @@ def main() -> None:
     require(len(mean_plus_overall) == 3,
             "mean plus one overall valid-coverage field leaves one controlled support-state collision")
     require(len(full_support) == 4,
-            "mean plus the three-part support tuple identifies all four controlled support states")
+            "mean plus the explicit support tuple identifies all four controlled support states")
 
     finite_gap = observed["finite_gap"]
     footprint_gap = observed["footprint_gap"]
@@ -158,7 +174,7 @@ def main() -> None:
         finite_gap[0] == footprint_gap[0]
         and finite_gap[3] == footprint_gap[3]
         and finite_gap[1:3] != footprint_gap[1:3],
-        "single overall coverage conflates finite-data loss with raster-footprint loss in the controlled fixture",
+        "single overall coverage conflates finite-data loss with raster-grid loss in the controlled fixture",
     )
 
     collision_meta = collision.get("interface_collision_analysis", {})
@@ -167,7 +183,7 @@ def main() -> None:
     require(int(collision_meta.get("mean_plus_overall_valid_coverage_unique_signatures", -1)) == len(mean_plus_overall),
             "tracked interface analysis records the mean-plus-overall signature count")
     require(int(collision_meta.get("mean_plus_three_part_support_unique_signatures", -1)) == len(full_support),
-            "tracked interface analysis records the three-part signature count")
+            "tracked interface analysis records the full-support signature count")
     require(collision_meta.get("critical_collision") == ["finite_gap", "footprint_gap"],
             "tracked interface analysis identifies the finite-gap versus footprint-gap collision")
     require("not a claim" in str(collision_meta.get("claim_boundary", "")).casefold(),
