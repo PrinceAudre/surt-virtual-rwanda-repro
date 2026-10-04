@@ -1,0 +1,7 @@
+"scenario","raster_cells","polygon_count","mode","median_elapsed_s","max_r_heap_peak_delta_mb","max_r_heap_high_water_mb","max_value_difference_vs_peer"
+"small",10000,16,"direct_mean",0.109999999999999,22.6999999999999,294.4,0
+"small",10000,16,"surt_support_contract",0.139999999999999,26.8,298.5,0
+"medium",90000,64,"direct_mean",0.200000000000003,88.9,360.7,0
+"medium",90000,64,"surt_support_contract",0.239999999999998,97.6,369.4,0
+"large",360000,144,"direct_mean",0.5,144.7,416.5,0
+"large",360000,144,"surt_support_contract",0.57,150.7,422.5,0
