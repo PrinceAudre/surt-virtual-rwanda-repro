@@ -18,6 +18,7 @@ MANUSCRIPT = ROOT / "paper" / "array-manuscript.md"
 PRIOR_ART = ROOT / "paper" / "ARRAY_NOVELTY_PRIOR_ART_AUDIT.md"
 PRIOR_ART_DELTA = ROOT / "paper" / "ARRAY_PRIOR_ART_UPDATE_2026-10-04.md"
 PRIOR_ART_DELTA_B = ROOT / "paper" / "ARRAY_PRIOR_ART_UPDATE_2026-10-04B.md"
+PRIOR_ART_DELTA_C = ROOT / "paper" / "ARRAY_PRIOR_ART_UPDATE_2026-10-04C.md"
 CLAIMS = ROOT / "paper" / "ARRAY_CLAIM_EVIDENCE_MATRIX.md"
 COLLISION = ROOT / "evidence" / "array" / "support_semantics_collision.json"
 BENCHMARK = ROOT / "evidence" / "array" / "array_contract_benchmark_summary.csv"
@@ -50,10 +51,13 @@ def main() -> None:
     prior = read(PRIOR_ART)
     delta = read(PRIOR_ART_DELTA)
     delta_b = read(PRIOR_ART_DELTA_B)
+    delta_c = read(PRIOR_ART_DELTA_C)
     claims = read(CLAIMS)
     lower = manuscript.casefold()
     delta_lower = delta.casefold()
     delta_b_lower = delta_b.casefold()
+    delta_c_lower = delta_c.casefold()
+    claims_lower = claims.casefold()
 
     require(manuscript.startswith("# SuRT-GeoHarmonizer: A contract-first workflow"),
             "Array manuscript uses the contract-first title")
@@ -111,6 +115,22 @@ def main() -> None:
     require("not proof of uniqueness" in delta_b_lower,
             "second prior-art delta explicitly blocks exhaustive novelty inference")
 
+    # Third targeted delta: climate/admin preprocessing, African services, public-health use and contracts.
+    require("stagg" in delta_c_lower and "climate impacts analysis" in delta_c_lower,
+            "third prior-art delta captures dedicated climate-to-administrative preprocessing software")
+    require("climate econometrics toolkit" in delta_c_lower and "runtime" in delta_c_lower,
+            "third prior-art delta captures integrated climate aggregation and benchmark precedent")
+    require("climate data tool" in delta_c_lower and "africa" in delta_c_lower and "20 african countries" in delta_c_lower,
+            "third prior-art delta captures operational African climate-service precedent")
+    require("geoglue" in delta_c_lower and "epidemiology" in delta_c_lower and "public health" in delta_c_lower,
+            "third prior-art delta captures public-health administrative aggregation precedent")
+    require("ipums terra" in delta_c_lower and "population-environment" in delta_c_lower,
+            "third prior-art delta captures historical population-environment integration")
+    require("autogis" in delta_c_lower and "contract-driven" in delta_c_lower,
+            "third prior-art delta blocks contract-driven geospatial computing as a priority claim")
+    require("not proof of uniqueness" in delta_c_lower,
+            "third prior-art delta explicitly blocks exhaustive novelty inference")
+
     # The strongest prior-art findings must not remain only in internal audits.
     for comparator in (
         "Open Climate Service", "QFlowCrate", "mbg", "STAC", "raster-footprint", "SWATbuildR",
@@ -118,6 +138,11 @@ def main() -> None:
     ):
         require(comparator in manuscript,
                 f"expanded prior-art finding is integrated into manuscript: {comparator}")
+
+    # Delta C must at least be represented in the claim matrix even before manuscript compression is finalized.
+    for comparator in ("stagg", "Climate Econometrics Toolkit", "CDT", "geoglue", "IPUMS Terra", "AutoGIS"):
+        require(comparator.casefold() in claims_lower,
+                f"third-delta novelty limit is recorded in claim matrix: {comparator}")
 
     require("rectangular grid extent" in lower,
             "manuscript defines raster coverage as rectangular grid-extent coverage")
@@ -157,10 +182,14 @@ def main() -> None:
             "main novelty audit retains the bounded integration-contract contribution")
     require("first`, `unique`, `unprecedented`" in claims,
             "claim matrix blocks unverified priority language")
-    require("urban growth center" in claims.casefold() and "geobrix" in claims.casefold(),
+    require("urban growth center" in claims_lower and "geobrix" in claims_lower,
             "claim matrix records the latest direct coverage precedents")
-    require("absence of an exact integrated match" in claims.casefold(),
+    require("absence of an exact integrated match" in claims_lower,
             "claim matrix blocks novelty inference from an unmatched search")
+    require("african/lmic relevance is a deployment rationale only" in claims_lower,
+            "claim matrix blocks African/LMIC context from becoming a novelty claim")
+    require("contract-first` is descriptive framing" in claims_lower,
+            "claim matrix blocks contract-first wording from becoming a priority claim")
 
     collision = json.loads(read(COLLISION))
     cases = collision.get("cases", [])
@@ -182,9 +211,6 @@ def main() -> None:
     }
     require(observed == expected, "collision evidence matches the frozen four-case support tuples")
 
-    # RQ1 interface-information analysis. The point is not that other software
-    # cannot compute these quantities; it is that a single overall valid-coverage
-    # field cannot identify why support was lost in this controlled fixture.
     mean_only = {(vals[0],) for vals in observed.values()}
     mean_plus_overall = {(vals[0], vals[3]) for vals in observed.values()}
     full_support = {(vals[0], vals[1], vals[2], vals[3]) for vals in observed.values()}
