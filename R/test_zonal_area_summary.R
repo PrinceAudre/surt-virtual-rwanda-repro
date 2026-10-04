@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 # Reviewer-driven regression tests for area weighting and valid-data coverage.
+# Includes the Array support-semantics collision experiment: identical zonal
+# means can carry materially different footprint and finite-data support.
 
 suppressWarnings(suppressMessages({
   library(terra)
@@ -69,6 +71,78 @@ stop_if_not("extent-limited polygon has complete valid coverage within raster fo
             abs(s_extent$valid_within_raster_fraction - 1) < 1e-9)
 stop_if_not("extent-limited polygon overall valid coverage matches footprint coverage",
             abs(s_extent$valid_data_fraction - s_extent$raster_coverage_fraction) < 1e-9)
+
+# Array E1 support-semantics collision experiment.
+# All four cases intentionally return the same value (10) while representing
+# different support states. This demonstrates why the mean alone is not an
+# adequate administrative-data handoff contract. The experiment does NOT claim
+# that underlying libraries cannot calculate comparable diagnostics when asked.
+make_constant_raster <- function(values) {
+  r <- terra::rast(
+    xmin = 0, xmax = 2000, ymin = 0, ymax = 1000,
+    ncols = 2, nrows = 1, crs = "EPSG:3857"
+  )
+  terra::values(r) <- values
+  r
+}
+
+collision_cases <- list(
+  complete = surt_area_weighted_summary(
+    make_constant_raster(c(10, 10)),
+    sf::st_sf(unit_id = "COMPLETE", geometry = rect_polygon(0, 2000, 0, 1000, 3857))
+  ),
+  finite_gap = surt_area_weighted_summary(
+    make_constant_raster(c(10, NA)),
+    sf::st_sf(unit_id = "FINITE_GAP", geometry = rect_polygon(0, 2000, 0, 1000, 3857))
+  ),
+  footprint_gap = surt_area_weighted_summary(
+    make_constant_raster(c(10, 10)),
+    sf::st_sf(unit_id = "FOOTPRINT_GAP", geometry = rect_polygon(0, 4000, 0, 1000, 3857))
+  ),
+  combined_gap = surt_area_weighted_summary(
+    make_constant_raster(c(10, NA)),
+    sf::st_sf(unit_id = "COMBINED_GAP", geometry = rect_polygon(0, 4000, 0, 1000, 3857))
+  )
+)
+
+collision <- do.call(rbind, lapply(names(collision_cases), function(case_name) {
+  row <- collision_cases[[case_name]]
+  data.frame(
+    case = case_name,
+    value = row$value,
+    raster_coverage_fraction = row$raster_coverage_fraction,
+    valid_within_raster_fraction = row$valid_within_raster_fraction,
+    valid_data_fraction = row$valid_data_fraction,
+    stringsAsFactors = FALSE
+  )
+}))
+rownames(collision) <- NULL
+
+stop_if_not("collision experiment keeps all zonal means identical",
+            max(abs(collision$value - 10)) < 1e-12)
+stop_if_not("complete case reports full support",
+            abs(collision$raster_coverage_fraction[collision$case == "complete"] - 1) < 1e-9 &&
+              abs(collision$valid_within_raster_fraction[collision$case == "complete"] - 1) < 1e-9 &&
+              abs(collision$valid_data_fraction[collision$case == "complete"] - 1) < 1e-9)
+stop_if_not("finite-gap case isolates within-footprint missingness",
+            abs(collision$raster_coverage_fraction[collision$case == "finite_gap"] - 1) < 1e-9 &&
+              abs(collision$valid_within_raster_fraction[collision$case == "finite_gap"] - 0.5) < 1e-9 &&
+              abs(collision$valid_data_fraction[collision$case == "finite_gap"] - 0.5) < 1e-9)
+stop_if_not("footprint-gap case isolates raster-extent missingness",
+            abs(collision$raster_coverage_fraction[collision$case == "footprint_gap"] - 0.5) < 0.01 &&
+              abs(collision$valid_within_raster_fraction[collision$case == "footprint_gap"] - 1) < 1e-9 &&
+              abs(collision$valid_data_fraction[collision$case == "footprint_gap"] - 0.5) < 0.01)
+stop_if_not("combined-gap case separates both support losses",
+            abs(collision$raster_coverage_fraction[collision$case == "combined_gap"] - 0.5) < 0.01 &&
+              abs(collision$valid_within_raster_fraction[collision$case == "combined_gap"] - 0.5) < 1e-9 &&
+              abs(collision$valid_data_fraction[collision$case == "combined_gap"] - 0.25) < 0.01)
+stop_if_not("collision experiment distinguishes support despite identical means",
+            length(unique(round(collision$raster_coverage_fraction, 6))) > 1L &&
+              length(unique(round(collision$valid_within_raster_fraction, 6))) > 1L &&
+              length(unique(round(collision$valid_data_fraction, 6))) > 2L)
+
+cat("\nSupport-semantics collision evidence:\n")
+print(collision, row.names = FALSE, digits = 6)
 
 # CHIRPS regression: the public annual GeoTIFF has a tiny floating-point spill
 # beyond 180 degrees longitude. That must not wrap the footprint across the
