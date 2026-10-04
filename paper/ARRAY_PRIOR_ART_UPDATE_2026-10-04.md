@@ -52,7 +52,7 @@ Project documentation: https://github.com/dragosgontariu/zonify/blob/main/docs/U
 
 Zonify 1.0.0 is a 2026 QGIS plugin for batch zonal statistics. Its documentation reports `Count` and `Coverage`, describes coverage as the percentage of a polygon containing valid raster data, excludes NoData from calculations, and documents geometric coverage for partial pixels.
 
-**Consequence for SuRT:** reporting a polygon coverage percentage alongside zonal statistics is not novel. The support-collision experiment therefore cannot be framed as proving that other software lacks coverage diagnostics. Its narrower evidentiary role is to show the information preserved when SuRT requires a fixed three-part decomposition that separates raster-footprint support from finite accepted support.
+**Consequence for SuRT:** reporting a polygon coverage percentage alongside zonal statistics is not novel. The support-collision experiment therefore cannot be framed as proving that other software lacks coverage diagnostics. Its narrower evidentiary role is to show the information preserved when SuRT requires a fixed decomposition that separates raster-grid extent support from finite accepted support.
 
 ## 6. mbg and public-health spatial aggregation
 
@@ -91,14 +91,33 @@ Machine-readable, versioned data contracts that encode schema, semantics and qua
 
 **Consequence for SuRT:** the terms `data contract`, `machine-readable contract`, JSON Schema, CI enforcement and fail-closed schema validation are not priority claims. The defensible contribution is the domain-specific content and evaluated integration of SuRT's raster-to-administrative contract, not the generic concept of a data contract.
 
+### 7.4. Fail-closed raster-coverage thresholds
+
+Primary implementation documentation: OPTAIN SWAT+ modelling protocol, `check_raster_coverage()` description. https://www.optain.eu/sites/default/files/delivrables/OPTAIN%20D4.2%20-%20Modelling_Protocols.pdf
+
+The documented SWATbuildR workflow checks whether each model polygon is covered by at least a configured fraction of required raster data and raises an error for polygons below that threshold. Example soil and terrain workflows use explicit coverage fractions before model setup continues.
+
+**Consequence for SuRT:** rejecting a workflow when polygon raster support falls below a configured minimum is established practice. SuRT's `--min-valid-fraction` and fail-closed behavior are useful implementation controls, but thresholded coverage rejection is not a novelty claim.
+
+### 7.5. Valid-data footprints and valid-percent metadata
+
+Primary sources:
+
+- STAC common metadata specification: https://github.com/radiantearth/stac-spec/blob/master/commons/common-metadata.md
+- `raster-footprint` package: https://pypi.org/project/raster-footprint/
+
+STAC raster-band statistics include a `valid_percent` field for the percentage of non-NoData values. The `raster-footprint` package constructs geometries bounding valid raster data rather than merely reporting the rectangular dataset extent.
+
+**Consequence for SuRT:** valid-data percentages and valid-data footprint geometry are established concepts. SuRT must be precise that its `raster_coverage_fraction` is coverage by the raster **grid extent/rectangular footprint**, while `valid_within_raster_fraction` describes finite accepted support inside that grid-covered portion. The value proposition is the explicit causal decomposition in the administrative-output contract, not invention of valid-data footprints or validity percentages.
+
 ## 8. Current novelty boundary after the expanded search
 
 The expanded search removes several broad claims but does not invalidate the central study if the manuscript remains narrow and empirical.
 
 The evidence supports saying that SuRT-GeoHarmonizer **defines and evaluates** an integrated raster-to-administrative assurance contract in which:
 
-- `raster_coverage_fraction` reports polygon support by the raster footprint;
-- `valid_within_raster_fraction` reports finite accepted support within that footprint;
+- `raster_coverage_fraction` reports polygon support by the rectangular raster grid extent;
+- `valid_within_raster_fraction` reports finite accepted support within the grid-covered portion;
 - `valid_data_fraction` reports overall supported polygon area and is algebraically constrained to the product of the first two values;
 - fail-closed job semantics bind provider, transformation, QA, aggregation, output and provenance declarations;
 - an out-of-tree provider boundary is tested without modification of the built-in registry or generic harmonizer;
@@ -106,16 +125,21 @@ The evidence supports saying that SuRT-GeoHarmonizer **defines and evaluates** a
 - failure injection and release-contract corruption are tested; and
 - exact tracked-file identity is checked as release evidence.
 
+The three reported support fields are **not three independent mathematical quantities**. Only two factors are algebraically independent because `valid_data_fraction = raster_coverage_fraction × valid_within_raster_fraction` when the denominator is defined. The third field is retained deliberately so downstream users receive both causal components and the overall support fraction without reconstructing it, while validators can check the invariant. This must be stated rather than presenting the three fields as three independent measurements.
+
 None of those component ideas is claimed to be unique. The Array contribution is the evaluated integration of these controls around one bounded scientific-data handoff and the empirical demonstration of what that integration exposes and costs.
 
-The RQ1 collision experiment is evidence of **information added by the fixed decomposition**, not evidence of algorithmic exclusivity. The RQ5 benchmark is evidence of **measured implementation cost on one declared system**, not evidence of performance superiority.
+The RQ1 collision experiment is evidence of **information added by the fixed decomposition**, not evidence of algorithmic exclusivity. In the controlled fixture, a mean-only handoff yields one unique signature across four support states, and a mean plus one overall valid-data fraction yields three because finite-data loss and grid-footprint loss can have the same total valid support. Reporting the two causal factors plus their explicit overall product yields four support signatures and an invariant that can be checked. This result does not imply that other software cannot be programmed to calculate the same quantities.
+
+The RQ5 benchmark is evidence of **measured implementation cost on one declared system**, not evidence of performance superiority.
 
 ## 9. Claims now explicitly prohibited
 
 In addition to the prohibitions in the main novelty audit, do not state or imply that SuRT is the first or only system to provide:
 
 - data contracts or machine-verifiable data contracts;
-- coverage reporting or valid-data coverage;
+- coverage reporting, valid-data percentages, or valid-data footprints;
+- minimum-coverage thresholds or fail-closed rejection for inadequate raster support;
 - geospatial provenance or FAIR/reproducible workflow packaging;
 - open-source climate-health data integration;
 - administrative or health-service-area environmental summaries;
@@ -128,6 +152,6 @@ In addition to the prohibitions in the main novelty audit, do not state or imply
 
 **GO FOR ARRAY HARDENING remains justified, with a narrower novelty statement.**
 
-The search has repeatedly found strong prior art for every individual primitive. That is useful rather than fatal: it tells us exactly what cannot be claimed. The remaining manuscript must stand or fall on the evidence for the integrated assurance boundary, especially the three-part support semantics, fail-closed handoff contract, external-provider decoupling, independent numerical checks and release-evidence gates.
+The search has repeatedly found strong prior art for every individual primitive. That is useful rather than fatal: it tells us exactly what cannot be claimed. The remaining manuscript must stand or fall on the evidence for the integrated assurance boundary, especially the explicit separation of raster-grid support from finite/QA-accepted support, fail-closed handoff semantics, external-provider decoupling, independent numerical checks and release-evidence gates.
 
-Before submission, the newest findings in this delta, particularly Open Climate Service, QFlowCrate, current coverage-reporting software, `mbg`, and the generic data-contract literature, must be reflected in the manuscript's novelty boundary or explicitly judged non-material with a recorded reason. No priority wording is permitted merely because an exact integrated match was not found.
+Before submission, the findings in this delta, particularly Open Climate Service, QFlowCrate, current coverage-reporting and valid-footprint software, `mbg`, generic data-contract practice, and pre-existing fail-closed coverage thresholds, must be reflected in the manuscript's novelty boundary or explicitly judged non-material with a recorded reason. No priority wording is permitted merely because an exact integrated match was not found.
