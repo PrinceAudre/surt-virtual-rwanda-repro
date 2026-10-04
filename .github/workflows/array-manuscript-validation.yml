@@ -8,6 +8,7 @@ on:
       - 'paper/array-manuscript.md'
       - 'paper/ARRAY_NOVELTY_PRIOR_ART_AUDIT.md'
       - 'paper/ARRAY_PRIOR_ART_UPDATE_2026-10-04.md'
+      - 'paper/ARRAY_PRIOR_ART_UPDATE_2026-10-04B.md'
       - 'paper/ARRAY_CLAIM_EVIDENCE_MATRIX.md'
       - 'evidence/array/**'
       - 'python/validate_array_manuscript.py'
