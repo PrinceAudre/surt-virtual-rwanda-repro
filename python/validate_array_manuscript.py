@@ -74,8 +74,8 @@ def main() -> None:
             "latest prior-art delta captures GDAL 3.12 fractional coverage capability")
     require("spatcovar" in delta and "0.1.0" in delta and "2026-09-08" in delta,
             "latest prior-art delta captures spatcovar 0.1.0")
-    require("spatcovar" in delta and "spatcovar" not in prior,
-            "new spatcovar finding is isolated as an explicit post-audit delta pending manuscript integration")
+    require("spatcovar" in prior and "spatcovar" in manuscript,
+            "spatcovar prior-art finding is integrated into audit and manuscript")
 
     require(V13_DOI in manuscript, "published v1.3.0 DOI is retained")
     require("No v1.4.0 DOI is valid until" in manuscript,
