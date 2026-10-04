@@ -1,0 +1,26 @@
+{
+  "evidence_type": "out_of_tree_provider_extension_experiment",
+  "date": "2026-10-04",
+  "script": "python/test_config_contract.py",
+  "purpose": "Demonstrate that a provider module physically outside the repository can be loaded by module:factory without editing the built-in registry or generic R harmonizer.",
+  "claim_boundary": "Plugin architectures are prior art. This evidence supports only SuRT-GeoHarmonizer's implemented decoupling between provider preparation and its fixed harmonization contract.",
+  "method": {
+    "module_location": "runtime temporary directory outside repository root",
+    "loading_mechanism": "module:factory via importlib",
+    "core_registry_edits_required": 0,
+    "generic_R_harmonizer_edits_required": 0,
+    "checks": [
+      "temporary module is physically outside repository root",
+      "module factory loads through provider adapter boundary",
+      "prepared artifact path is preserved",
+      "adapter-supplied provenance suffix is preserved",
+      "malformed repository fixture adapter remains fail-closed",
+      "undeclared provider options remain fail-closed"
+    ]
+  },
+  "local_verification": {
+    "environment": "Windows authorized development machine, Python 3.13",
+    "result": "PASS",
+    "test_summary": "21 passed, 0 failed"
+  }
+}
