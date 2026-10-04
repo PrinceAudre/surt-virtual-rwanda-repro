@@ -50,6 +50,7 @@ def main() -> None:
     delta = read(PRIOR_ART_DELTA)
     claims = read(CLAIMS)
     lower = manuscript.casefold()
+    delta_lower = delta.casefold()
 
     require(manuscript.startswith("# SuRT-GeoHarmonizer: A contract-first workflow"),
             "Array manuscript uses the contract-first title")
@@ -76,6 +77,23 @@ def main() -> None:
             "latest prior-art delta captures spatcovar 0.1.0")
     require("spatcovar" in prior and "spatcovar" in manuscript,
             "spatcovar prior-art finding is integrated into audit and manuscript")
+
+    # Expanded October 2026 novelty controls. These are intentionally checked in
+    # the internal delta before they are promoted into final manuscript wording.
+    require("open climate service" in delta_lower and "chirps" in delta_lower and "health-service" in delta_lower,
+            "prior-art delta captures DHIS2 Open Climate Service and administrative health-area processing")
+    require("qflowcrate" in delta_lower and "ro-crate" in delta_lower,
+            "prior-art delta captures peer-reviewed geospatial provenance packaging")
+    require("zonify" in delta_lower and "coverage" in delta_lower and "nodata" in delta_lower,
+            "prior-art delta captures current zonal coverage reporting")
+    require("model-based geostatistics" in delta_lower and "mbg" in delta_lower,
+            "prior-art delta captures health/geostatistical raster-to-polygon aggregation")
+    require("machine-readable data contracts" in delta_lower and "not priority claims" in delta_lower,
+            "prior-art delta blocks generic data-contract novelty")
+    require("he2at" in delta_lower and "sub-saharan african" in delta_lower,
+            "prior-art delta treats African climate-health integration as established application context")
+    require("manuscript integration" in delta_lower and "required before submission" in delta_lower,
+            "newest prior-art findings remain an explicit pre-submission integration gate")
 
     require(V13_DOI in manuscript, "published v1.3.0 DOI is retained")
     require("No v1.4.0 DOI is valid until" in manuscript,
