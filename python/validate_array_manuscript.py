@@ -44,10 +44,6 @@ def require(condition: bool, message: str) -> None:
     print(f"[PASS] {message}")
 
 
-def fmt_seconds(value: float) -> str:
-    return f"{value:.2f} s"
-
-
 def main() -> None:
     manuscript = read(MANUSCRIPT)
     prior = read(PRIOR_ART)
@@ -151,9 +147,9 @@ def main() -> None:
         fragment = f"| {cells:,} cells / {polygons} polygons | {direct_s:.2f} s | {surt_s:.2f} s |"
         require(fragment in manuscript, f"manuscript benchmark timing matches evidence for {scenario}")
 
-    require("not process RSS" in manuscript,
+    require("not operating-system rss" in lower or "not process rss" in lower,
             "benchmark memory limitation explicitly distinguishes R heap from RSS")
-    require("does not establish" in manuscript and "universal" in manuscript,
+    require("does not establish" in lower and "universal" in lower,
             "performance/portability conclusions remain bounded")
 
     print("\nArray manuscript and evidence validation passed.")
