@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MANUSCRIPT = ROOT / "paper" / "array-manuscript.md"
 PRIOR_ART = ROOT / "paper" / "ARRAY_NOVELTY_PRIOR_ART_AUDIT.md"
 PRIOR_ART_DELTA = ROOT / "paper" / "ARRAY_PRIOR_ART_UPDATE_2026-10-04.md"
+PRIOR_ART_DELTA_B = ROOT / "paper" / "ARRAY_PRIOR_ART_UPDATE_2026-10-04B.md"
 CLAIMS = ROOT / "paper" / "ARRAY_CLAIM_EVIDENCE_MATRIX.md"
 COLLISION = ROOT / "evidence" / "array" / "support_semantics_collision.json"
 BENCHMARK = ROOT / "evidence" / "array" / "array_contract_benchmark_summary.csv"
@@ -48,9 +49,11 @@ def main() -> None:
     manuscript = read(MANUSCRIPT)
     prior = read(PRIOR_ART)
     delta = read(PRIOR_ART_DELTA)
+    delta_b = read(PRIOR_ART_DELTA_B)
     claims = read(CLAIMS)
     lower = manuscript.casefold()
     delta_lower = delta.casefold()
+    delta_b_lower = delta_b.casefold()
 
     require(manuscript.startswith("# SuRT-GeoHarmonizer: A contract-first workflow"),
             "Array manuscript uses the contract-first title")
@@ -96,8 +99,23 @@ def main() -> None:
     require("valid-data footprints" in delta_lower and "valid_percent" in delta_lower,
             "prior-art delta distinguishes grid extent from established valid-data footprint/percent concepts")
 
-    # The strongest new prior-art findings must not remain only in an internal audit.
-    for comparator in ("Open Climate Service", "QFlowCrate", "mbg", "STAC", "raster-footprint", "SWATbuildR"):
+    # Second targeted delta: directly challenge coverage and geospatial-assurance novelty.
+    require("urban growth center" in delta_b_lower and "valid_coverage_share" in delta_b,
+            "second prior-art delta captures metric-specific valid-coverage shares")
+    require("geobrix" in delta_b_lower and "coverage=complete" in delta_b and "nodata" in delta_b_lower,
+            "second prior-art delta captures extent-versus-valid raster-grid semantics")
+    require("geospatial agentic services" in delta_b_lower and "reproducibility bundle" in delta_b_lower,
+            "second prior-art delta captures integrated validation/provenance/reproducibility architecture")
+    require("enterprise spatial data provenance knowledge infrastructure" in delta_b_lower and "validation-gated" in delta_b_lower,
+            "second prior-art delta captures validation-gated geospatial provenance architecture")
+    require("not proof of uniqueness" in delta_b_lower,
+            "second prior-art delta explicitly blocks exhaustive novelty inference")
+
+    # The strongest prior-art findings must not remain only in internal audits.
+    for comparator in (
+        "Open Climate Service", "QFlowCrate", "mbg", "STAC", "raster-footprint", "SWATbuildR",
+        "Urban Growth Center", "GeoBrix", "Geospatial Agentic Services", "ESDPKI",
+    ):
         require(comparator in manuscript,
                 f"expanded prior-art finding is integrated into manuscript: {comparator}")
 
@@ -110,6 +128,8 @@ def main() -> None:
             "produced **three** signatures" in manuscript and
             "produced **four** signatures" in manuscript,
             "manuscript reports the 1/3/4 support-interface signature result")
+    require("not a priority claim" in lower and "cannot prove uniqueness" in lower,
+            "manuscript states that an unmatched search result is not a priority claim")
 
     require(V13_DOI in manuscript, "published v1.3.0 DOI is retained")
     require("No v1.4.0 DOI is valid until" in manuscript,
@@ -123,6 +143,9 @@ def main() -> None:
         "the first environmental-data harmonization",
         "first reusable geospatial pipeline",
         "the first software to aggregate",
+        "first to report valid coverage",
+        "first to separate raster extent",
+        "novel coverage metric",
         "world-first",
         "unprecedented software",
         "scientifically more accurate than",
@@ -134,6 +157,10 @@ def main() -> None:
             "main novelty audit retains the bounded integration-contract contribution")
     require("first`, `unique`, `unprecedented`" in claims,
             "claim matrix blocks unverified priority language")
+    require("urban growth center" in claims.casefold() and "geobrix" in claims.casefold(),
+            "claim matrix records the latest direct coverage precedents")
+    require("absence of an exact integrated match" in claims.casefold(),
+            "claim matrix blocks novelty inference from an unmatched search")
 
     collision = json.loads(read(COLLISION))
     cases = collision.get("cases", [])
