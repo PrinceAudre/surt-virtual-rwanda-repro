@@ -23,7 +23,7 @@ The revised manuscript should be a systems/evaluation paper rather than a Softwa
 
 ## Novelty position
 
-The prior-art audit finds substantial overlap at the feature level with DART-Pipeline/geoglue, DHIS2 Climate Tools, AREAdata, xagg, exactextract(r), GDAL, terra, Google Earth Engine, openEO and general reproducibility/workflow systems.
+The prior-art audit and four October 2026 delta audits find substantial overlap at the feature level with DART-Pipeline/geoglue, DHIS2 Climate Tools/Open Climate Service, AREAdata, stagg, Climate Econometrics Toolkit, Climate-CAFE, xagg, spatcovar, exactextract(r), GDAL, terra, Google Earth Engine, openEO, CDT and general contract/provenance/reproducibility systems.
 
 Accordingly, SuRT-GeoHarmonizer does **not** claim to invent:
 

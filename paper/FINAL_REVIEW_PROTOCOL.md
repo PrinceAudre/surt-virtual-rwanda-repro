@@ -50,15 +50,17 @@ A technical concern may be called closed only when implementation, tests/evidenc
 Minimum landscape:
 
 - DART-Pipeline and geoglue;
-- DHIS2 Climate App / Climate Tools and Rwanda climate-health work;
-- AREAdata;
-- xagg;
-- exactextract and exactextractr;
+- DHIS2 Climate App / Climate Tools, Open Climate Service and Rwanda climate-health work;
+- AREAdata, stagg, Climate Econometrics Toolkit and Climate-CAFE;
+- xagg, spatcovar, exactextract and exactextractr;
 - GDAL and terra;
-- Google Earth Engine;
-- openEO;
-- Snakemake and reproducibility/workflow frameworks; and
+- Google Earth Engine and openEO;
+- CDT and other African climate-service precedents;
+- Urban Growth Center and GeoBrix coverage/validity interfaces;
+- AutoGIS, QFlowCrate, Geospatial Agentic Services, ESDPKI, Snakemake and related contract/provenance/workflow frameworks; and
 - current Array framework/software papers, including FairFlow and relevant interdisciplinary health-computing work.
+
+The four October 2026 delta audits are part of this gate and must remain represented in both the claim matrix and manuscript-facing related work.
 
 The paper must not claim a new zonal-statistics algorithm, new cell-area algorithm, first climate-health integration pipeline, first reproducible geospatial workflow, first African/LMIC harmonizer, or superiority over broader systems without direct comparative evidence.
 

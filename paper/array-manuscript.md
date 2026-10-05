@@ -51,7 +51,9 @@ These capabilities preclude novelty claims based on generic coverage reporting, 
 
 ### 2.2. Climate and environmental integration
 
-DART-Pipeline is the closest published climate-health comparator. It is locally deployable, can acquire and process multiple climatic, environmental, socioeconomic and epidemiological sources, supports administrative aggregation, area- and population-weighted statistics, metadata, provenance, tests, CI and extension through custom metrics [6]. DART is broader than SuRT in domain integration and disease-modelling preparation.
+DART-Pipeline is the closest published climate-health comparator. It is locally deployable, can acquire and process multiple climatic, environmental, socioeconomic and epidemiological sources, supports administrative aggregation, area- and population-weighted statistics, metadata, provenance, tests, CI and extension through custom metrics [6]. DART is broader than SuRT in domain integration and disease-modelling preparation. Its geospatial preparation layer, `geoglue`, is explicitly designed to fetch and aggregate geospatial data to administrative levels for epidemiology and public health and uses established exact-extraction methods for partial polygon overlaps [30].
+
+Dedicated climate-preprocessing systems narrow the claim further. `stagg` provides reusable climate-impact preprocessing with polygon-to-grid area weights, temporal/spatial aggregation and optional secondary population or cropland weighting [28]. Climate-CAFE publishes R and Python ERA5-Land workflows that derive heat metrics and aggregate them across administrative boundaries for epidemiological and sociodemographic analyses, using Kenya as a demonstration setting [29]. These systems show that climate-to-administrative preprocessing, African health-oriented demonstrations and computational benchmarking are established adjacent capabilities rather than SuRT novelty claims.
 
 AREAdata provides a maintained global resource of climate variables averaged across administrative units and demonstrates that automated, reproducible production of administrative climate summaries is established practice [7]. DHIS2 Climate Tools provides open Python workflows for accessing, processing and uploading climate and environmental data to DHIS2, while the DHIS2 Climate App offers no-code integration through Google Earth Engine [8,9]. The 2026 DHIS2 Open Climate Service goes further by self-hosting sources including CHIRPS and ERA5-Land, scheduling updates, summarizing data by administrative or health-service area, accepting custom data sources and deploying locally, in the cloud or on national infrastructure [18]. Rwanda is among the countries participating in DHIS2 Climate & Health work, so climate-data harmonization for health systems is an active local practice rather than a novel problem owned by this project [10].
 
@@ -70,7 +72,7 @@ Table 1 positions the software by system layer rather than scoring unlike produc
 | Extraction / geospatial primitives | exactextract(r), terra, GDAL, xagg, spatcovar, raster-footprint, Urban Growth Center, GeoBrix | fractional overlap, zonal summaries, area weighting, coverage diagnostics, valid-data shares/footprints, extent/NoData distinctions, raster/vector operations, polygon-covariate interfaces | SuRT composes mature primitives and does not claim their algorithms or generic wrappers |
 | Health / spatial modelling | mbg and related geostatistical workflows | raster prediction, polygon aggregation, weighting and uncertainty-aware summaries | SuRT does not claim a new health or geostatistical aggregation category |
 | Cloud / geospatial process platforms | Google Earth Engine, openEO | large catalogues, regional reduction, declarative or programmable processing | SuRT provides a smaller local handoff contract for prepared inputs |
-| Domain integration | DART-Pipeline, DHIS2 Climate Tools, Open Climate Service, AREAdata | climate/environmental acquisition, administrative aggregation, health or domain integration, local/national deployment | SuRT is narrower and can serve as an auditable raster-to-administrative boundary |
+| Domain integration / climate preprocessing | DART-Pipeline/geoglue, DHIS2 Climate Tools, Open Climate Service, AREAdata, stagg, Climate-CAFE | climate/environmental acquisition, administrative aggregation, health-oriented preprocessing, weighting and local/national deployment | SuRT is narrower and can serve as an auditable raster-to-administrative boundary |
 | Workflow / provenance infrastructure | Snakemake, QFlowCrate, GAS, ESDPKI, general reproducibility frameworks | dependency orchestration, repeatable execution, validation, provenance and reproducibility packaging patterns | SuRT uses these ideas to verify its bounded domain contract |
 | Contract-first handoff | SuRT-GeoHarmonizer | explicit per-polygon grid-support and finite-support decomposition, overall-support invariant, fail-closed job/output semantics, tested provider boundary and release-evidence gates | evaluated contribution of this study |
 
@@ -215,7 +217,7 @@ The result demonstrates information value rather than algorithmic exclusivity. U
 
 ### 5.2. RQ2: scoped numerical agreement
 
-Table 3 summarizes the source-pinned real-data checks.
+Table 3 summarizes the source-pinned real-data checks for CHIRPS, ERA5-Land, MOD13A3 and HAND [13-16].
 
 **Table 3. Independent computational cross-checks.**
 
@@ -256,7 +258,7 @@ The initial benchmark also revealed an inefficient per-feature equal-area inters
 
 ## 6. Relevance to climate-health and public-sector data workflows
 
-Environmental covariates are commonly joined to administrative health data for studies of climate-sensitive disease, maternal and child health, nutrition, environmental exposure and service planning. The existence of DART, DHIS2 Climate & Health, Open Climate Service and health-oriented geostatistical software such as `mbg` demonstrates that this is already an active research and implementation area [6,8-10,18,20]. SuRT does not attempt to replace those systems.
+Environmental covariates are commonly joined to administrative health data for studies of climate-sensitive disease, maternal and child health, nutrition, environmental exposure and service planning. DART/geoglue, DHIS2 Climate & Health, Open Climate Service, Climate-CAFE, `stagg` and health-oriented geostatistical software such as `mbg` demonstrate that administrative environmental preprocessing for health and climate-impact analysis is already an active research and implementation area [6,8-10,18,20,28-30]. SuRT does not attempt to replace those systems.
 
 Its practical role is lower in the stack. Once an appropriate raster is available, the harmonizer can create an administrative covariate while retaining explicit evidence about how much of each polygon intersects the raster grid and how much of that covered area remains finite after quality control. This distinction can matter when downstream analysts would otherwise receive identical-looking means, or even the same overall valid-support fraction, produced by different mechanisms of support loss.
 
@@ -266,7 +268,7 @@ Rwanda provides a relevant reference setting because climate and environmental d
 
 ## 7. Threats to validity and limitations
 
-**Prior-art completeness.** The related-software search covers the closest systems identified during reviewer remediation and Array hardening, including current GDAL zonal-statistics capabilities, `spatcovar` 0.1.0, DART-Pipeline, Open Climate Service, `mbg`, Urban Growth Center, GeoBrix, QFlowCrate, Geospatial Agentic Services, ESDPKI, STAC validity metadata, valid-data footprint tooling and documented fail-closed raster-coverage checks. No literature or software search can prove that no other project implements the same integrated semantics. We therefore avoid `first`, `unique` and priority claims. The contribution is evaluated as an integrated contract, not inferred from the absence of equivalent primitives elsewhere.
+**Prior-art completeness.** The related-software search covers the closest systems identified during reviewer remediation and four October 2026 Array delta audits, including current GDAL zonal-statistics capabilities, `spatcovar` 0.1.0, DART-Pipeline/geoglue, `stagg`, Climate-CAFE, Open Climate Service, `mbg`, Urban Growth Center, GeoBrix, QFlowCrate, Geospatial Agentic Services, ESDPKI, STAC validity metadata, valid-data footprint tooling and documented fail-closed raster-coverage checks. No literature or software search can prove that no other project implements the same integrated semantics. We therefore avoid `first`, `unique` and priority claims. The contribution is evaluated as an integrated contract, not inferred from the absence of equivalent primitives elsewhere.
 
 **Support-field dependence.** The three reported support fields are intentionally redundant: `valid_data_fraction = raster_coverage_fraction × valid_within_raster_fraction`. Only two are algebraically independent. The overall fraction is emitted so downstream users receive total support directly and validators can check the invariant. RQ1 demonstrates information preserved by separating the two causes of support loss; it does not show that three independent quantities are required or that other software cannot expose them.
 
@@ -302,7 +304,7 @@ SuRT-GeoHarmonizer does not propose a new zonal-statistics algorithm. It address
 
 The evaluation shows why that contract can add information. Four administrative summaries with identical means collapsed to one mean-only signature. Adding only overall valid support yielded three signatures because finite-data loss and raster-grid extent loss can produce the same total support. Exposing the two causal factors plus their explicit product yielded four signatures while preserving an independently checkable invariant. Scoped CHIRPS, ERA5-Land, MODIS and HAND calculations agreed with independent implementations within declared tolerances. A provider was loaded from outside the repository without changes to the generic harmonizer or built-in registry. The core contract is exercised beyond Rwanda and across a bounded three-operating-system smoke matrix. Finally, the computational price of the added support fields was measured rather than hidden, with small absolute timing overheads in the tested benchmark and no change in paired means.
 
-The resulting contribution is best understood as an auditable integration boundary that complements, rather than replaces, broader systems such as DART, Open Climate Service, DHIS2 Climate Tools, Google Earth Engine and established geospatial libraries. Release and submission remain contingent on exact-tree validation and final claim-to-evidence review.
+The resulting contribution is best understood as an auditable integration boundary that complements, rather than replaces, broader systems and preprocessing workflows such as DART/geoglue, Climate-CAFE, `stagg`, Open Climate Service, DHIS2 Climate Tools, Google Earth Engine and established geospatial libraries. Release and submission remain contingent on exact-tree validation and final claim-to-evidence review.
 
 ## Declaration of competing interest
 
@@ -371,3 +373,9 @@ During development and manuscript preparation, the author used OpenAI ChatGPT an
 [26] Geospatial Agentic Services: a framework for interoperable geospatial intelligence, International Journal of Digital Earth (2026). https://doi.org/10.1080/19475683.2026.2738374.
 
 [27] M. A. Sadiq, P. K. Langat, A. Neupane, Enterprise Spatial Data Provenance Knowledge Infrastructure, ISPRS International Journal of Geo-Information 15 (5) (2026) 182. https://doi.org/10.3390/ijgi15050182.
+
+[28] T. Liddell, A. S. Boser, S. Orofino, T. Mangin, T. Carleton, stagg: A data pre-processing R package for climate impacts analysis, Environmental Modelling & Software 183 (2025) 106202. https://doi.org/10.1016/j.envsoft.2024.106202.
+
+[29] Climate-CAFE, ERA5 Daily Heat Aggregation, R and Python workflows for administrative heat-metric aggregation, GitHub repository. https://github.com/Climate-CAFE/era5-daily-heat-aggregation (accessed 5 October 2026).
+
+[30] Kraemer Lab, geoglue: fetch and aggregate geospatial data to administrative levels, software documentation and repository. https://geoglue.readthedocs.io/; https://github.com/kraemer-lab/geoglue (accessed 5 October 2026).

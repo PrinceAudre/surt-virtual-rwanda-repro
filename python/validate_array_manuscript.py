@@ -11,6 +11,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,6 +20,7 @@ PRIOR_ART = ROOT / "paper" / "ARRAY_NOVELTY_PRIOR_ART_AUDIT.md"
 PRIOR_ART_DELTA = ROOT / "paper" / "ARRAY_PRIOR_ART_UPDATE_2026-10-04.md"
 PRIOR_ART_DELTA_B = ROOT / "paper" / "ARRAY_PRIOR_ART_UPDATE_2026-10-04B.md"
 PRIOR_ART_DELTA_C = ROOT / "paper" / "ARRAY_PRIOR_ART_UPDATE_2026-10-04C.md"
+PRIOR_ART_DELTA_D = ROOT / "paper" / "ARRAY_PRIOR_ART_UPDATE_2026-10-04D.md"
 CLAIMS = ROOT / "paper" / "ARRAY_CLAIM_EVIDENCE_MATRIX.md"
 COLLISION = ROOT / "evidence" / "array" / "support_semantics_collision.json"
 BENCHMARK = ROOT / "evidence" / "array" / "array_contract_benchmark_summary.csv"
@@ -52,11 +54,13 @@ def main() -> None:
     delta = read(PRIOR_ART_DELTA)
     delta_b = read(PRIOR_ART_DELTA_B)
     delta_c = read(PRIOR_ART_DELTA_C)
+    delta_d = read(PRIOR_ART_DELTA_D)
     claims = read(CLAIMS)
     lower = manuscript.casefold()
     delta_lower = delta.casefold()
     delta_b_lower = delta_b.casefold()
     delta_c_lower = delta_c.casefold()
+    delta_d_lower = delta_d.casefold()
     claims_lower = claims.casefold()
 
     require(manuscript.startswith("# SuRT-GeoHarmonizer: A contract-first workflow"),
@@ -131,10 +135,25 @@ def main() -> None:
     require("not proof of uniqueness" in delta_c_lower,
             "third prior-art delta explicitly blocks exhaustive novelty inference")
 
+    # Fourth targeted delta: the newest direct zonal and epidemiological preprocessing baselines.
+    require("gdal 3.12" in delta_d_lower and "coverage arrays" in delta_d_lower and "weighted zonal" in delta_d_lower,
+            "fourth prior-art delta captures modern GDAL zonal interface capability")
+    require("spatcovar" in delta_d_lower and "geometry repair" in delta_d_lower and "missing-value" in delta_d_lower,
+            "fourth prior-art delta captures robust polygon-covariate wrapper precedent")
+    require("climate-cafe" in delta_d_lower and "kenya" in delta_d_lower and "epidemiological" in delta_d_lower,
+            "fourth prior-art delta captures African epidemiological ERA5 preprocessing precedent")
+    require("stagg::overlay_weights()" in delta_d and "administrative polygon" in delta_d_lower,
+            "fourth prior-art delta captures explicit polygon-to-grid support weights")
+    require("geoglue" in delta_d_lower and "public health" in delta_d_lower and "non-nan" in delta_d_lower,
+            "fourth prior-art delta captures missing-data-aware public-health geospatial processing")
+    require("not proof of uniqueness" in delta_d_lower,
+            "fourth prior-art delta explicitly blocks exhaustive novelty inference")
+
     # The strongest prior-art findings must not remain only in internal audits.
     for comparator in (
         "Open Climate Service", "QFlowCrate", "mbg", "STAC", "raster-footprint", "SWATbuildR",
         "Urban Growth Center", "GeoBrix", "Geospatial Agentic Services", "ESDPKI",
+        "stagg", "Climate-CAFE", "geoglue",
     ):
         require(comparator in manuscript,
                 f"expanded prior-art finding is integrated into manuscript: {comparator}")
@@ -268,6 +287,34 @@ def main() -> None:
         surt_s = round(float(surt["median_elapsed_s"]), 2)
         fragment = f"| {cells:,} cells / {polygons} polygons | {direct_s:.2f} s | {surt_s:.2f} s |"
         require(fragment in manuscript, f"manuscript benchmark timing matches evidence for {scenario}")
+
+    # Citation/reference integrity is part of the manuscript contract. Ignore numeric
+    # interval groups containing zero, such as [0,1], because citations start at 1.
+    body, sep, refs = manuscript.partition("## References")
+    require(bool(sep), "manuscript contains a References section")
+    ref_numbers = [int(m.group(1)) for m in re.finditer(r"(?m)^\[(\d+)\]\s", refs)]
+    require(bool(ref_numbers), "manuscript contains numbered references")
+    require(ref_numbers == list(range(1, max(ref_numbers) + 1)),
+            "reference numbering is contiguous from 1")
+    cited = set()
+    for group in re.findall(r"\[([0-9][0-9,\-– ]*)\]", body):
+        values = set()
+        for part in group.replace("–", "-").split(","):
+            part = part.strip()
+            if not part:
+                continue
+            if "-" in part:
+                lo, hi = (int(x.strip()) for x in part.split("-", 1))
+                values.update(range(lo, hi + 1))
+            else:
+                values.add(int(part))
+        if 0 in values:
+            continue
+        cited.update(values)
+    require(cited <= set(ref_numbers),
+            "every numbered in-text citation resolves to a reference entry")
+    require(set(ref_numbers) <= cited,
+            "every numbered reference is cited in the manuscript body")
 
     require("not operating-system rss" in lower or "not process rss" in lower,
             "benchmark memory limitation explicitly distinguishes R heap from RSS")

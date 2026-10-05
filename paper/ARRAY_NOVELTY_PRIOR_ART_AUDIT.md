@@ -267,9 +267,10 @@ The final benchmark now provides machine-specific runtime and R-heap measurement
 The manuscript should compare systems by layer rather than score unlike tools as interchangeable products:
 
 - primitive/extraction and covariate wrappers: exactextract(r), GDAL, terra, xagg, spatcovar;
+- climate-to-administrative preprocessing: stagg, Climate Econometrics Toolkit, Climate-CAFE;
 - cloud/process platforms: Google Earth Engine, openEO;
-- domain integration: DART-Pipeline, DHIS2 Climate Tools, AREAdata;
-- workflow/reproducibility infrastructure: Snakemake and general reproducibility frameworks;
+- domain/public-health integration: DART-Pipeline/geoglue, DHIS2 Climate Tools/Open Climate Service, AREAdata, CDT;
+- workflow/contract/provenance infrastructure: Snakemake, AutoGIS, QFlowCrate, Geospatial Agentic Services, ESDPKI and related reproducibility frameworks;
 - SuRT: contract-first raster-to-administrative harmonization and release-evidence layer.
 
 SuRT composes mature primitives and is not presented as a replacement for broader platforms.
@@ -290,7 +291,7 @@ Proceed to final Array submission only if:
 
 **GO FOR ARRAY MANUSCRIPT HARDENING.**
 
-The feature-level overlap with DART, DHIS2 Climate Tools, AREAdata, xagg, exactextract, GDAL 3.12, spatcovar and general reproducibility frameworks is substantial and must remain visible in the manuscript. That overlap narrows the claim rather than invalidating the project.
+The feature-level overlap documented across the main audit and four October 2026 delta audits is substantial: DART/geoglue, DHIS2 Climate Tools/Open Climate Service, AREAdata, stagg, Climate Econometrics Toolkit, Climate-CAFE, xagg, exactextract, GDAL 3.12, spatcovar, CDT and contract/provenance/reproducibility frameworks all occupy adjacent capability. That overlap must remain visible in the manuscript and narrows the claim rather than invalidating the project.
 
 The empirical evidence now demonstrates the remaining contribution more strongly: the mandatory three-part support contract distinguishes identical zonal results with different evidence support; an out-of-tree provider can be added without modifying the generic harmonizer or built-in registry; and the added support semantics carry a measured, disclosed runtime and R-heap cost on the tested workload while preserving numerical means.
 
