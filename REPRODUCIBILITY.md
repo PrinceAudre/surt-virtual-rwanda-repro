@@ -2,7 +2,7 @@
 
 ## Development and release boundary
 
-The active peer-review remediation target is SuRT-GeoHarmonizer version `1.4.0` on branch `review/softwarex-resubmission-v1.4.0`.
+The active Array transfer hardening target is SuRT-GeoHarmonizer version `1.4.0` on branch `review/softwarex-resubmission-v1.4.0`. The branch name is retained for continuity with the externally reviewed SoftwareX remediation history.
 
 The published release `v1.3.0`, DOI `10.5281/zenodo.21840177`, remains immutable. The earlier release `v1.2.0`, DOI `10.5281/zenodo.21744708`, also remains immutable. The concept DOI for the release family is `10.5281/zenodo.21671788`.
 
@@ -50,7 +50,7 @@ The default account-free development suite includes:
 10. HAND denominator and valid-area-coverage tests;
 11. deliberate transformation failure injection;
 12. valid and deliberately corrupted release-contract checks; and
-13. SoftwareX remediation metadata validation.
+13. Array transfer metadata validation.
 
 The runner writes `generated/verification_summary.json`, the generic example, the Uganda portability output, and controlled fixture outputs. Controlled fixtures require no private repository, provider account, network request, or unpublished data.
 

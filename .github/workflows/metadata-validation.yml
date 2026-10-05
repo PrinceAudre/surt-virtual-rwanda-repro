@@ -1,4 +1,4 @@
-name: SoftwareX metadata and manuscript validation
+name: Array transfer metadata validation
 
 on:
   push:
@@ -12,9 +12,10 @@ on:
       - "CONTRIBUTING.md"
       - "requirements-providers.txt"
       - "R/**"
-      - "paper/manuscript.md"
+      - "paper/array-manuscript.md"
+      - "paper/submission/**"
+      - "python/validate_array_manuscript.py"
       - "python/validate_resubmission_metadata.py"
-      - "python/audit_manuscript.py"
       - ".github/workflows/metadata-validation.yml"
   pull_request:
     paths:
@@ -27,9 +28,10 @@ on:
       - "CONTRIBUTING.md"
       - "requirements-providers.txt"
       - "R/**"
-      - "paper/manuscript.md"
+      - "paper/array-manuscript.md"
+      - "paper/submission/**"
+      - "python/validate_array_manuscript.py"
       - "python/validate_resubmission_metadata.py"
-      - "python/audit_manuscript.py"
       - ".github/workflows/metadata-validation.yml"
   workflow_dispatch:
 
@@ -37,7 +39,7 @@ permissions:
   contents: read
 
 jobs:
-  validate-softwarex-resubmission:
+  validate-array-transfer:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -48,7 +50,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check cffconvert==2.0.0
       - name: Validate Citation File Format schema
         run: cffconvert --validate
-      - name: Validate v1.4 peer-review remediation consistency
+      - name: Validate v1.4 Array transfer metadata consistency
         run: python python/validate_resubmission_metadata.py
-      - name: Audit SoftwareX manuscript structure, length and references
-        run: python python/audit_manuscript.py
+      - name: Validate Array manuscript and evidence
+        run: python python/validate_array_manuscript.py

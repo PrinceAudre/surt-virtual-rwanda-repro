@@ -211,7 +211,7 @@ The real Uganda CHIRPS case plus Rwanda ERA5-Land, MODIS and HAND already provid
 
 The first E2 prototype exposed a performance hotspot in `surt_raster_coverage_fraction()`: per-feature equal-area geometry intersections dominated runtime. The implementation was replaced by rectangular raster-footprint overlap extraction using the same exact-extraction stack, with a complete-footprint short circuit where appropriate.
 
-Controlled large-fixture timing for that support path fell from approximately **19.3 s to 0.64 s**, while coverage results remained identical and the full zonal regression suite remained green. This is a local optimization result, not a general benchmark against other software.
+The implementation change is retained as engineering provenance and the full zonal regression suite remained green. No durable pre-change benchmark artifact with a defined environment and repetition protocol was preserved, so this audit does not claim an exact before/after speedup. Quantitative performance statements are limited to the tracked final benchmark evidence.
 
 ## 7. Claims prohibited unless future evidence changes the audit
 

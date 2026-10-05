@@ -254,7 +254,7 @@ The support contract preserved the direct baseline mean in every paired run (`ma
 
 These results quantify the tested cost rather than establish performance superiority. They are specific to the benchmark implementation, workload, dependency versions and machine.
 
-The initial benchmark also revealed an inefficient per-feature equal-area intersection in raster-grid coverage calculation. Replacing it with rectangular grid-extent overlap extraction and a complete-coverage short circuit reduced the controlled large-fixture coverage path from approximately 19.3 s to 0.64 s without changing the support results; all zonal regression tests remained green. The final benchmark in Table 4 was run after this correction.
+The initial implementation also exposed an inefficient per-feature equal-area intersection in raster-grid coverage calculation. This path was replaced by rectangular grid-extent overlap extraction with a complete-coverage short circuit before the final benchmark, and the zonal regression tests remained green. Because no durable pre-change timing artifact with a defined environment and repetition protocol was preserved, we do not report a quantitative before/after speedup. Table 4 is the tracked quantitative performance evidence.
 
 ## 6. Relevance to climate-health and public-sector data workflows
 

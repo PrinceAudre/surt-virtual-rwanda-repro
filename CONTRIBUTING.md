@@ -6,7 +6,7 @@ Thank you for your interest in contributing. SuRT-GeoHarmonizer is a reusable R 
 
 - Outputs are **descriptive environmental layers only**. Contributions must not add or imply validated hazard, flood, forecast, epidemiological, exposure, causal, or operational decision-support claims.
 - No patient, surveillance, confidential operational, proprietary, or credential-bearing data may be added.
-- New bundled data must have redistribution terms compatible with the repository and an ElsevierSoftwareX repository copy, such as CC0, public domain, or CC BY 4.0. Do not introduce share-alike data such as ODbL without an explicit maintainer decision and a documented compatibility review. A prior ODbL dependency was deliberately removed.
+- New bundled data must have redistribution terms compatible with the repository and an Elsevier journal submission and repository copy, such as CC0, public domain, or CC BY 4.0. Do not introduce share-alike data such as ODbL without an explicit maintainer decision and a documented compatibility review. A prior ODbL dependency was deliberately removed.
 - A checksum proves byte integrity, not scientific validity. A synthetic fixture proves controlled software behaviour, not provider accuracy or geographic validation.
 - The private SuRT-Virtual Rwanda application, its private methodology register, and operational interfaces are outside this repository.
 

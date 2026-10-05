@@ -180,6 +180,11 @@ def main() -> None:
             "v1.4.0 remains explicitly unreleased")
     require("Declaration of generative AI" in manuscript and "OpenAI ChatGPT and Codex" in manuscript,
             "AI-assistance disclosure is retained")
+    unsupported_historical_timing = "19.3 s"
+    require(unsupported_historical_timing not in manuscript and unsupported_historical_timing not in claims and unsupported_historical_timing not in prior,
+            "unsupported historical before/after timing is absent from active Array evidence claims")
+    require("no durable pre-change timing artifact" in manuscript,
+            "manuscript explains why only tracked final benchmark timings are reported")
     require("## Declaration of generative AI and AI-assisted technologies in the manuscript preparation process" in manuscript,
             "Elsevier AI declaration uses the current recommended section heading")
 

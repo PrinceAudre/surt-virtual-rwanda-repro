@@ -52,10 +52,10 @@ jobs:
         run: snakemake --cores 1 --printshellcmds --rerun-incomplete
       - name: Generate manuscript figures from archived GeoJSON files
         run: Rscript R/make_manuscript_figures.R
-      - name: Upload SoftwareX evidence bundle
+      - name: Upload Array candidate evidence bundle
         uses: actions/upload-artifact@v4
         with:
-          name: softwarex-candidate-evidence
+          name: array-candidate-evidence
           path: |
             paper/figures/generated/
             generated/verification_summary.json
