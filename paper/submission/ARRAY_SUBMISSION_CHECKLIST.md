@@ -9,6 +9,7 @@
 - [x] Array Editorial Manager record has been created and returned to the author for completion.
 - [x] Array email of 5 October 2026 contains no technical comments.
 - [x] Editorial Manager instruction identified: `Submissions Sent Back to Author` -> `Edit submission`.
+- [x] Transfer expiry recorded: **3 January 2027** if no further action is taken.
 - [ ] Update the transferred Editorial Manager title from the earlier SoftwareX title to the active Array title.
 - [ ] Verify article type and all transferred metadata against Array's current Editorial Manager fields.
 - [ ] Inspect every transferred file and remove superseded SoftwareX-specific files before final submission.
@@ -82,8 +83,10 @@
 - [ ] If Editorial Manager provides a reviewer-response field or file type, upload the finalized response to the prior SoftwareX reviews; otherwise retain it as audit evidence and do not force an unsolicited file type.
 - [ ] Verify data/code availability statements and repository links.
 - [ ] Verify funding, competing-interest, AI-use and other declarations against the frozen manuscript.
-- [ ] Preview the submission-generated PDF and inspect every page before approval.
-- [ ] Final owner approval before pressing the Array submission button.
+- [ ] Choose `Build PDF for Approval` after all mandatory information and files are complete.
+- [ ] Inspect every page of the generated submission PDF in `Submissions Waiting Approval by Author`.
+- [ ] Accept Elsevier's Ethics in Publishing Policy checkbox only after the final preview is correct.
+- [ ] Final owner approval before choosing `Approve Submission`.
 
 ## Submission freeze rule
 
