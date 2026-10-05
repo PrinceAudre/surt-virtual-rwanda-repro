@@ -1,9 +1,9 @@
 # Array final pre-release review, 5 October 2026
 
-**Status:** Gates 1 through 11 closed. GO FOR RELEASE FREEZE.  
-**Review subject, human source commit:** `059c5173b98625a9aa1a773ddd8453a094264839`  
-**Manifest-bearing review head:** `9203be05e8ced02a71752f83368f25c41758ab3d`  
-**Target:** Array transfer, SuRT-GeoHarmonizer v1.4.0  
+**Status:** Gates 1 through 11 closed. GO FOR RELEASE FREEZE.
+**Review subject, human source commit:** `059c5173b98625a9aa1a773ddd8453a094264839`
+**Manifest-bearing review head:** `9203be05e8ced02a71752f83368f25c41758ab3d`
+**Target:** Array transfer, SuRT-GeoHarmonizer v1.4.0
 **Prior reviewed manuscript:** SoftwareX `SOFTX-D-26-01014`
 
 ## 1. Scope and decision
