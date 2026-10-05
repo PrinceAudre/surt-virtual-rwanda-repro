@@ -132,11 +132,11 @@ def write_summary(
         "development": {
             "target_version": "1.4.0",
             "branch": "review/softwarex-resubmission-v1.4.0",
-            "status": "DOI-bearing Array release candidate; exact tag/archive gates pending",
+            "status": "DOI-bearing v1.4.0 release metadata",
             "version_doi": "10.5281/zenodo.23162055",
         },
         "integrity": {
-            "scope": "complete tracked-file v1.4 release-candidate scope",
+            "scope": "complete tracked-file v1.4 release scope",
             "manifest": "CHECKSUMS.sha256",
             "manifest_verified_in_this_run": verify_manifest,
             "development_manifest_policy": (

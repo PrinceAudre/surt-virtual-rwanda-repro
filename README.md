@@ -10,8 +10,8 @@ The software is descriptive and research-oriented. It does not generate validate
 
 ## Software status
 
-- **DOI-bearing release freeze:** `v1.4.0`, DOI `10.5281/zenodo.23162055`
-- **Release-freeze branch:** `review/softwarex-resubmission-v1.4.0`
+- **DOI-bearing release:** `v1.4.0`, DOI `10.5281/zenodo.23162055`
+- **Release lineage branch:** `review/softwarex-resubmission-v1.4.0`
 - **Previous immutable release:** `v1.3.0`, DOI `10.5281/zenodo.21840177`
 - **Zenodo concept DOI:** `10.5281/zenodo.21671788`
 - **Earlier immutable release:** `v1.2.0`, DOI `10.5281/zenodo.21744708`
@@ -19,7 +19,7 @@ The software is descriptive and research-oriented. It does not generate validate
 - **Full reproducibility CI:** Ubuntu Linux
 - **Core platform smoke CI:** Ubuntu 24.04, Windows 2025, and macOS 14
 
-Version `1.4.0` is the approved DOI-bearing release freeze. Its version DOI is `10.5281/zenodo.23162055`. The v1.3.0 release remains immutable history. Tagging, GitHub release creation, and Zenodo publication remain sequential release actions on this exact tree.
+Version `1.4.0` is the DOI-bearing release identity. Its version DOI is `10.5281/zenodo.23162055`. The v1.3.0 release remains immutable history. The release contract requires the exact `v1.4.0` Git tag, GitHub release, Zenodo archive, and tracked-file checksum manifest to identify the same content.
 
 ## What the software does
 

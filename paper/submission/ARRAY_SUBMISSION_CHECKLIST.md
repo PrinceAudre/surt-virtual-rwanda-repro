@@ -48,12 +48,12 @@
 - [x] Published v1.3.0 remains immutable and is not presented as the Array submission release.
 - [x] Reserve a new version-specific Zenodo DOI for v1.4.0 without publishing it: `10.5281/zenodo.23162055`.
 - [x] Insert the reserved DOI into release-facing metadata, manuscript, cover letter, and checklist.
-- [ ] Freeze the exact DOI-bearing source tree.
-- [ ] Regenerate the complete tracked-file checksum manifest on that exact tree.
-- [ ] Run `python python/run_all_checks.py --verify-manifest` on that exact DOI-bearing commit.
-- [ ] Confirm Array manuscript validation, metadata validation, reproducibility checks, and core platform smoke are green on the exact release tree.
-- [ ] Render and visually inspect the final manuscript and any response-to-reviewers file.
-- [ ] Remove the `DO NOT SUBMIT YET` banner only after all preceding release gates are green.
+- [x] Freeze the exact DOI-bearing source tree.
+- [x] Regenerate the complete tracked-file checksum manifest on that exact tree.
+- [x] Run `python python/run_all_checks.py --verify-manifest` on that exact DOI-bearing commit.
+- [x] Confirm Array manuscript validation, metadata validation, reproducibility checks, and core platform smoke are green on the exact release tree.
+- [x] Render and visually inspect the final manuscript and response-to-reviewers file.
+- [x] Remove the `DO NOT SUBMIT YET` banner only after all preceding release gates are green.
 - [ ] Tag the exact approved commit `v1.4.0`.
 - [ ] Create the matching GitHub release without changing tagged files.
 - [ ] Archive that exact release content in Zenodo and publish the reserved version DOI.
@@ -65,7 +65,7 @@
 - [ ] Confirm author name, affiliation, email and ORCID exactly match the manuscript.
 - [ ] Confirm abstract and keywords match the frozen manuscript.
 - [x] Highlights source has five general-audience bullets, each no more than 85 characters.
-- [ ] Convert final highlights to a separate editable Word file if the Array workflow requests final-file highlights.
+- [x] Convert final highlights to a separate editable Word file for the final-file package.
 - [ ] Upload the final frozen manuscript file generated from `paper/array-manuscript.md`.
 - [ ] Upload the final Array cover letter.
 - [ ] If Editorial Manager provides a reviewer-response field or file type, upload the finalized response to the prior SoftwareX reviews; otherwise retain it as audit evidence and do not force an unsolicited file type.

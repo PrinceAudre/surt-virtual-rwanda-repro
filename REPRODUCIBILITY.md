@@ -2,7 +2,7 @@
 
 ## Development and release boundary
 
-The approved Array release freeze is SuRT-GeoHarmonizer version `1.4.0` on branch `review/softwarex-resubmission-v1.4.0`, bound to version DOI `10.5281/zenodo.23162055`. The branch name is retained for continuity with the externally reviewed SoftwareX remediation history.
+SuRT-GeoHarmonizer version `1.4.0` is bound to version DOI `10.5281/zenodo.23162055`. The branch `review/softwarex-resubmission-v1.4.0` is retained as release lineage for continuity with the externally reviewed SoftwareX remediation history.
 
 The published release `v1.3.0`, DOI `10.5281/zenodo.21840177`, remains immutable. The earlier release `v1.2.0`, DOI `10.5281/zenodo.21744708`, also remains immutable. The concept DOI for the release family is `10.5281/zenodo.21671788`.
 

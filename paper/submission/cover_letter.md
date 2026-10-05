@@ -1,6 +1,4 @@
-# DRAFT FOR v1.4.0 RELEASE FREEZE
-
-> **DO NOT SUBMIT YET.** Remove this notice only after the exact v1.4.0 release commit has passed the final manifest, review, rendering, tag, GitHub release, and Zenodo DOI gates. The final letter must state the exact v1.4.0 version DOI.
+﻿# Cover letter
 
 Editors
 Array
@@ -33,10 +31,10 @@ Thank you for considering this transferred manuscript.
 
 Sincerely,
 
-TUYISHIME AUDRE PRINCE
-School of Public Health
-College of Medicine and Health Sciences
-University of Rwanda
-Kigali, Rwanda
-ORCID: 0009-0002-0799-3140
+TUYISHIME AUDRE PRINCE\
+School of Public Health\
+College of Medicine and Health Sciences\
+University of Rwanda\
+Kigali, Rwanda\
+ORCID: 0009-0002-0799-3140\
 Email: priplee@gmail.com

@@ -9,7 +9,7 @@ ORCID: 0009-0002-0799-3140
 Corresponding author: TUYISHIME AUDRE PRINCE, priplee@gmail.com
 
 **Target journal:** Array  
-**Status:** DOI-bearing v1.4.0 release-freeze manuscript. Do not submit until the exact release artifact is tagged, archived, visually inspected, and the final submission gate is approved.
+**Status:** DOI-bearing v1.4.0 release manuscript. Release identity is governed by exact-tree checksum, tag, archive, and DOI agreement.
 
 ## Abstract
 
@@ -138,7 +138,7 @@ The boundary deliberately does not promise that arbitrary environmental products
 
 ### 3.5. Release-evidence boundary
 
-The verification layer includes controlled fixtures, deliberate failure injection, independent output-contract validation, source-pinned numerical checks, checksum-manifest validation, multi-platform core smoke tests and a Snakemake evidence DAG. The published v1.3.0 release remains immutable. The v1.4.0 release freeze is bound to DOI `10.5281/zenodo.23162055` and is not treated as published until one exact source tree, DOI, tag, archive and checksum manifest agree.
+The verification layer includes controlled fixtures, deliberate failure injection, independent output-contract validation, source-pinned numerical checks, checksum-manifest validation, multi-platform core smoke tests and a Snakemake evidence DAG. The published v1.3.0 release remains immutable. The v1.4.0 release identity is bound to DOI `10.5281/zenodo.23162055`; the release contract requires one exact source tree, DOI, tag, archive and checksum manifest to agree.
 
 ## 4. Evaluation methods
 
@@ -286,7 +286,7 @@ Rwanda provides a relevant reference setting because climate and environmental d
 
 The public repository is `https://github.com/PrinceAudre/surt-virtual-rwanda-repro`.
 
-The v1.4.0 release freeze is assigned version DOI `https://doi.org/10.5281/zenodo.23162055` and remains bound to branch `review/softwarex-resubmission-v1.4.0` until the exact validated tree is tagged and archived. The previous published release v1.3.0 remains immutable at `https://doi.org/10.5281/zenodo.21840177`, and the release-family concept DOI is `https://doi.org/10.5281/zenodo.21671788`.
+The v1.4.0 release identity uses version DOI `https://doi.org/10.5281/zenodo.23162055`. Its release contract requires the exact `v1.4.0` tagged tree and Zenodo archive to agree with the tracked-file checksum manifest. The branch `review/softwarex-resubmission-v1.4.0` is retained as release lineage. The previous published release v1.3.0 remains immutable at `https://doi.org/10.5281/zenodo.21840177`, and the release-family concept DOI is `https://doi.org/10.5281/zenodo.21671788`.
 
 Account-free verification is orchestrated by:
 
