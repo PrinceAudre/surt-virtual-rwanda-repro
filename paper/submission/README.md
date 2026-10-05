@@ -1,17 +1,45 @@
 # Array submission materials
 
-This directory contains the editable submission-facing sources for the transferred Array submission of SuRT-GeoHarmonizer v1.4.0.
+This directory contains the submission-facing sources for the transferred Array submission of SuRT-GeoHarmonizer.
 
-Current sources:
+## Frozen scientific source
 
-- `cover_letter.md`: finalized Array transfer cover-letter source with the v1.4.0 DOI and peer-review provenance.
-- `highlights.txt`: five concise highlights for the strengthened Array submission.
-- `ARRAY_SUBMISSION_CHECKLIST.md`: transfer, metadata, release-identity, rendering, and Editorial Manager controls.
+The scientific manuscript and released software are frozen at Git tag `v1.4.0`, exact commit `49a87472c3581b6f1912cde97c900ec3dbd17335`.
 
-The active Array manuscript source is `paper/array-manuscript.md`. The prior SoftwareX reviewer-response source remains `paper/reviewer-response-draft.md` and is retained for provenance and, if useful in Editorial Manager, as a response-to-reviewers document. Historical SoftwareX submission controls are preserved under `paper/submission/archive/` and are not active submission instructions.
+- Active manuscript: `paper/array-manuscript.md` at `v1.4.0`.
+- Software version: `1.4.0`.
+- Zenodo version DOI: `10.5281/zenodo.23162055`.
+- Zenodo concept DOI: `10.5281/zenodo.21671788`.
+- Repository: `https://github.com/PrinceAudre/surt-virtual-rwanda-repro`.
 
-Elsevier has transferred the manuscript to Array. The transferred Editorial Manager record must be edited before final submission because the transferred title is the earlier SoftwareX title, whereas the strengthened Array manuscript now uses the title **"SuRT-GeoHarmonizer: A contract-first workflow for verifiable raster-to-administrative data harmonization."**
+The tag and release must not be rewritten for Editorial Manager packaging changes.
 
-The published v1.3.0 release and DOI `10.5281/zenodo.21840177` are immutable historical baselines. They are not the release identity for the Array submission. The reviewer-remediated v1.4.0 release is assigned Zenodo version DOI `10.5281/zenodo.23162055` and must remain bound to the exact manifest-verified, tagged, archived, and visually inspected release tree before the final Array submission is completed.
+## Submission-facing sources on this branch
 
-Final Array submission remains separate from the software release and requires Editorial Manager metadata/file verification plus explicit owner approval before the submission button is pressed.
+- `cover_letter.md`: finalized Array transfer cover letter, corrected after the v1.4.0 release so completed release actions are stated in past tense.
+- `response_to_softwarex_reviewers.md`: finalized point-by-point response suitable for Array only if Editorial Manager provides an appropriate reviewer-response field or file type.
+- `highlights.txt`: five concise highlights.
+- `ARRAY_SUBMISSION_CHECKLIST.md`: live transfer and Editorial Manager completion checklist.
+
+The earlier `paper/reviewer-response-draft.md` remains historical development evidence and should not be uploaded in place of the finalized response.
+
+## Transfer state
+
+Elsevier transferred the prior SoftwareX manuscript `SOFTX-D-26-01014` to Array. On 5 October 2026, Array returned the transferred record to the author for completion with no technical comments. Editorial Manager instructs the author to open `Submissions Sent Back to Author` and choose `Edit submission`.
+
+The transferred record still uses the earlier SoftwareX title. The active Array title is:
+
+**SuRT-GeoHarmonizer: A contract-first workflow for verifiable raster-to-administrative data harmonization**
+
+Before final submission, the Editorial Manager metadata and transferred file list must be reconciled with the frozen manuscript. Superseded SoftwareX files should not be carried forward unintentionally.
+
+## Final-submission boundary
+
+Array submission is a separate editorial action from the software release. It requires:
+
+1. Editorial Manager metadata verification;
+2. upload or replacement of the frozen manuscript and finalized submission-facing files;
+3. inspection of the generated submission PDF page by page; and
+4. explicit owner approval before the final submission button is pressed.
+
+If an actual scientific or software defect is discovered during this final check, do not silently change the v1.4.0 tag. Handle it explicitly as a post-release correction or new version decision.
