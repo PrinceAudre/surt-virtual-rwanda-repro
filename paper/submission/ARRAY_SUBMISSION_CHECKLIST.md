@@ -16,7 +16,7 @@
 
 ## Active manuscript identity
 
-- [x] Active manuscript source: `paper/array-manuscript.md` at release tag `v1.4.0`.
+- [x] Scientific manuscript source is frozen at release tag `v1.4.0`.
 - [x] Active title: `SuRT-GeoHarmonizer: A contract-first workflow for verifiable raster-to-administrative data harmonization`.
 - [x] Target journal is stated as Array in the manuscript.
 - [x] Legal author name: TUYISHIME AUDRE PRINCE.
@@ -30,6 +30,7 @@
 - [x] Threats-to-validity section is explicit.
 - [x] Manuscript explicitly disclaims novelty in zonal-statistics algorithms.
 - [x] Current prior-art treatment includes exactextractr, GDAL 3.12, spatcovar 0.1.0, DART-Pipeline/geoglue, DHIS2 climate tooling, stagg, Climate-CAFE and other adjacent systems.
+- [ ] Produce a submission-only manuscript copy that preserves all frozen scientific content but updates the final conclusion sentence `Release and submission remain contingent on exact-tree validation and final claim-to-evidence review.` because the v1.4.0 release and those validation gates are now completed. Do not rewrite the `v1.4.0` tag.
 
 ## Evidence boundary
 
@@ -60,13 +61,13 @@
 
 ## Submission-facing files
 
-- [x] Active manuscript source frozen at `v1.4.0`.
 - [x] Post-release Array cover-letter source finalized on `submission/array-final-completion` so it no longer describes already-completed release actions in future tense.
+- [x] Final response-to-reviewers source created as `paper/submission/response_to_softwarex_reviewers.md`, with the exact v1.4.0 release identity and no stale pre-release gate language.
 - [x] Highlights source contains five general-audience bullets, each no more than 85 characters.
-- [ ] Confirm the final editable manuscript DOCX/PDF to upload was rendered from the `v1.4.0` manuscript source.
+- [ ] Confirm the final editable manuscript DOCX/PDF was rendered from the frozen manuscript plus only the approved post-release status wording correction above.
 - [ ] Confirm the final cover-letter DOCX/PDF was rendered from the post-release final cover-letter source.
 - [ ] Confirm the final highlights Word file matches `paper/submission/highlights.txt`.
-- [ ] Finalize the response-to-reviewers file against the released v1.4.0 identity if Array provides an appropriate response field/file type.
+- [ ] Confirm the reviewer-response document was rendered from `paper/submission/response_to_softwarex_reviewers.md` if Array provides an appropriate response field/file type.
 
 ## Editorial Manager completion
 
@@ -76,7 +77,7 @@
 - [ ] Confirm abstract and keywords match the frozen manuscript.
 - [ ] Confirm article type against Array's available choices.
 - [ ] Remove or replace superseded SoftwareX manuscript files in the transferred file list.
-- [ ] Upload the final frozen manuscript file generated from `paper/array-manuscript.md` at tag `v1.4.0`.
+- [ ] Upload the final Array manuscript file.
 - [ ] Upload the final Array cover letter.
 - [ ] If Editorial Manager provides a reviewer-response field or file type, upload the finalized response to the prior SoftwareX reviews; otherwise retain it as audit evidence and do not force an unsolicited file type.
 - [ ] Verify data/code availability statements and repository links.
@@ -86,4 +87,4 @@
 
 ## Submission freeze rule
 
-The software release `v1.4.0` is immutable. Editorial-system corrections to title, metadata, cover letter, highlights or reviewer-response packaging must not rewrite or retag the software release. Any newly discovered defect in the scientific manuscript or released software must be handled explicitly rather than silently changing the tagged source.
+The software release `v1.4.0` is immutable. Editorial-system corrections to title, metadata, cover letter, highlights, reviewer-response packaging, or already-completed release-status wording must not rewrite or retag the software release. Any newly discovered defect in the scientific content or released software must be handled explicitly rather than silently changing the tagged source.
