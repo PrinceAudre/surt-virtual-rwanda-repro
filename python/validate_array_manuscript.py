@@ -180,6 +180,8 @@ def main() -> None:
             "v1.4.0 remains explicitly unreleased")
     require("Declaration of generative AI" in manuscript and "OpenAI ChatGPT and Codex" in manuscript,
             "AI-assistance disclosure is retained")
+    require("## Declaration of generative AI and AI-assisted technologies in the manuscript preparation process" in manuscript,
+            "Elsevier AI declaration uses the current recommended section heading")
 
     risky_phrases = (
         "the first climate-health",

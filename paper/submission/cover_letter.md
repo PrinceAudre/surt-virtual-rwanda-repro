@@ -1,39 +1,35 @@
 # DRAFT FOR v1.4.0 RELEASE FREEZE
 
-> **DO NOT SUBMIT YET.** Remove this draft notice only after the exact v1.4.0 release commit has passed the final manifest, review, rendering, tag, GitHub release, and Zenodo DOI gates. The final letter must state the exact v1.4.0 version DOI.
+> **DO NOT SUBMIT YET.** Remove this notice only after the exact v1.4.0 release commit has passed the final manifest, review, rendering, tag, GitHub release, and Zenodo DOI gates. The final letter must state the exact v1.4.0 version DOI.
 
-Editors-in-Chief
-SoftwareX
+Editors
+Array
 
 Dear Editors,
 
-Please consider the substantially revised manuscript, **“SuRT-GeoHarmonizer: An auditable R and Python workflow for administrative-scale Earth-data harmonization and provenance labelling,”** for renewed consideration as an **Original Software Publication** in SoftwareX.
+Please consider the transferred and substantially strengthened manuscript, **"SuRT-GeoHarmonizer: A contract-first workflow for verifiable raster-to-administrative data harmonization,"** for publication in **Array**.
 
-This work was previously evaluated under SoftwareX manuscript `SOFTX-D-26-01014` and received external peer review on 2 October 2026. The present version is a substantive technical rebuild responding to those reviews. The point-by-point response maps each reviewer concern to code changes, tests, manuscript revisions, continuous-integration evidence, and source-pinned numerical validation records.
+The manuscript was previously evaluated by SoftwareX as `SOFTX-D-26-01014` and received external peer review on 2 October 2026. Elsevier subsequently offered an Article Transfer, which I accepted for Array. The present package retains that review history while rebuilding the manuscript around a narrower and more defensible contribution, updated prior-art analysis, explicit research questions, and stronger software-evaluation evidence.
 
-SuRT-GeoHarmonizer is an open R and Python command-line workflow that converts environmental rasters and polygon boundaries into provenance-labelled administrative-unit GeoJSON. The revised software now separates raster-footprint coverage, finite-data coverage, and overall valid-data coverage; weights zonal contributions by polygon overlap and raster-cell surface area; exposes a fail-closed declarative JSON job contract and provider-adapter boundary; and includes a Snakemake evidence workflow with deliberate positive and negative tests.
+SuRT-GeoHarmonizer is an open R and Python workflow for converting environmental rasters and polygon boundaries into provenance-labelled administrative-unit outputs under an explicit software contract. The workflow separates rectangular raster-grid support from finite and quality-accepted support, emits their overall product as an invariant-checked field, validates declarative jobs fail closed, tests an out-of-tree provider-adapter boundary, independently cross-checks numerical outputs, and binds release claims to exact tracked-file integrity controls.
 
-The revision also adds direct evidence of reuse and independent numerical cross-checking. A source-derived Uganda CHIRPS 2023 case runs through the same configuration-driven generic workflow used by the reference implementation and agrees with an independent `terra` area-weighted calculation within 0.000016 mm, with complete reported coverage. Scoped source-pinned real-data checks also cover ERA5-Land temperature, MODIS/Terra MOD13A3 NDVI with pixel-reliability filtering, and HAND terrain-share calculations. These checks establish computational agreement for the stated cases and are not presented as validation of source-product observational accuracy.
+The manuscript does **not** claim a new zonal-statistics algorithm. Mature tools such as exactextractr, terra, GDAL, xagg, and spatcovar already provide core extraction and coverage capabilities. The revised related-work analysis also treats DART-Pipeline/geoglue, DHIS2 climate tooling, stagg, Climate-CAFE and other adjacent systems as established prior art. The contribution claimed here is therefore the evaluated integration and assurance contract around a bounded raster-to-administrative handoff, not priority over the underlying geospatial operations.
 
-The full reproducibility workflow is continuously exercised on Ubuntu. A separate dependency-light core smoke matrix passes on Ubuntu 24.04, Windows 2025, and macOS 14. The manuscript explicitly distinguishes this operating-system evidence from geographic portability and does not claim that credentialed provider acquisition has been exercised on every platform.
+The evaluation addresses five research questions. Controlled fixtures test the information value of decomposed support semantics; source-pinned CHIRPS, ERA5-Land, MODIS and HAND cases are checked against independent calculations; an external provider module is loaded without modifying the generic harmonizer or built-in registry; the same core contract is exercised across Rwanda and Uganda geometry and on Ubuntu, Windows and macOS under a bounded portability claim; and the mandatory support contract is benchmarked against a direct area-weighted mean using the same geospatial primitives.
 
-The software contribution is an integrated administrative-data and release-evidence contract rather than a new raster algorithm. The revised manuscript compares SuRT-GeoHarmonizer with established geospatial tools at the level of documented primary scope and built-in workflow contracts and now also discusses a closely adjacent climate-disease data-integration pipeline. The distinction claimed for SuRT is deliberately narrower: explicit area and coverage semantics, fail-closed configuration, an externally tested adapter boundary, provenance-labelled administrative GeoJSON, negative tests, independent output-contract validation, source-pinned numerical cross-checks, and exact release-integrity controls.
-
-The code is released under the MIT License. Source-derived data and geometry are redistributed only under documented source-specific terms. The repository contains no patient, surveillance, confidential operational, or private application data. Provider credentials remain external to the repository.
-
-Public repository:
+The repository is public and released under the MIT License:
 
 https://github.com/PrinceAudre/surt-virtual-rwanda-repro
 
-The current immutable public baseline is version 1.3.0, DOI `10.5281/zenodo.21840177`. The reviewer-remediated version 1.4.0 is not yet released. Before this letter is submitted, the exact approved v1.4.0 commit will be frozen, validated with the complete tracked-file checksum manifest, tagged, archived in Zenodo, and assigned its own version-specific DOI. The final letter must replace this development statement with that exact release identity.
+The current immutable public baseline is version 1.3.0, DOI `10.5281/zenodo.21840177`. Version 1.4.0 is not yet released. Before final submission, the exact approved v1.4.0 commit will be frozen, validated against the complete tracked-file checksum manifest, tagged, archived in Zenodo, and assigned its own version-specific DOI. This development paragraph must be replaced by that exact release identity before submission.
 
-My affiliation has changed since the earlier submission. I am now enrolled in the Master of Public Health programme at the School of Public Health, College of Medicine and Health Sciences, University of Rwanda, and the rebuilt manuscript uses this current affiliation. Development of the earlier software release predates this affiliation, and no institutional endorsement of the software is claimed.
+My affiliation has changed since the earlier SoftwareX submission. I am now affiliated with the School of Public Health, College of Medicine and Health Sciences, University of Rwanda. Development of the earlier software release predates this affiliation, and no institutional endorsement of the software is claimed.
 
-I confirm that the manuscript is not under simultaneous consideration elsewhere. I am the sole author and take responsibility for the software, source and licence statements, analyses, manuscript, and submission. I declare no competing interests and no specific funding for this work.
+I confirm that the manuscript is not under simultaneous consideration elsewhere. I am the sole author and take responsibility for the software, analyses, source and licence statements, evidence, manuscript, and submission. I declare no competing interests and no specific funding for this work.
 
-As disclosed in the manuscript, OpenAI ChatGPT and Codex and Anthropic Claude were used during earlier development for coding assistance, critical review, and language editing. I reviewed and edited all outputs, reran the reported checks, verified the reported evidence and citations, and remain responsible for the final content. The final reviewer-remediation gate is evidence-led and does not depend on access to any named AI system. These tools did not generate source data or empirical results.
+As disclosed in the manuscript, OpenAI ChatGPT and Codex and Anthropic Claude were used during earlier development for coding assistance, critical review, and language editing. I reviewed and edited all outputs, reran the reported checks, verified the reported evidence and citations, and remain responsible for the final content. These tools did not generate source data or empirical results.
 
-Thank you for considering the revised work.
+Thank you for considering this transferred manuscript.
 
 Sincerely,
 

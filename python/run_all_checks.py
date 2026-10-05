@@ -132,7 +132,7 @@ def write_summary(
         "development": {
             "target_version": "1.4.0",
             "branch": "review/softwarex-resubmission-v1.4.0",
-            "status": "SoftwareX peer-review remediation; not a release",
+            "status": "Array transfer hardening after SoftwareX peer review; not a release",
             "version_doi": None,
         },
         "integrity": {
@@ -226,7 +226,7 @@ def main() -> None:
             [sys.executable, str(ROOT / "python" / "validate_release_contract.py")],
         ),
         run(
-            "v1.4 peer-review remediation metadata consistency",
+            "v1.4 Array transfer metadata consistency",
             [sys.executable, str(ROOT / "python" / "validate_resubmission_metadata.py")],
         ),
     ]

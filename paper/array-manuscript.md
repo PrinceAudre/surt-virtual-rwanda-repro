@@ -314,9 +314,9 @@ The author declares no known competing financial interests or personal relations
 
 This work received no specific grant from public, commercial or not-for-profit funding agencies.
 
-## Declaration of generative AI and AI-assisted technologies in the writing and software-development process
+## Declaration of generative AI and AI-assisted technologies in the manuscript preparation process
 
-During development and manuscript preparation, the author used OpenAI ChatGPT and Codex and, during earlier development stages, Anthropic Claude for coding assistance, critical review and language editing. No named AI system is an acceptance or release gate. The author reviewed and edited the outputs, reran the reported checks, verified cited facts and source terms, and takes responsibility for the software and manuscript. These tools did not generate source environmental data or empirical measurements.
+During preparation of this work, the author used OpenAI ChatGPT and Codex and, during earlier development stages, Anthropic Claude for coding assistance, critical review and language editing. After using these tools, the author reviewed and edited the content as needed, reran the reported checks, verified cited facts and source terms, and takes full responsibility for the software and manuscript. These tools did not generate source environmental data or empirical measurements.
 
 ## References
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate metadata invariants during the v1.4 peer-review remediation cycle.
+"""Validate metadata invariants during the v1.4 Array transfer and remediation cycle.
 
 This development gate intentionally does not require a v1.4 tag or DOI. Those are
 release-time artifacts and must only be minted after the exact approved commit is
@@ -9,6 +9,7 @@ frozen. The immutable published v1.3.0 release remains the historical baseline.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 
@@ -21,6 +22,8 @@ PREVIOUS_TAG = "v1.3.0"
 PREVIOUS_DOI = "10.5281/zenodo.21840177"
 CONCEPT_DOI = "10.5281/zenodo.21671788"
 MANUSCRIPT_ID = "SOFTX-D-26-01014"
+TARGET_JOURNAL = "Array"
+ACTIVE_TITLE = "SuRT-GeoHarmonizer: A contract-first workflow for verifiable raster-to-administrative data harmonization"
 CURRENT_AFFILIATION = (
     "School of Public Health, College of Medicine and Health Sciences, "
     "University of Rwanda, Kigali, Rwanda"
@@ -46,7 +49,7 @@ def require(condition: bool, message: str) -> None:
 
 def main() -> None:
     readme = read("README.md")
-    manuscript = read("paper/manuscript.md")
+    manuscript = read("paper/array-manuscript.md")
     description = read("DESCRIPTION")
     runner = read("python/run_all_checks.py")
     checksum_builder = read("python/build_checksum_manifest.py")
@@ -109,7 +112,7 @@ def main() -> None:
     # Historical submission records remain in-tree for auditability. Any non-archive
     # paper document that still contains an earlier journal-targeting declaration
     # must be explicitly bannered as superseded so it cannot be mistaken for the
-    # active SoftwareX submission state.
+    # active Array submission state.
     stale_target_markers = (
         "Primary target: Earth Science Informatics",
         "Manuscript target:** Earth Science Informatics",
@@ -127,7 +130,7 @@ def main() -> None:
                 stale_unbannered.append(path.relative_to(ROOT).as_posix())
     require(
         not stale_unbannered,
-        "legacy non-SoftwareX targeting records are explicitly marked superseded"
+        "legacy non-Array targeting records are explicitly marked superseded"
         + (f" ({', '.join(stale_unbannered)})" if stale_unbannered else ""),
     )
 
@@ -144,14 +147,20 @@ def main() -> None:
     # occurred. Lock those regressions out of the active branch.
     cover = read("paper/submission/cover_letter.md")
     submission_readme = read("paper/submission/README.md")
-    submission_checklist = read("paper/submission/SOFTWAREX_SUBMISSION_CHECKLIST.md")
+    submission_checklist = read("paper/submission/ARRAY_SUBMISSION_CHECKLIST.md")
     highlights = [line.strip() for line in read("paper/submission/highlights.txt").splitlines() if line.strip()]
     submission_material = "\n".join([cover, submission_readme, submission_checklist])
 
     require(MANUSCRIPT_ID in cover,
-            "cover letter identifies the externally reviewed SoftwareX manuscript")
+            "cover letter identifies the externally reviewed SoftwareX manuscript provenance")
     require("external peer review" in cover.casefold(),
             "cover letter discloses prior external peer review")
+    require(TARGET_JOURNAL in cover and TARGET_JOURNAL in submission_readme and TARGET_JOURNAL in submission_checklist,
+            "submission-facing sources target Array")
+    require(ACTIVE_TITLE in cover and ACTIVE_TITLE in submission_readme and ACTIVE_TITLE in submission_checklist,
+            "submission-facing sources use the active Array title")
+    require("An auditable R and Python workflow for administrative-scale Earth-data harmonization and provenance labelling" not in cover,
+            "cover letter does not retain the transferred SoftwareX title as the active title")
     require("has not undergone external peer review" not in cover.casefold(),
             "false pre-review cover-letter claim is absent")
     require(CURRENT_AFFILIATION in submission_checklist,
@@ -170,13 +179,15 @@ def main() -> None:
         require("DO NOT SUBMIT" in cover,
                 "unreleased v1.4.0 cover letter is fail-closed with a do-not-submit banner")
 
-    require(len(highlights) == 5, "exactly five SoftwareX highlights are supplied")
+    require(len(highlights) == 5, "exactly five Array highlights are supplied")
     require(all(len(line) <= 85 for line in highlights),
-            "every SoftwareX highlight is at most 85 characters")
-    require(any("Uganda CHIRPS" in line for line in highlights),
+            "every Array highlight is at most 85 characters")
+    require(any("Uganda" in line and "Rwanda" in line for line in highlights),
             "highlights include demonstrated second-country reuse")
-    require(any("ERA5-Land" in line and "MODIS" in line and "HAND" in line for line in highlights),
-            "highlights represent the scoped multi-product cross-check evidence")
+    require(any("Climate" in line and "terrain" in line and "independent" in line for line in highlights),
+            "highlights represent independent environmental cross-check evidence")
+    require(not any(re.search(r"\b[A-Z]{2,}\b", line) for line in highlights),
+            "highlights avoid all-caps acronyms for a general audience")
 
     forbidden = [
         "TODO_REVIEWER",
@@ -187,11 +198,11 @@ def main() -> None:
     for token in forbidden:
         require(token not in active, f"reviewer placeholder token is absent: {token}")
 
-    print("\nv1.4 peer-review remediation metadata validation passed.")
+    print("\nv1.4 Array transfer metadata validation passed.")
 
 
 if __name__ == "__main__":
     try:
         main()
     except (MetadataError, json.JSONDecodeError) as exc:
-        raise SystemExit(f"v1.4 remediation metadata validation failed: {exc}") from exc
+        raise SystemExit(f"v1.4 Array transfer metadata validation failed: {exc}") from exc
