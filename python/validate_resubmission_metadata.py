@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Validate metadata invariants during the v1.4 Array transfer and remediation cycle.
 
-This development gate intentionally does not require a v1.4 tag or DOI. Those are
-release-time artifacts and must only be minted after the exact approved commit is
-frozen. The immutable published v1.3.0 release remains the historical baseline.
+This gate supports both remediation and the DOI-bearing v1.4 release freeze. The
+reserved release DOI is validated before tagging and archival publication. The
+immutable published v1.3.0 release remains the historical baseline.
 """
 
 from __future__ import annotations
@@ -21,6 +21,7 @@ PREVIOUS_VERSION = "1.3.0"
 PREVIOUS_TAG = "v1.3.0"
 PREVIOUS_DOI = "10.5281/zenodo.21840177"
 CONCEPT_DOI = "10.5281/zenodo.21671788"
+RELEASE_DOI = "10.5281/zenodo.23162055"
 MANUSCRIPT_ID = "SOFTX-D-26-01014"
 TARGET_JOURNAL = "Array"
 ACTIVE_TITLE = "SuRT-GeoHarmonizer: A contract-first workflow for verifiable raster-to-administrative data harmonization"
@@ -105,6 +106,12 @@ def main() -> None:
     if release_is_frozen:
         require(CURRENT_AFFILIATION in citation and "University of Rwanda" in codemeta_text,
                 "frozen v1.4 release metadata uses the current University of Rwanda affiliation")
+        require(f"version: {TARGET_VERSION}" in citation and f"doi: {RELEASE_DOI}" in citation,
+                "CITATION.cff binds v1.4.0 to the reserved release DOI")
+        require(codemeta.get("version") == TARGET_VERSION and RELEASE_DOI in codemeta.get("identifier", ""),
+                "CodeMeta binds v1.4.0 to the reserved release DOI")
+        require(all(RELEASE_DOI in text for text in (readme, manuscript, runner)),
+                "README, manuscript, and verification summary share the reserved v1.4.0 DOI")
     else:
         require(PREVIOUS_VERSION in citation and PREVIOUS_VERSION in codemeta_text,
                 "development tree preserves immutable v1.3 metadata until the v1.4 release freeze")
@@ -169,6 +176,9 @@ def main() -> None:
             "cover letter transparently explains the changed affiliation")
     require(TARGET_VERSION in cover and TARGET_VERSION in submission_readme and TARGET_VERSION in submission_checklist,
             "submission sources identify v1.4.0 as the reviewer-remediated target")
+    if release_is_frozen:
+        require(all(RELEASE_DOI in text for text in (cover, submission_readme, submission_checklist)),
+                "submission sources share the reserved v1.4.0 DOI")
     require("exact validated version `1.3.0` release" not in submission_material,
             "submission sources do not present v1.3.0 as the rebuilt submission release")
     require("48 explicit behavioural" not in submission_material,

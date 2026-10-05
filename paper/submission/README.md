@@ -12,6 +12,6 @@ The active Array manuscript source is `paper/array-manuscript.md`. The prior Sof
 
 Elsevier has transferred the manuscript to Array. The transferred Editorial Manager record must be edited before final submission because the transferred title is the earlier SoftwareX title, whereas the strengthened Array manuscript now uses the title **"SuRT-GeoHarmonizer: A contract-first workflow for verifiable raster-to-administrative data harmonization."**
 
-The published v1.3.0 release and DOI `10.5281/zenodo.21840177` are immutable historical baselines. They are not the release identity for the Array submission. The reviewer-remediated v1.4.0 release must be frozen from the exact approved commit, assigned a new version-specific Zenodo DOI, manifest-verified, tagged, archived, and visually inspected before the final Array submission is completed.
+The published v1.3.0 release and DOI `10.5281/zenodo.21840177` are immutable historical baselines. They are not the release identity for the Array submission. The reviewer-remediated v1.4.0 release is assigned Zenodo version DOI `10.5281/zenodo.23162055` and must remain bound to the exact manifest-verified, tagged, archived, and visually inspected release tree before the final Array submission is completed.
 
 Do not finalize the Array submission while the cover-letter draft banner remains present or while the v1.4.0 DOI/release gates remain open.

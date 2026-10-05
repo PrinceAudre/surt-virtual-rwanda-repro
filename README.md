@@ -10,16 +10,16 @@ The software is descriptive and research-oriented. It does not generate validate
 
 ## Software status
 
-- **Active Array transfer hardening target:** `1.4.0` development
-- **Development branch:** `review/softwarex-resubmission-v1.4.0`
-- **Published immutable baseline:** `v1.3.0`, DOI `10.5281/zenodo.21840177`
+- **DOI-bearing release freeze:** `v1.4.0`, DOI `10.5281/zenodo.23162055`
+- **Release-freeze branch:** `review/softwarex-resubmission-v1.4.0`
+- **Previous immutable release:** `v1.3.0`, DOI `10.5281/zenodo.21840177`
 - **Zenodo concept DOI:** `10.5281/zenodo.21671788`
 - **Earlier immutable release:** `v1.2.0`, DOI `10.5281/zenodo.21744708`
 - **Code licence:** MIT
 - **Full reproducibility CI:** Ubuntu Linux
 - **Core platform smoke CI:** Ubuntu 24.04, Windows 2025, and macOS 14
 
-Version `1.4.0` is not yet a release. No v1.4.0 tag or version DOI should be created until the reviewer-remediation ledger and release gates are complete. The published v1.3.0 release remains immutable.
+Version `1.4.0` is the approved DOI-bearing release freeze. Its version DOI is `10.5281/zenodo.23162055`. The v1.3.0 release remains immutable history. Tagging, GitHub release creation, and Zenodo publication remain sequential release actions on this exact tree.
 
 ## What the software does
 
@@ -309,7 +309,7 @@ The current release records lightweight human-readable provenance. It does not c
 - `python/validate_release_contract.py` independently checks committed GeoJSON files and rejects controlled corruptions.
 - `CHECKSUMS.sha256` covers the complete tracked development scope and is rebuilt and checked by the dedicated v1.4 manifest workflow after human source commits.
 - GitHub Actions reruns the full account-free evidence suite and Snakemake workflow on a clean Ubuntu runner; manual dispatch can enable strict manifest verification. A separate core smoke matrix verifies the dependency-light contract on Ubuntu 24.04, Windows 2025, and macOS 14.
-- The eventual v1.4 tag and Zenodo version DOI must identify the exact same approved release content.
+- The v1.4 tag and Zenodo version DOI `10.5281/zenodo.23162055` must identify the exact same approved release content.
 
 Checksums establish byte integrity, not scientific validity.
 
@@ -334,8 +334,8 @@ Support contact: `priplee@gmail.com`.
 
 ## Citation
 
-Until v1.4.0 is frozen, tagged, and archived, cite the published v1.3.0 release:
+The DOI-bearing v1.4.0 release identity is:
 
-> Tuyishime AP (2026). SuRT-GeoHarmonizer: auditable administrative-scale Earth-data harmonization and provenance labelling. Version 1.3.0. Zenodo. https://doi.org/10.5281/zenodo.21840177
+> Tuyishime AP (2026). SuRT-GeoHarmonizer: auditable administrative-scale Earth-data harmonization and provenance labelling. Version 1.4.0. Zenodo. https://doi.org/10.5281/zenodo.23162055
 
-The release-family concept DOI is `10.5281/zenodo.21671788`. A new v1.4.0 version DOI will be inserted only after the exact reviewer-remediated release commit is approved and frozen.
+The release-family concept DOI is `10.5281/zenodo.21671788`. The immutable v1.3.0 predecessor remains archived at `10.5281/zenodo.21840177`.

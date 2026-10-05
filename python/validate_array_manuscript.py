@@ -30,6 +30,7 @@ AFFILIATION = (
     "University of Rwanda, Kigali, Rwanda"
 )
 V13_DOI = "10.5281/zenodo.21840177"
+V14_DOI = "10.5281/zenodo.23162055"
 
 
 class ArrayValidationError(ValueError):
@@ -176,8 +177,9 @@ def main() -> None:
             "manuscript states that an unmatched search result is not a priority claim")
 
     require(V13_DOI in manuscript, "published v1.3.0 DOI is retained")
-    require("No v1.4.0 DOI is valid until" in manuscript,
-            "v1.4.0 remains explicitly unreleased")
+    require(V14_DOI in manuscript, "reserved v1.4.0 DOI is bound to the Array manuscript")
+    require("No v1.4.0 DOI is valid until" not in manuscript,
+            "stale pre-reservation v1.4.0 DOI wording is absent")
     require("Declaration of generative AI" in manuscript and "OpenAI ChatGPT and Codex" in manuscript,
             "AI-assistance disclosure is retained")
     unsupported_historical_timing = "19.3 s"

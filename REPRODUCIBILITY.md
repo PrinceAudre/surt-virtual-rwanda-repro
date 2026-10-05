@@ -2,11 +2,11 @@
 
 ## Development and release boundary
 
-The active Array transfer hardening target is SuRT-GeoHarmonizer version `1.4.0` on branch `review/softwarex-resubmission-v1.4.0`. The branch name is retained for continuity with the externally reviewed SoftwareX remediation history.
+The approved Array release freeze is SuRT-GeoHarmonizer version `1.4.0` on branch `review/softwarex-resubmission-v1.4.0`, bound to version DOI `10.5281/zenodo.23162055`. The branch name is retained for continuity with the externally reviewed SoftwareX remediation history.
 
 The published release `v1.3.0`, DOI `10.5281/zenodo.21840177`, remains immutable. The earlier release `v1.2.0`, DOI `10.5281/zenodo.21744708`, also remains immutable. The concept DOI for the release family is `10.5281/zenodo.21671788`.
 
-No v1.4.0 tag or version DOI is valid until all reviewer-remediation release gates are satisfied on the exact release commit.
+The v1.4.0 version DOI `10.5281/zenodo.23162055` has been reserved for the exact release tree. The tag, GitHub release, and Zenodo publication must all remain bound to that same validated content.
 
 ## Environment restoration
 
@@ -328,7 +328,7 @@ A passing checksum establishes byte-level integrity only. It does not establish 
 After every reviewer concern and release gate has executable or documentary evidence:
 
 1. freeze the approved source, data, documentation, manuscript, and evidence files;
-2. reserve a new version-specific Zenodo DOI for v1.4.0 without publishing it;
+2. reserve a new version-specific Zenodo DOI for v1.4.0 without publishing it (`10.5281/zenodo.23162055`);
 3. insert the reserved v1.4.0 DOI into release-facing metadata and manuscript files;
 4. regenerate the complete tracked-file checksum manifest;
 5. run `python python/run_all_checks.py --verify-manifest` on that exact DOI-bearing commit;

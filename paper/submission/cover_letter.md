@@ -21,7 +21,7 @@ The repository is public and released under the MIT License:
 
 https://github.com/PrinceAudre/surt-virtual-rwanda-repro
 
-The current immutable public baseline is version 1.3.0, DOI `10.5281/zenodo.21840177`. Version 1.4.0 is not yet released. Before final submission, the exact approved v1.4.0 commit will be frozen, validated against the complete tracked-file checksum manifest, tagged, archived in Zenodo, and assigned its own version-specific DOI. This development paragraph must be replaced by that exact release identity before submission.
+The reviewer-remediated release is version 1.4.0, assigned Zenodo version DOI `10.5281/zenodo.23162055`. The previous v1.3.0 release, DOI `10.5281/zenodo.21840177`, remains immutable history. Before final submission, the exact DOI-bearing v1.4.0 tree will be manifest-verified, tagged, released on GitHub, archived in Zenodo, and checked to confirm that the DOI resolves to that exact release.
 
 My affiliation has changed since the earlier SoftwareX submission. I am now affiliated with the School of Public Health, College of Medicine and Health Sciences, University of Rwanda. Development of the earlier software release predates this affiliation, and no institutional endorsement of the software is claimed.
 

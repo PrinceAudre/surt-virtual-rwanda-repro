@@ -118,7 +118,7 @@ def write_summary(
         for step in steps
     }
     summary = {
-        "schema_version": "1.4-dev",
+        "schema_version": "1.4-release",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "software": "SuRT-GeoHarmonizer",
         "repository": "PrinceAudre/surt-virtual-rwanda-repro",
@@ -132,11 +132,11 @@ def write_summary(
         "development": {
             "target_version": "1.4.0",
             "branch": "review/softwarex-resubmission-v1.4.0",
-            "status": "Array transfer hardening after SoftwareX peer review; not a release",
-            "version_doi": None,
+            "status": "DOI-bearing Array release candidate; exact tag/archive gates pending",
+            "version_doi": "10.5281/zenodo.23162055",
         },
         "integrity": {
-            "scope": "complete tracked-file development scope",
+            "scope": "complete tracked-file v1.4 release-candidate scope",
             "manifest": "CHECKSUMS.sha256",
             "manifest_verified_in_this_run": verify_manifest,
             "development_manifest_policy": (

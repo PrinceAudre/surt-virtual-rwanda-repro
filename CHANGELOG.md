@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.4.0 - unreleased
+## 1.4.0 - release freeze, 2026-10-05
 
 ### Reviewer-driven scientific corrections
 
@@ -34,12 +34,12 @@
 - Added CMake and the required geospatial system libraries to hosted Ubuntu CI for clean-cache restoration of the locked R environment.
 - Added explicit Natural Earth attribution and interpretation limits for the Uganda portability fixture in `NOTICE.md`.
 
-### Still required before v1.4.0 release
+### Release-freeze status
 
-- Final independent code/manuscript review and reviewer-response sign-off.
-- Reserve and insert the v1.4.0 version DOI into the exact release-facing metadata and manuscript.
-- Freeze the exact source tree, regenerate and verify the complete tracked-file manifest, and confirm full Ubuntu reproducibility plus the three-platform core smoke matrix at that exact commit.
-- Render and inspect the final journal package, then tag `v1.4.0`, create the matching GitHub release, and publish the exact archive to Zenodo.
+- Final independent code/manuscript review and reviewer-response sign-off are complete.
+- Version-specific Zenodo DOI `10.5281/zenodo.23162055` is reserved and inserted into release-facing metadata and the Array manuscript.
+- The exact DOI-bearing source tree must now receive a regenerated complete tracked-file manifest and strict verification.
+- After rendering inspection, tag `v1.4.0`, create the matching GitHub release, and publish that exact archive to Zenodo.
 
 ## 1.3.0 - SoftwareX release candidate, 2026-08-07
 

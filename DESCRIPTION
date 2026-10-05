@@ -1,7 +1,7 @@
 Package: surtgeoharmonizer
 Type: Project
 Title: Auditable Administrative-Scale Earth-Data Harmonization and Provenance Labelling
-Version: 1.3.0
+Version: 1.4.0
 Authors@R: person("Audre Prince", "Tuyishime", role = c("aut", "cre"),
                   email = "priplee@gmail.com",
                   comment = c(ORCID = "0009-0002-0799-3140"))
