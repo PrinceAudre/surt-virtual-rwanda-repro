@@ -1,6 +1,6 @@
 # Final review protocol for SuRT-GeoHarmonizer v1.4.0
 
-**Status:** active Array-transfer hardening gate  
+**Status:** Gates 1 through 11 closed; GO FOR RELEASE FREEZE; Gate 12 active
 **Branch:** `review/softwarex-resubmission-v1.4.0`  
 **Prior peer-reviewed manuscript:** SoftwareX `SOFTX-D-26-01014`  
 **Current target:** Array

@@ -43,6 +43,8 @@
 
 ## Release controls
 
+- [x] Final pre-freeze adversarial review is recorded in paper/ARRAY_FINAL_REVIEW_2026-10-05.md; Gates 1 through 11 are closed.
+
 - [x] Published v1.3.0 remains immutable and is not presented as the Array submission release.
 - [ ] Reserve a new version-specific Zenodo DOI for v1.4.0 without publishing it.
 - [ ] Insert the reserved DOI into release-facing metadata, manuscript, cover letter, and checklist.
