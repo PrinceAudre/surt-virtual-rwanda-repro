@@ -248,10 +248,15 @@ jobs:
                       if not run.text.strip():
                           continue
                       checked += 1
+                      expected_size = (
+                          10.0
+                          if run.style and run.style.name and "Source Code" in run.style.name
+                          else target
+                      )
                       actual = run.font.size.pt if run.font.size is not None else None
-                      if actual is None or abs(actual - target) > 0.01:
+                      if actual is None or abs(actual - expected_size) > 0.01:
                           failures.append(
-                              f"{path.name}: {paragraph.style.name!r} expected {target} pt, "
+                              f"{path.name}: {paragraph.style.name!r} expected {expected_size} pt, "
                               f"got {actual!r} for {run.text[:40]!r}"
                           )
 
