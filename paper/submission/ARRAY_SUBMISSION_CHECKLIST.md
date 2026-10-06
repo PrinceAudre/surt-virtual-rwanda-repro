@@ -11,7 +11,7 @@
 - [x] Editorial Manager instruction identified: `Submissions Sent Back to Author` -> `Edit submission`.
 - [x] Transfer expiry recorded: **3 January 2027** if no further action is taken.
 - [ ] Update the transferred Editorial Manager title from the earlier SoftwareX title to the active Array title.
-- [ ] Verify article type and all transferred metadata against Array's current Editorial Manager fields.
+- [ ] Verify article type and all transferred metadata against Array's current Editorial Manager fields. Current Array guidance distinguishes Regular Papers from Technical Notes (maximum 10 standard-format pages); this 18-page research manuscript should be treated as a Regular Paper unless Editorial Manager presents a more specific applicable label.
 - [ ] Inspect every transferred file and remove superseded SoftwareX-specific files before final submission.
 - [ ] Confirm that no simultaneous submission remains active elsewhere at the moment of final submission.
 
@@ -31,6 +31,7 @@
 - [x] Threats-to-validity section is explicit.
 - [x] Manuscript explicitly disclaims novelty in zonal-statistics algorithms.
 - [x] Current prior-art treatment includes exactextractr, GDAL 3.12, spatcovar 0.1.0, DART-Pipeline/geoglue, DHIS2 climate tooling, stagg, Climate-CAFE and other adjacent systems.
+- [x] Submission abstract tightened to 226 words and keywords retained at six; the package workflow now fails closed above 250 abstract words, outside 1-7 keywords, or if TeX math delimiters reappear.
 - [x] Submission-only manuscript copy created as `paper/submission/array-manuscript-final.md`. It is derived from the frozen `v1.4.0` manuscript, preserves the scientific content, updates only completed-release status wording, and limits the keyword list to six terms for current Elsevier submission guidance. The `v1.4.0` tag remains unchanged.
 
 ## Evidence boundary
