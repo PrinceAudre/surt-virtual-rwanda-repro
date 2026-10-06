@@ -187,7 +187,9 @@ jobs:
                   paragraph_size = STYLE_SIZES.get(p.style.name, 12)
                   for run in p.runs:
                       if run.style and run.style.name and "Source Code" in run.style.name:
-                          set_run_font(run, size=10)
+                          # Preserve Pandoc's monospace Source Code character
+                          # style; only normalize its size.
+                          run.font.size = Pt(10)
                       else:
                           set_run_font(run, size=paragraph_size)
 
