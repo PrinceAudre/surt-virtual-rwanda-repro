@@ -33,7 +33,7 @@ jobs:
           mkdir -p "$OUT"
 
           pandoc paper/submission/array-manuscript-final.md \
-            --from=markdown+tex_math_dollars+pipe_tables+raw_tex \
+            --from=markdown+pipe_tables \
             --to=docx --standalone \
             --output="$OUT/SuRT-GeoHarmonizer_Array_Manuscript_v1.4.0.docx"
 

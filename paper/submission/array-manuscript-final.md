@@ -94,31 +94,23 @@ The built-in provider adapter accepts a prepared local raster. Provider-specific
 
 ### 3.2. Spatial-support semantics
 
-For polygon $P$, let $P_R$ be the portion intersecting the raster's rectangular grid extent and let $P_V$ be the finite, quality-accepted portion of $P_R$. SuRT reports three fields:
+For polygon `P`, let `P_R` be the portion intersecting the raster's rectangular grid extent and let `P_V` be the finite, quality-accepted portion of `P_R`. SuRT reports three fields:
 
-$$
-r = \frac{A(P_R)}{A(P)},
-$$
+`r = A(P_R) / A(P)`
 
-$$
-v = \frac{A(P_V)}{A(P_R)},
-$$
+`v = A(P_V) / A(P_R)`
 
 and
 
-$$
-d = r\,v = \frac{A(P_V)}{A(P)}.
-$$
+`d = r * v = A(P_V) / A(P)`
 
-In the output schema these are `raster_coverage_fraction`, `valid_within_raster_fraction`, and `valid_data_fraction`. Only $r$ and $v$ are algebraically independent; $d$ is reported explicitly as the overall support fraction and independently validated against $r\times v$. The implementation clamps numerical round-off to the interval [0,1] and can fail closed below a configured minimum overall valid-data fraction.
+In the output schema these are `raster_coverage_fraction`, `valid_within_raster_fraction`, and `valid_data_fraction`. Only `r` and `v` are algebraically independent; `d` is reported explicitly as the overall support fraction and independently validated against `r * v`. The implementation clamps numerical round-off to the interval [0,1] and can fail closed below a configured minimum overall valid-data fraction.
 
-Here, raster coverage refers to the rectangular grid extent, not a geometry derived from valid pixels. Internal NoData, provider QA rejection and other finite-data loss are represented by $v$. Keeping these meanings separate is the point of the contract.
+Here, raster coverage refers to the rectangular grid extent, not a geometry derived from valid pixels. Internal NoData, provider QA rejection and other finite-data loss are represented by `v`. Keeping these meanings separate is the point of the contract.
 
-The zonal value itself is a surface-area-weighted mean over finite contributions. If raster cell $i$ has value $x_i$, cell surface area $a_i$, and polygon-cell coverage fraction $c_i$, then
+The zonal value itself is a surface-area-weighted mean over finite contributions. If raster cell `i` has value `x_i`, cell surface area `a_i`, and polygon-cell coverage fraction `c_i`, then
 
-$$
-\bar{x}=\frac{\sum_{i\in V}x_i a_i c_i}{\sum_{i\in V}a_i c_i}.
-$$
+`mean = sum over i in V of (x_i * a_i * c_i) / sum over i in V of (a_i * c_i)`
 
 `terra::cellSize(..., transform = TRUE)` supplies square-metre cell-area weights and `exactextractr` supplies polygon-cell coverage fractions. The formulation prevents equal-degree geographic cells at different latitudes from being treated as equal physical areas.
 
@@ -149,7 +141,7 @@ A controlled two-cell projected raster fixture was constructed to create four ca
 - half-grid coverage with all covered cells finite;
 - half-grid coverage with half of the covered area finite.
 
-All finite cells were assigned value 10. We therefore compare three interface states: mean only; mean plus the single overall valid-data fraction $d$; and mean plus the full reported support tuple $(r,v,d)$. The experiment records the number of unique signatures under each interface and specifically tests whether finite-data loss can be distinguished from raster-grid extent loss when both yield the same overall valid support. This is an interface-information experiment, not a claim that other geospatial software cannot be programmed to compute the same quantities.
+All finite cells were assigned value 10. We therefore compare three interface states: mean only; mean plus the single overall valid-data fraction `d`; and mean plus the full reported support tuple `(r, v, d)`. The experiment records the number of unique signatures under each interface and specifically tests whether finite-data loss can be distinguished from raster-grid extent loss when both yield the same overall valid support. This is an interface-information experiment, not a claim that other geospatial software cannot be programmed to compute the same quantities.
 
 ### 4.2. RQ2: independent numerical reproduction
 
