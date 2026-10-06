@@ -8,8 +8,6 @@ ORCID: 0009-0002-0799-3140
 
 Corresponding author: TUYISHIME AUDRE PRINCE, priplee@gmail.com
 
-**Target journal:** Array  
-**Status:** DOI-bearing v1.4.0 release manuscript. Release identity is governed by exact-tree checksum, tag, archive, and DOI agreement.
 
 ## Abstract
 
