@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - submission/array-final-completion
+      - review/softwarex-resubmission-v1.4.0
     paths:
       - "paper/submission/**"
       - ".github/workflows/array-submission-package.yml"
@@ -89,6 +90,12 @@ jobs:
           from docx.oxml.ns import qn
 
           out = Path("generated/array_submission_package")
+          STYLE_SIZES = {
+              "Title": 16,
+              "Heading 1": 14,
+              "Heading 2": 13,
+              "Heading 3": 12,
+          }
 
           def set_run_font(run, name="Times New Roman", size=12):
               run.font.name = name
@@ -145,7 +152,7 @@ jobs:
               normal.paragraph_format.line_spacing = 1.15
               normal.paragraph_format.space_after = Pt(6)
 
-              for sty_name, size in (("Title", 16), ("Heading 1", 14), ("Heading 2", 13), ("Heading 3", 12)):
+              for sty_name, size in STYLE_SIZES.items():
                   if sty_name in doc.styles:
                       sty = doc.styles[sty_name]
                       sty.font.name = "Times New Roman"
@@ -161,7 +168,11 @@ jobs:
                       "Cover letter", "Response to prior SoftwareX reviewers"
                   }:
                       first.style = doc.styles["Title"]
-                      first.alignment = WD_ALIGN_PARAGRAPH.CENTER if kind == "manuscript" else WD_ALIGN_PARAGRAPH.LEFT
+                      first.alignment = (
+                          WD_ALIGN_PARAGRAPH.CENTER
+                          if kind == "manuscript"
+                          else WD_ALIGN_PARAGRAPH.LEFT
+                      )
 
               if kind == "manuscript":
                   for p in doc.paragraphs[1:]:
@@ -173,11 +184,12 @@ jobs:
                   normal.paragraph_format.line_spacing = 1.0
 
               for p in doc.paragraphs:
+                  paragraph_size = STYLE_SIZES.get(p.style.name, 12)
                   for run in p.runs:
                       if run.style and run.style.name and "Source Code" in run.style.name:
-                          run.font.size = Pt(10)
+                          set_run_font(run, size=10)
                       else:
-                          set_run_font(run, size=12)
+                          set_run_font(run, size=paragraph_size)
 
               for table in doc.tables:
                   table.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -207,7 +219,48 @@ jobs:
           format_doc(out / "SuRT-GeoHarmonizer_Highlights.docx", "highlights")
           PY
 
-      - name: Convert Word files to PDF for final visual inspection
+      - name: Verify Word heading hierarchy
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from docx import Document
+
+          out = Path("generated/array_submission_package")
+          expected = {
+              "Title": 16.0,
+              "Heading 1": 14.0,
+              "Heading 2": 13.0,
+              "Heading 3": 12.0,
+          }
+          failures = []
+          checked = 0
+
+          for path in sorted(out.glob("*.docx")):
+              doc = Document(path)
+              for paragraph in doc.paragraphs:
+                  target = expected.get(paragraph.style.name)
+                  if target is None or not paragraph.text.strip():
+                      continue
+                  for run in paragraph.runs:
+                      if not run.text.strip():
+                          continue
+                      checked += 1
+                      actual = run.font.size.pt if run.font.size is not None else None
+                      if actual is None or abs(actual - target) > 0.01:
+                          failures.append(
+                              f"{path.name}: {paragraph.style.name!r} expected {target} pt, "
+                              f"got {actual!r} for {run.text[:40]!r}"
+                          )
+
+          if failures:
+              raise SystemExit("FAIL: Word heading hierarchy regression:\n" + "\n".join(failures[:30]))
+          if checked == 0:
+              raise SystemExit("FAIL: no styled title/heading runs were checked")
+          print(f"PASS: verified {checked} title/heading runs at configured sizes")
+          PY
+
+      - name: Convert Word files to PDF and verify package checksums
         shell: bash
         run: |
           set -euo pipefail
@@ -219,7 +272,12 @@ jobs:
               --convert-to pdf --outdir "$OUT" "$f"
           done
           printf '%s\n' "${GITHUB_SHA}" > "$OUT/SOURCE_COMMIT.txt"
-          sha256sum "$OUT"/*.docx "$OUT"/*.pdf > "$OUT/SHA256SUMS.txt"
+
+          (
+            cd "$OUT"
+            sha256sum *.docx *.pdf SOURCE_COMMIT.txt > SHA256SUMS.txt
+            sha256sum -c SHA256SUMS.txt
+          )
 
       - name: Upload Array submission package
         uses: actions/upload-artifact@v4
