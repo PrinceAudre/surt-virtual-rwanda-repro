@@ -1,4 +1,4 @@
-﻿# Cover letter
+# Cover letter
 
 Editors
 Array
@@ -19,7 +19,7 @@ The repository is public and released under the MIT License:
 
 https://github.com/PrinceAudre/surt-virtual-rwanda-repro
 
-The reviewer-remediated release is version 1.4.0, assigned Zenodo version DOI `10.5281/zenodo.23162055`. The previous v1.3.0 release, DOI `10.5281/zenodo.21840177`, remains immutable history. Before final submission, the exact DOI-bearing v1.4.0 tree will be manifest-verified, tagged, released on GitHub, archived in Zenodo, and checked to confirm that the DOI resolves to that exact release.
+The reviewer-remediated software is released as version 1.4.0. The exact tagged commit is `49a87472c3581b6f1912cde97c900ec3dbd17335`; its tracked-file checksum manifest and strict release-integrity checks were completed before publication. The GitHub release is `v1.4.0`, the Zenodo version DOI is `10.5281/zenodo.23162055`, and the Zenodo concept DOI is `10.5281/zenodo.21671788`. The previous v1.3.0 release, DOI `10.5281/zenodo.21840177`, remains immutable history.
 
 My affiliation has changed since the earlier SoftwareX submission. I am now affiliated with the School of Public Health, College of Medicine and Health Sciences, University of Rwanda. Development of the earlier software release predates this affiliation, and no institutional endorsement of the software is claimed.
 
@@ -31,10 +31,10 @@ Thank you for considering this transferred manuscript.
 
 Sincerely,
 
-TUYISHIME AUDRE PRINCE\
-School of Public Health\
-College of Medicine and Health Sciences\
-University of Rwanda\
-Kigali, Rwanda\
-ORCID: 0009-0002-0799-3140\
+TUYISHIME AUDRE PRINCE  
+School of Public Health  
+College of Medicine and Health Sciences  
+University of Rwanda  
+Kigali, Rwanda  
+ORCID: 0009-0002-0799-3140  
 Email: priplee@gmail.com
