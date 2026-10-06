@@ -31,7 +31,7 @@
 - [x] Threats-to-validity section is explicit.
 - [x] Manuscript explicitly disclaims novelty in zonal-statistics algorithms.
 - [x] Current prior-art treatment includes exactextractr, GDAL 3.12, spatcovar 0.1.0, DART-Pipeline/geoglue, DHIS2 climate tooling, stagg, Climate-CAFE and other adjacent systems.
-- [ ] Produce a submission-only manuscript copy that preserves all frozen scientific content but updates the final conclusion sentence `Release and submission remain contingent on exact-tree validation and final claim-to-evidence review.` because the v1.4.0 release and those validation gates are now completed. Do not rewrite the `v1.4.0` tag.
+- [x] Submission-only manuscript copy created as `paper/submission/array-manuscript-final.md`. It is derived from the frozen `v1.4.0` manuscript, preserves the scientific content, updates only completed-release status wording, and limits the keyword list to six terms for current Elsevier submission guidance. The `v1.4.0` tag remains unchanged.
 
 ## Evidence boundary
 
@@ -75,7 +75,7 @@
 - [ ] Open `Submissions Sent Back to Author` and choose `Edit submission`.
 - [ ] Replace the transferred old title with the active Array title.
 - [ ] Confirm author name, affiliation, email and ORCID exactly match the manuscript.
-- [ ] Confirm abstract and keywords match the frozen manuscript.
+- [ ] Confirm the Editorial Manager abstract matches `paper/submission/array-manuscript-final.md` and enter its six submission keywords exactly.
 - [ ] Confirm article type against Array's available choices.
 - [ ] Remove or replace superseded SoftwareX manuscript files in the transferred file list.
 - [ ] Upload the final Array manuscript file.
