@@ -31,10 +31,10 @@ Thank you for considering this transferred manuscript.
 
 Sincerely,
 
-TUYISHIME AUDRE PRINCE
-School of Public Health
-College of Medicine and Health Sciences
-University of Rwanda
-Kigali, Rwanda
-ORCID: 0009-0002-0799-3140
+TUYISHIME AUDRE PRINCE  
+School of Public Health  
+College of Medicine and Health Sciences  
+University of Rwanda  
+Kigali, Rwanda  
+ORCID: 0009-0002-0799-3140  
 Email: priplee@gmail.com
