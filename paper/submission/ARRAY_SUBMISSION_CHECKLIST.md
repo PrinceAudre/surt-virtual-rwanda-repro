@@ -65,10 +65,10 @@
 - [x] Post-release Array cover-letter source finalized on `submission/array-final-completion` so it no longer describes already-completed release actions in future tense.
 - [x] Final response-to-reviewers source created as `paper/submission/response_to_softwarex_reviewers.md`, with the exact v1.4.0 release identity and no stale pre-release gate language.
 - [x] Highlights source contains five general-audience bullets, each no more than 85 characters.
-- [ ] Confirm the final editable manuscript DOCX/PDF was rendered from the frozen manuscript plus only the approved post-release status wording correction above.
-- [ ] Confirm the final cover-letter DOCX/PDF was rendered from the post-release final cover-letter source.
-- [ ] Confirm the final highlights Word file matches `paper/submission/highlights.txt`.
-- [ ] Confirm the reviewer-response document was rendered from `paper/submission/response_to_softwarex_reviewers.md` if Array provides an appropriate response field/file type.
+- [x] Confirm the final editable manuscript DOCX/PDF was rendered from the frozen manuscript plus only the approved post-release status wording correction above. Visual QA completed on all 18 pages after the renderer-safe equation fix.
+- [x] Confirm the final cover-letter DOCX/PDF was rendered from the post-release final cover-letter source. Both pages visually inspected.
+- [x] Confirm the final highlights Word file matches `paper/submission/highlights.txt`. Rendered one-page file visually inspected.
+- [x] Confirm the reviewer-response document was rendered from `paper/submission/response_to_softwarex_reviewers.md`. All six pages visually inspected; upload remains conditional on Array providing an appropriate response field/file type.
 
 ## Editorial Manager completion
 
