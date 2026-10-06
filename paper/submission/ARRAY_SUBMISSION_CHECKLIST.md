@@ -60,6 +60,7 @@
 - [x] Matching GitHub release published without changing tagged files.
 - [x] Zenodo version DOI recorded in the GitHub release and `CITATION.cff`.
 - [x] GitHub release date: 5 October 2026.
+- [x] DataCite registry check on 6 October 2026 confirms DOI `10.5281/zenodo.23162055` is findable as version `v1.4.0` and links to the GitHub `v1.4.0` tree.
 
 ## Submission-facing files
 
@@ -70,8 +71,11 @@
 - [x] Confirm the final cover-letter DOCX/PDF was rendered from the post-release final cover-letter source. Both pages visually inspected.
 - [x] Confirm the final highlights Word file matches `paper/submission/highlights.txt`. Rendered one-page file visually inspected.
 - [x] Confirm the reviewer-response document was rendered from `paper/submission/response_to_softwarex_reviewers.md`. All six pages visually inspected; upload remains conditional on Array providing an appropriate response field/file type.
+- [x] Final Array package workflow run `37458303927` succeeded on package source commit `60f3f5bd9ddcc121b7904a6b59871ebc4a5059f9`; artifact digest `sha256:28c13cc08d6097d7a2943e5c7ae4b27189e5d69e14802c3b25016a73a4f3adec`. Internal `SHA256SUMS.txt` verification passed.
 
 ## Editorial Manager completion
+
+- [x] Exact copy-ready Editorial Manager reconciliation sheet created as `paper/submission/ARRAY_EDITORIAL_MANAGER_ENTRY_SHEET.md`.
 
 - [ ] Open `Submissions Sent Back to Author` and choose `Edit submission`.
 - [ ] Replace the transferred old title with the active Array title.
