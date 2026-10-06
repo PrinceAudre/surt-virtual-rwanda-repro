@@ -4,7 +4,7 @@
 # Rebuild release: python python/build_checksum_manifest.py --all-tracked --write
 fbf815468cd887b5898ba8b2fc367f78f5ea8f30f83ec75dac923b12479e7a7d  .gitattributes
 d9cfd2a0a93159b7344d397f4805cf1b84b342f43c53af58c719f86fc3f38bc0  .github/workflows/array-manuscript-validation.yml
-d2c2560950a2f79802759ed2d5f0fee1bddf696c0925f820c2d6b0f93158b923  .github/workflows/array-submission-package.yml
+a5944690e3b3761a7ce52f77476e99460bb55c9f740f3e887ddf9f51025f8e3a  .github/workflows/array-submission-package.yml
 1b57e4e593ae7f28593bda7c83153f8ae194a58f29210f298c8da0d855d7f518  .github/workflows/metadata-validation.yml
 5de35ec0d749060677935d2640e494637d393f0e3230955372d142d19f4e44df  .github/workflows/platform-smoke.yml
 b2421bceb39256dbb5a791f2a8662b3199ebe1b0b581ec2844e848067d782094  .github/workflows/public-data-validation.yml
