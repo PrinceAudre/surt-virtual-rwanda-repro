@@ -25,6 +25,28 @@ jobs:
           sudo apt-get install -y --no-install-recommends pandoc libreoffice-writer fonts-liberation fonts-dejavu-core
           python -m pip install --disable-pip-version-check python-docx
 
+      - name: Validate submission source constraints
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          text = Path("paper/submission/array-manuscript-final.md").read_text(encoding="utf-8")
+          match = re.search(r"## Abstract\n\n([\s\S]*?)\n\n\*\*Keywords:\*\*\s*(.+)", text)
+          if not match:
+              raise SystemExit("FAIL: abstract/keywords block not found")
+          abstract_words = len(re.findall(r"\b[\w°.-]+\b", match.group(1)))
+          keywords = [item.strip() for item in match.group(2).split(";") if item.strip()]
+          if abstract_words > 250:
+              raise SystemExit(f"FAIL: Array abstract has {abstract_words} words; maximum is 250")
+          if not 1 <= len(keywords) <= 7:
+              raise SystemExit(f"FAIL: Array keyword count is {len(keywords)}; expected 1-7")
+          if "$" in text:
+              raise SystemExit("FAIL: TeX math delimiters remain in the Word-bound manuscript source")
+          print(f"PASS: abstract {abstract_words} words; {len(keywords)} keywords; renderer-safe equations")
+          PY
+
       - name: Build editable Word files
         shell: bash
         run: |
