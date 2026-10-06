@@ -21,6 +21,7 @@ The tag and release must not be rewritten for Editorial Manager packaging change
 - `response_to_softwarex_reviewers.md`: finalized point-by-point response suitable for Array only if Editorial Manager provides an appropriate reviewer-response field or file type.
 - `highlights.txt`: five concise highlights.
 - `ARRAY_SUBMISSION_CHECKLIST.md`: live transfer and Editorial Manager completion checklist.
+- `ARRAY_EDITORIAL_MANAGER_ENTRY_SHEET.md`: copy-ready metadata, declarations, identifiers, file mapping, sequence, and hard-stop conditions for reconciling the transferred Editorial Manager record.
 
 The earlier `paper/reviewer-response-draft.md` remains historical development evidence and should not be uploaded in place of the finalized response.
 
