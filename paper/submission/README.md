@@ -16,6 +16,7 @@ The tag and release must not be rewritten for Editorial Manager packaging change
 
 ## Submission-facing sources on this branch
 
+- `array-manuscript-final.md`: submission-only manuscript copy derived from the immutable `v1.4.0` manuscript. Scientific content is preserved; post-release status wording is updated and the keyword list is limited to six submission terms. The tagged software/manuscript source is not rewritten.
 - `cover_letter.md`: finalized Array transfer cover letter, corrected after the v1.4.0 release so completed release actions are stated in past tense.
 - `response_to_softwarex_reviewers.md`: finalized point-by-point response suitable for Array only if Editorial Manager provides an appropriate reviewer-response field or file type.
 - `highlights.txt`: five concise highlights.
