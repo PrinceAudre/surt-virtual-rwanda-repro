@@ -160,7 +160,6 @@ jobs:
               for table in doc.tables:
                   table.alignment = WD_TABLE_ALIGNMENT.CENTER
                   table.autofit = True
-                  table.style = "Table Grid"
                   for ridx, row in enumerate(table.rows):
                       if ridx == 0:
                           trPr = row._tr.get_or_add_trPr()
