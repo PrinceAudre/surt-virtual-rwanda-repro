@@ -155,8 +155,9 @@ def main() -> None:
     cover = read("paper/submission/cover_letter.md")
     submission_readme = read("paper/submission/README.md")
     submission_checklist = read("paper/submission/ARRAY_SUBMISSION_CHECKLIST.md")
+    em_entry_sheet = read("paper/submission/ARRAY_EDITORIAL_MANAGER_ENTRY_SHEET.md")
     highlights = [line.strip() for line in read("paper/submission/highlights.txt").splitlines() if line.strip()]
-    submission_material = "\n".join([cover, submission_readme, submission_checklist])
+    submission_material = "\n".join([cover, submission_readme, submission_checklist, em_entry_sheet])
 
     require(MANUSCRIPT_ID in cover,
             "cover letter identifies the externally reviewed SoftwareX manuscript provenance")
@@ -172,6 +173,22 @@ def main() -> None:
             "false pre-review cover-letter claim is absent")
     require(CURRENT_AFFILIATION in submission_checklist,
             "submission checklist records the current University of Rwanda affiliation")
+    require(ACTIVE_TITLE in em_entry_sheet,
+            "Editorial Manager entry sheet uses the active Array title")
+    require("TUYISHIME AUDRE PRINCE" in em_entry_sheet and
+            "priplee@gmail.com" in em_entry_sheet and
+            "0009-0002-0799-3140" in em_entry_sheet and
+            CURRENT_AFFILIATION in em_entry_sheet,
+            "Editorial Manager entry sheet matches the finalized author identity")
+    require(RELEASE_DOI in em_entry_sheet and CONCEPT_DOI in em_entry_sheet,
+            "Editorial Manager entry sheet uses the released Zenodo identifiers")
+    require("49a87472c3581b6f1912cde97c900ec3dbd17335" in em_entry_sheet,
+            "Editorial Manager entry sheet binds the immutable v1.4.0 commit")
+    require("Regular Paper" in em_entry_sheet and "Technical Note" in em_entry_sheet,
+            "Editorial Manager entry sheet records the bounded article-type decision")
+    require("explicit owner approval" in em_entry_sheet.casefold() and
+            "Approve Submission" in em_entry_sheet,
+            "Editorial Manager entry sheet preserves the final owner-approval gate")
     require("University of Rwanda" in cover and "affiliation has changed" in cover,
             "cover letter transparently explains the changed affiliation")
     require(TARGET_VERSION in cover and TARGET_VERSION in submission_readme and TARGET_VERSION in submission_checklist,
